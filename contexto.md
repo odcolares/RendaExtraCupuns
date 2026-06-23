@@ -101,6 +101,7 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 - [x] Fix Cupom detector plural: `/\bcupons?\b/i`
 - [x] Fix links desconhecidos: `resolveUnknownUrl()` no monitor
 - [x] Extração fallback _data WhatsApp: campos ocultos da mensagem
+- [x] GitHub: repositório criado (odcolares/RendaExtraCupuns) — 68 arquivos, 19.272 linhas
 - [ ] Cadastrar AliExpress Afiliados — obter ID
 - [x] Cadastrar Shopee Afiliados — ID obtido (18387911117)
 - [x] Cadastrar Mercado Livre Afiliados — ID obtido (88981950)
@@ -538,6 +539,7 @@ npm run test:coverage      # Testes com cobertura
 - **Extração fallback _data** ✅ campos `canonicalUrl`, `matchedText`, `url`, `link` do objeto da mensagem WhatsApp
 - **extractLinksFromMessage retorna todas URLs** ✅ filtro removido, resolução dinâmica no handleMessage
 - **Shopee Afiliados** ✅ ID 18387911117 configurado! Links geram com `?af_id=18387911117`
+- **GitHub** ✅ [github.com/odcolares/RendaExtraCupuns](https://github.com/odcolares/RendaExtraCupuns) — 68 arquivos, 19.272 linhas
 
 ---
 
@@ -554,6 +556,9 @@ npm run test:coverage      # Testes com cobertura
 - [GRAPH_REPORT.md](./graphify-out/GRAPH_REPORT.md) - Relatório completo
 - [graph.html](./graphify-out/graph.html) - Grafo interativo
 - [graph.json](./graphify-out/graph.json) - Dados brutos
+
+### GitHub
+- [Repositório](https://github.com/odcolares/RendaExtraCupuns) - Código fonte
 
 ### Externos
 - [Telegraf](https://telegraf.js.org/) - Bot Telegram

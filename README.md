@@ -4,7 +4,7 @@
 
 Sistema automatizado que monitora ofertas em grupos WhatsApp, gera links de afiliado e publica em canal próprio no **Telegram**, transformando ofertas em fonte de renda extra via marketing de afiliados.
 
-**Status**: **Alpha** ✅ | WhatsApp (2 grupos + newsletter + barto ofertas) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | AliExpress (pronto, sem ID) ✅ | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | Deploy VPS ⏳
+**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | AliExpress (pronto, sem ID) ✅ | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | Deploy VPS ⏳
 
 ---
 
@@ -195,7 +195,7 @@ npm --version    # v9.0.0 ou superior
 
 ```bash
 # Clonar repositório
-git clone https://github.com/seu-usuario/RendaExtraCupuns.git
+git clone https://github.com/odcolares/RendaExtraCupuns.git
 cd RendaExtraCupuns
 
 # Instalar dependências
@@ -396,6 +396,7 @@ npm run lint           # Verificar erros TypeScript
 - **Ofertas multi-plataforma**: Shopee (PS5 Pro), ML (Caneca), Amazon — pipeline validado com +barto ofertas ✅
 - **URL resolution**: Shopee (`shp.ee`, `s.shopee.com.br`), AliExpress (`s.click.aliexpress.com`), desconhecidas (`tidd.ly`) resolvidas via HTTP redirect ✅
 - **Shopee Afiliados ID**: 18387911117 ✅ — links com `?af_id=18387911117`
+- **GitHub**: [github.com/odcolares/RendaExtraCupuns](https://github.com/odcolares/RendaExtraCupuns) ✅
 
 ### 🔴 Ainda necessário (voce) — quando tiver as contas
 1. **AliExpress Afiliados** — https://portals.aliexpress.com → obter ID e colocar no .env (já preparado)
@@ -431,6 +432,6 @@ graphify explain "X"        # Explicar conceito
 
 ---
 
-**Status**: **Alpha** operacional. WhatsApp Broadcast conectado. Amazon + Mercado Livre configurados e testados E2E. Deploy aguardando AliExpress e Shopee. 🚀
+**Status**: **Alpha** operacional. 4 fontes WhatsApp monitoradas. Amazon + Shopee + Mercado Livre configurados e testados E2E. Código no [GitHub](https://github.com/odcolares/RendaExtraCupuns). Deploy aguardando VPS. 🚀
 
 *Última atualização: 23/06/2026*

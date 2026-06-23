@@ -220,7 +220,7 @@ git push                           # Enviar para remote
 
  PROJETO:
 ─────────────────────────────────────────────────────────────────────────────
- Repositório: (adicionar URL)
+ Repositório: https://github.com/odcolares/RendaExtraCupuns
  Documentação: (adicionar URL)
  Issues: (adicionar URL)
 
@@ -760,6 +760,13 @@ O que foi feito:
    - Pipeline validado: Amazon (Controle Dualsense id:152), ML (Fone Pulse id:154) publicados
    - Shopee pronto para gerar links com `?af_id=18387911117`
 
+6. **GitHub — Repositório criado** (23/06)
+   - `gh` CLI autenticado como `odcolares`
+   - Repositório público: `github.com/odcolares/RendaExtraCupuns`
+   - 68 arquivos, 19.272 linhas no commit inicial
+   - `.gitignore` configurado: `.env`, `data/*.db`, `whatsapp-session/`, `node_modules/`, `dist/`, `logs/` protegidos
+   - Remote `origin` configurado e push realizado
+
 Decisões tomadas:
 - extractLinksFromMessage retorna ALL URLs: filtro isProductLink removido. Detecção de plataforma + resolução de shorteners agora no handleMessage. Permite resolução dinâmica de domínios desconhecidos (tidd.ly → redirect → detecta Magalu/Kabum/etc)
 - Cada módulo de afiliado resolve suas próprias URLs curtas (Shopee resolve shp.ee, AliExpress resolve s.click) — encapsulamento mantido
@@ -782,14 +789,17 @@ Arquivos modificados:
 - [x] contexto.md (atualizado)
 - [x] SESSAO.txt (esta sessão registrada)
 - [x] AFFILIATES.md (Shopee status atualizado)
-- [x] README.md (Shopee configurado)
+- [x] README.md (Shopee configurado, GitHub URL adicionado)
+- [x] .gitignore (criado: .env, data/*.db, sessão WhatsApp, node_modules, dist, logs)
+- [x] GitHub (odcolares/RendaExtraCupuns — 68 arquivos, 19.272 linhas, push realizado)
+- [x] PROPOSTA_COMERCIAL.md (criada)
 
 ═══════════════════════════════════════════════════════════════════════════════
                         📊 RESUMO DAS SESSÕES
 ═══════════════════════════════════════════════════════════════════════════════
 
  Total de sessões: 9
- Status: Código completo, Bot Telegram ✅, Canal ✅, Amazon ✅, ML ✅, PM2 config ✅, E2E testado ✅
+ Status: Código completo, Bot Telegram ✅, Canal ✅, Amazon ✅, ML ✅, Shopee ✅, GitHub ✅, PM2 config ✅, E2E testado ✅
 
  Fases (FLUXO.md):
  ─────────────────────────────────────────────────────────────────────────────
@@ -799,4 +809,4 @@ Arquivos modificados:
  Fase 4: EXECUTAR    💻 31 arquivos .ts, pipeline + CLI + fetcher ✅ (17/06)
  Fase 5: VALIDAR     🔬 97 testes, 11 suites, 100% passando      ✅ (19/06)
  Fase 6: REGISTRAR   📄 Contextos atualizados + Sessão 08        ✅ (20/06)
- Fase 7: DEPLOY      🚀 Bot+Telegram+Amazon+ML ✅ | AliExpress/Shopee ⏳
+ Fase 7: DEPLOY      🚀 Bot+Telegram+Amazon+ML+Shopee+GitHub ✅ | AliExpress/VPS ⏳
