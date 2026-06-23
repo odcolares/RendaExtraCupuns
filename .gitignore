@@ -1,0 +1,35 @@
+# Dependências
+node_modules/
+
+# Build
+dist/
+
+# Config sensível (tokens, senhas, IDs de afiliado)
+config/.env
+.env
+
+# Sessão WhatsApp (dados de autenticação)
+whatsapp-session/
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Banco de dados (dados reais de ofertas)
+data/*
+!data/.gitkeep
+
+# Logs
+logs/
+
+# Arquivos temporários do OpenCode
+.tmp/
+
+# Graphify output (gerado automaticamente)
+graphify-out/
+
+# Cobertura de testes
+coverage/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log

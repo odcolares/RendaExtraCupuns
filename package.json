@@ -1,0 +1,45 @@
+{
+  "name": "renda-extra-cupuns",
+  "version": "1.0.0",
+  "description": "Bot automatizado que monitora ofertas no WhatsApp e publica no Telegram com links de afiliado",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "dev:core": "ts-node src/index.ts",
+    "dev:telegram": "ts-node src/telegram/test-bot.ts",
+    "build": "tsc",
+    "postbuild": "node -e \"require('fs').cpSync('config/.env.example', 'dist/config/.env', {force:true}); require('fs').cpSync('config/.env', 'dist/config/.env', {force:true, errorOnNonExist:false}); require('fs').mkdirSync('dist/data', {recursive:true}); require('fs').mkdirSync('dist/logs', {recursive:true}); console.log('✅ Build copiado para dist/');\"",
+    "start": "node dist/index.js",
+    "start:pm2": "pm2 start ecosystem.config.cjs",
+    "lint": "tsc --noEmit",
+    "cli": "ts-node src/cli.ts",
+    "whatsapp:qr": "ts-node src/qr-only.ts",
+    "discover": "ts-node src/discover-group.ts",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "dependencies": {
+    "amazon-paapi": "^1.1.0",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "qrcode-terminal": "^0.12.0",
+    "sql.js": "^1.10.3",
+    "telegraf": "^4.16.3",
+    "whatsapp-web.js": "^1.25.0",
+    "winston": "^3.13.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.14.2",
+    "@types/qrcode-terminal": "^0.12.2",
+    "@types/sql.js": "^1.4.11",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

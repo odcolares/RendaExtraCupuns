@@ -1,0 +1,802 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    SESSÃO DE TRABALHO - OFERTAS AFILIADO                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📥 INÍCIO DA SESSÃO
+═══════════════════════════════════════════════════════════════════════════════
+
+1. LER CONTEXTO
+   ─────────────────────────────────────────────────────────────────────────
+   cat contexto.md
+
+   OU
+
+   code contexto.md
+
+2. VERIFICAR STATUS
+   ─────────────────────────────────────────────────────────────────────────
+   □ Próximo passo definido no contexto?
+   □ Há pendências da última sessão?
+   □ Alguma atualização do graphify?
+
+3. VERIFICAR GRAFO (se necessário)
+   ─────────────────────────────────────────────────────────────────────────
+   □ graphify-out/graph.html existe?
+   □ Há mudanças desde última vez?
+
+   Se sim, rodar:
+   graphify --update
+
+4. DEFINIR OBJETIVO DA SESSÃO
+   ─────────────────────────────────────────────────────────────────────────
+   Objetivo: _________________________________________________
+   
+   Tarefas:
+   □ _______________________________________________
+   □ _______________________________________________
+   □ _______________________________________________
+
+═══════════════════════════════════════════════════════════════════════════════
+                        💻 DURANTE O TRABALHO
+═══════════════════════════════════════════════════════════════════════════════
+
+5. TRABALHAR NAS TAREFAS
+   ─────────────────────────────────────────────────────────────────────────
+   □ Implementar código
+   □ Testar funcionalidades
+   □ Documentar mudanças
+
+6. ATUALIZAR CONTEXTO (a cada mudança significativa)
+   ─────────────────────────────────────────────────────────────────────────
+   Editar contexto.md:
+   
+   □ Status Atual - marcar tarefas concluídas
+   □ Próximas Tarefas - adicionar novas
+   □ Decisões Tomadas - registrar novas decisões
+   □ Notas da Sessão - adicionar observações
+
+7. RODAR GRAPHIFY (quando houver mudança significativa)
+   ─────────────────────────────────────────────────────────────────────────
+   graphify --update
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📤 FIM DA SESSÃO
+═══════════════════════════════════════════════════════════════════════════════
+
+8. SALVAR PROGRESSO
+   ─────────────────────────────────────────────────────────────────────────
+   Editar contexto.md:
+   
+   □ Status Atual
+     O que foi concluído hoje:
+     □ _______________________________________________
+     □ _______________________________________________
+     □ _______________________________________________
+   
+   □ Próximo passo
+     Próxima tarefa a ser feita:
+     _______________________________________________
+   
+   □ Notas da Sessão
+     Data: ___/___/______
+     
+     O que foi feito:
+     □ _______________________________________________
+     □ _______________________________________________
+     □ _______________________________________________
+     
+     Decisões tomadas:
+     □ _______________________________________________
+     □ _______________________________________________
+     
+     Pendências:
+     □ _______________________________________________
+     □ _______________________________________________
+   
+   □ Última atualização
+     Atualizar data/hora: ___/___/______ ___:___
+
+9. VERIFICAR GRAFO
+   ─────────────────────────────────────────────────────────────────────────
+   Se houve mudança significativa:
+   
+   graphify --update
+   
+   Verificar:
+   □ graph.html atualizado
+   □ GRAPH_REPORT.md atualizado
+   □ Novas comunidades detectadas?
+   □ God nodes mudaram?
+
+10. COMMIT (se usando git)
+    ─────────────────────────────────────────────────────────────────────────
+    □ git status
+    □ git add .
+    □ git commit -m "Mensagem descritiva"
+    □ git push
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📋 CHECKLIST FINAL
+═══════════════════════════════════════════════════════════════════════════════
+
+ANTES DE FECHAR:
+─────────────────────────────────────────────────────────────────────────────
+□ contexto.md atualizado?
+□ Próximo passo definido?
+□ Decisões registradas?
+□ Graphify atualizado (se aplicável)?
+□ Código commitado (se aplicável)?
+
+TUDO PRONTO PARA PRÓXIMA SESSÃO? □ SIM  □ NÃO
+
+═══════════════════════════════════════════════════════════════════════════════
+                        🚀 COMANDOS ÚTEIS
+═══════════════════════════════════════════════════════════════════════════════
+
+GRAPHIFY:
+─────────────────────────────────────────────────────────────────────────────
+/graphify                          # Gerar grafo completo
+/graphify --update                 # Atualizar grafo
+/graphify query "pergunta"         # Perguntar ao grafo
+/graphify path "A" "B"             # Caminho entre conceitos
+/graphify explain "conceito"       # Explicar conceito
+
+PROJETO:
+─────────────────────────────────────────────────────────────────────────────
+npm install                        # Instalar dependências
+npm run dev                        # Rodar em desenvolvimento
+npm run build                      # Build para produção
+npm start                          # Rodar em produção
+
+GIT:
+─────────────────────────────────────────────────────────────────────────────
+git status                         # Ver status
+git add .                          # Adicionar tudo
+git commit -m "msg"                # Commitar
+git push                           # Enviar para remote
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📁 ARQUIVOS DO PROJETO
+═══════════════════════════════════════════════════════════════════════════════
+
+ DOCUMENTAÇÃO:
+─────────────────────────────────────────────────────────────────────────────
+ contexto.md           # Este arquivo - contexto da sessão
+ README.md             # Visão geral do projeto
+ WHATSAPP.md           # Documentação módulo WhatsApp
+ TELEGRAM.md           # Documentação módulo Telegram
+ AFFILIATES.md         # Documentação módulo de afiliados
+ SESSAO.txt            # Este arquivo - checklist de sessão
+
+ GRAPHIFY:
+─────────────────────────────────────────────────────────────────────────────
+ graphify-out/
+ ├── graph.html        # Grafo interativo
+ ├── GRAPH_REPORT.md   # Relatório completo
+ └── graph.json        # Dados brutos
+
+ CÓDIGO (quando implementado):
+─────────────────────────────────────────────────────────────────────────────
+ src/
+ ├── whatsapp/         # Módulo WhatsApp
+ ├── telegram/         # Módulo Telegram
+ ├── affiliates/       # Módulo de afiliados
+ ├── database/         # Banco de dados
+ └── utils/            # Utilitários
+
+═══════════════════════════════════════════════════════════════════════════════
+                        💡 DICAS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. SEMPRE LEIA O CONTEXTO PRIMEIRO
+   - Evita repetir trabalho
+   - Mantém foco nos objetivos
+   - Preserva decisões anteriores
+
+2. ATUALIZE O CONTEXTO REGULARMENTE
+   - A cada mudança significativa
+   - Ao tomar decisões importantes
+   - Ao terminar uma tarefa
+
+3. USE O GRAPHIFY PARA ENTENDER O CÓDIGO
+   - Antes de refatorar
+   - Para encontrar dependências
+   - Para identificar código duplicado
+
+4. NÃO PULE PASSOS
+   - Checklist existe por um motivo
+   - Cada passo evita problemas
+   - organized > rápido
+
+5. DEFINA PRÓXIMO PASSO CLARO
+   - Facilita retomada
+   - Evita perda de contexto
+   - Mantém progressão
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📞 CONTATO E REFERÊNCIAS
+═══════════════════════════════════════════════════════════════════════════════
+
+ PROJETO:
+─────────────────────────────────────────────────────────────────────────────
+ Repositório: (adicionar URL)
+ Documentação: (adicionar URL)
+ Issues: (adicionar URL)
+
+ EXTERNOS:
+─────────────────────────────────────────────────────────────────────────────
+ Telegraf: https://telegraf.js.org/
+ whatsapp-web.js: https://github.com/pedroslopez/whatsapp-web.js
+ Amazon Afiliados: https://afiliados.amazon.com.br/
+ Graphify: https://github.com/safishamsi/graphify
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📝 MODELO PARA NOTAS DA SESSÃO
+═══════════════════════════════════════════════════════════════════════════════
+
+Copie e cole no contexto.md:
+
+---
+## 📝 Notas da Sessão
+
+### Data: 12/06/2026 15:20
+
+#### O que foi feito:
+1. Discussão inicial sobre a ideia do projeto
+2. Criação da documentação completa (README, WHATSAPP, TELEGRAM, AFFILIATES)
+3. Separação dos módulos em arquivos independentes
+4. Análise com graphify (72 nós, 16 comunidades)
+5. Criação de contexto.md e SESSAO.txt
+6. Sistema de preservação de contexto entre sessões
+
+#### Decisões tomadas:
+- Telegram como destino principal (API oficial)
+- WhatsApp como fonte (grupo Kotas #51)
+- Node.js + TypeScript como stack
+- Módulos separados para cada responsabilidade
+
+#### Próximo passo:
+Configurar projeto Node.js + TypeScript e criar estrutura de diretórios
+
+#### Pendências:
+- Criar bot no Telegram
+- Criar canal no Telegram
+- Cadastrar em programas de afiliados
+- Implementar módulos
+
+#### Observações:
+- Projeto bem documentado antes de iniciar código
+- Graphify ajudou a identificar estrutura e duplicatas
+- Sistema de contexto criado para preservar aprendizado
+
+---
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📋 SESSÕES ANTERIORES
+═══════════════════════════════════════════════════════════════════════════════
+
+SESSÃO 01 - 12/06/2026
+─────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA
+
+O que foi feito:
+1. Discussão inicial sobre a ideia do projeto
+   - Monitorar grupos WhatsApp (Clube Kotas #51)
+   - Gerar links de afiliado automaticamente
+   - Publicar no Telegram
+
+2. Criação da documentação completa
+   - README.md - Visão geral do projeto
+   - WHATSAPP.md - Módulo WhatsApp (15 KB)
+   - TELEGRAM.md - Módulo Telegram (20 KB)
+   - AFFILIATES.md - Módulo de afiliados (16 KB)
+
+3. Separação dos módulos
+   - Módulos independentes para WhatsApp e Telegram
+   - Contextos separados para não misturar
+   - Cada módulo com sua documentação
+
+4. Análise com Graphify
+   - Extração: 72 nós, 74 arestas, 16 comunidades
+   - God Node principal: generateAffiliateLink (7 conexões)
+   - Conexões surpreendentes detectadas
+   - Grafo interativo gerado (graph.html)
+
+5. Criação de sistema de contexto
+   - contexto.md - Arquivo de contexto do projeto
+   - SESSAO.txt - Checklist de sessão
+   - Sistema para preservar contexto entre sessões
+
+Decisões tomadas:
+- Telegram como destino principal (API oficial)
+- WhatsApp como fonte (grupo Kotas #51)
+- Node.js + TypeScript como stack
+- Módulos separados para cada responsabilidade
+- SQLite para banco (leve, local)
+
+Próximo passo:
+- Configurar projeto Node.js + TypeScript
+- Criar estrutura de diretórios
+- Instalar dependências
+
+Pendências:
+- Criar bot no Telegram
+- Criar canal no Telegram
+- Cadastrar em programas de afiliados
+- Implementar módulos
+
+Graphify:
+- Grafo: 72 nós, 74 arestas, 16 comunidades
+- Arquivos: graph.html, GRAPH_REPORT.md, graph.json
+- God Nodes: generateAffiliateLink, formatFlashSaleMessage
+- Conexões: calculateDiscount ↔ extractDiscount (duplicata potencial)
+
+Observações:
+- Projeto bem documentado antes de iniciar código
+- Graphify ajudou a identificar estrutura e duplicatas
+- Sistema de contexto criado para preservar aprendizado
+
+Arquivos criados/salvos:
+- [x] README.md
+- [x] WHATSAPP.md
+- [x] TELEGRAM.md
+- [x] AFFILIATES.md
+- [x] contexto.md
+- [x] SESSAO.txt
+- [x] graphify-out/ (grafo completo)
+
+SESSÃO 02 - 15/06/2026
+─────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA
+
+O que foi feito:
+1. Implementação completa de todas as 20 tasks do TaskManager:
+   - Tasks 01-04 (Base): package.json, tsconfig.json, logger (Winston), helpers, config loader
+   - Tasks 05-08 (Telegram): bot.ts (Telegraf), templates.ts, buttons.ts, commands.ts, publisher.ts
+   - Tasks 09-11 (WhatsApp): client.ts (LocalAuth/QR), parser.ts, extractor.ts, monitor.ts
+   - Tasks 12-17 (Afiliados): amazon, aliexpress, shopee, mercadolivre + index.ts unificado
+   - Task 18 (Database): sql.js init + migrations + CRUD completo (offers.ts)
+   - Task 19 (Integração): processor.ts (pipeline) + app.ts (lifecycle) + index.ts (entry)
+   - Task 20 (Testes): Jest + ts-jest, 11 suites, 94 testes passando
+
+2. Decisões técnicas durante a implementação:
+   - Substituído better-sqlite3 por sql.js (WASM) - sem VS Build Tools no Windows
+   - Usado /i sem flag g em regex de parser (state leak com flag g)
+   - Taxa de rate limit: 30 mensagens/hora no Telegram
+   - Logger com Winston (console + arquivo rotativo)
+
+3. Testes e validação:
+   - 94/94 testes passando (100%)
+   - Pipeline E2E validado com 4 plataformas (Amazon, AliExpress, Shopee, ML)
+   - Testes de duplicatas, edge cases, fallbacks
+
+4. Graphify --update:
+   - Evolução: 72 nós/74 arestas/16 comunidades -> 734 nós/987 arestas/50 comunidades
+   - God nodes: createModuleLogger() (16), compilerOptions (16)
+   - Hyperedges: Core Data Pipeline, Affiliate Link Generators
+   - Outputs: graph.html, GRAPH_REPORT.md, graph.json atualizados
+
+5. Atualização de contextos (FLUXO.md Fase 6 - REGISTRAR):
+   - contexto.md completamente reescrito com status real
+   - SESSAO.txt com sessão 02 registrada
+   - Graphify atualizado
+
+Decisões tomadas:
+- sql.js em vez de better-sqlite3 (WASM vs nativo, compatibilidade Windows)
+- Singleton pattern para bot e client WhatsApp
+- Pipeline architecture: extract -> detect -> affiliate -> publish -> DB
+- Rate limiter in-memory (Map<channelId, {count, resetAt}>) - 30/h
+- Graceful shutdown: monitor -> WhatsApp -> Telegram -> DB
+
+Próximo passo:
+- Criar CLI mode (src/cli.ts) para inserir ofertas manualmente
+- Configurar .env com tokens reais
+
+Pendências:
+- [VOCE] Criar bot no Telegram (@BotFather) + token
+- [VOCE] Criar canal no Telegram + ID
+- [VOCE] Cadastrar em programas de afiliados (Amazon, AliExpress, Shopee, ML)
+- [VOCE] Número WhatsApp secundário para whatsapp-web.js
+- [AGENTE] CLI mode para inserção manual de ofertas
+
+Graphify:
+- Grafo: 734 nós, 987 arestas, 50 comunidades (16 nomeadas)
+- Arquivos: graph.html, GRAPH_REPORT.md, graph.json
+- God Nodes: createModuleLogger() (16), compilerOptions (16)
+- Hyperedges: Core Data Pipeline, Affiliate Platform Link Generators, Formatting Functions
+- Conexões surpreendentes: detectPlatform duplicado (Affiliates x WhatsApp)
+
+Observações:
+- Todas as 20 tasks de implementação concluídas
+- Projeto compila sem erros, 94 testes passando
+- Pipeline E2E validado (processor.test.ts)
+- only 1 arquivo .py de suporte em graphify-out/
+- Graphify saltou de 72 para 734 nós com a adição do código fonte
+- Próximo passo técnico: CLI mode para uso imediato sem WhatsApp
+
+Arquivos criados/salvos:
+- [x] src/ (28 arquivos .ts - todos os módulos)
+- [x] tests/ (11 arquivos .ts - 94 testes)
+- [x] config/.env.example
+- [x] jest.config.ts
+- [x] graphify-out/ atualizado (734 nós)
+
+SESSÃO 03 - 18/06/2026
+─────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA
+
+O que foi feito:
+
+1. Criação do CLI mode (src/cli.ts)
+   - Interface interativa via readline com prompt colorido "oferta>"
+   - Inicializa apenas DB + config (sem Telegram/WhatsApp para evitar erros sem token)
+   - Comandos: help, preview, publish, stats, recent, exit
+   - Usuário cola mensagem → extrai dados → busca info pelo link → preview → confirma publicação
+   - Comando `preview` / `p` — ver preview da última oferta analisada
+   - Comando `publish` / `pub` — publicar a última oferta sem precisar colar de novo
+   - Comando `stats` — estatísticas do banco de dados
+   - Comando `recent` / `r` — últimas 10 ofertas
+   - Reaproveita pipeline existente (processOffer, extractOfferData, extractLinksFromMessage)
+   - Cores ANSI para melhor experiência no terminal
+
+2. Product Fetcher (src/utils/product-fetcher.ts)
+   - Nova feature: usuário pode colar apenas o link (sem descrição) que o sistema busca os dados
+   - Faz requisição HTTP via axios à página do produto
+   - Extrai nome via og:title (fallback para <title>)
+   - Extrai descrição via og:description (fallback para meta description)
+   - Extrai imagem via og:image
+   - Extrai preço com patterns específicos por plataforma (Amazon, Mercado Livre, Shopee)
+   - Fallback automático para dados do texto quando o fetch falha (404, timeout, bloqueio)
+   - User-Agent real de navegador (Chrome 125) para evitar bloqueios
+   - Timeout configurável de 10s
+   - Tratamento de erros: 404, timeout, rede — todos com graceful handling
+   - Exportado via barrel de utils (src/utils/index.ts)
+
+3. Integração Product Fetcher + CLI
+   - Sempre que uma URL é detectada, o CLI dispara fetch automático
+   - Preview enriquecido: mostra nome + descrição + imagem vindos do link
+   - Dados do link identificados com tag "(via link)" no preview
+   - Dados do texto usados como fallback quando fetch falha ou não retorna dados
+
+4. Testes e validação
+   - TypeScript compila sem erros (npx tsc --noEmit) ✅
+   - 94/94 testes existentes passando (nada quebrado) ✅
+   - Parser testado com URLs reais: Amazon, Mercado Livre, Shopee — todas detectadas ✅
+   - Product Fetcher testado com URL real do Mercado Livre — página acessada com sucesso ✅
+   - CLI testado com comandos stats, exit — funcionando ✅
+   - CLI testado com pipe de comandos — funcionando ✅
+
+Decisões tomadas:
+- CLI mode usa apenas DB + config, não inicializa Telegram nem WhatsApp (evita erros sem .env)
+- Preview antes de publicar dá controle manual ao usuário — evita publicação acidental
+- Dados do link (fetch) têm prioridade sobre dados do texto quando disponíveis
+- Product fetcher sem dependências extras (reusa axios já instalado, regex para parse)
+- User-Agent real de navegador (Chrome 125) para evitar bloqueios dos sites
+- Og:title como fonte principal de nome, <title> como fallback
+- Sem cheerio/jsdom — parse via regex para manter zero dependências extras
+- Padrões de preço por plataforma (Amazon: a-price-whole, ML: andes-money-amount, Shopee: "price")
+
+Próximo passo:
+- Criar contas externas (Telegram, afiliados)
+- Configurar .env com tokens reais
+- npm run cli com .env configurado para testar E2E real (publicação no Telegram)
+- npm run dev para testar pipeline completo com WhatsApp
+
+Arquivos criados/salvos:
+- [x] src/cli.ts (CLI mode interativo - ~410 linhas)
+- [x] src/utils/product-fetcher.ts (Fetch de dados do produto pela URL - ~210 linhas)
+- [x] src/utils/index.ts (export do product-fetcher adicionado)
+- [x] package.json (script "cli" adicionado)
+- [x] contexto.md atualizado (CLI mode + fetcher marcados como concluídos)
+- [x] SESSAO.txt com sessão 03 atualizada
+
+SESSÃO 04 - 18/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA
+
+O que foi feito:
+
+1. Atualização geral de status dos 4 artefatos do projeto
+   - FLUXO.md: Adicionada Fase 7 (DEPLOY) oficialmente ao fluxo
+   - README.md: Adicionado CLI mode + Product Fetcher na documentação
+   - contexto.md: Atualizado com Sessão 04, Fase 7 adicionada, data atualizada
+   - SESSAO.txt: Esta sessão registrada
+
+2. FLUXO.md atualizado
+   - Fase 7: DEPLOY adicionada após Fase 6 (REGISTRAR)
+   - Visão geral atualizada: 7 fases agora
+   - Tabela de Skills por Fase com Fase 7 incluída
+   - Data: 15/06 → 18/06
+
+3. README.md atualizado
+   - Status agora mostra "CLI mode + Product Fetcher ✅"
+   - Estrutura do projeto inclui cli.ts e product-fetcher.ts
+   - Setup rápido inclui `npm run cli`
+   - Seção "💻 CLI Mode" adicionada aos módulos
+   - Data: 15/06 → 18/06
+
+4. contexto.md atualizado
+   - Fase 6: REGISTRAR marcada com os novos itens
+   - Fase 7: DEPLOY adicionada com checklist completo
+   - Sessão 04 adicionada à tabela de sessões
+   - Data/hora atualizada
+
+Decisões:
+- FLUXO.md agora oficialmente com 7 fases (até DEPLOY)
+- Fase 7 serve como checklist de deploy para qualquer projeto
+
+SESSÃO 05 - 18/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA
+
+O que foi feito:
+1. Step 1 - Bot Telegram (@RendaExtraCuponsBot)
+   - Token configurado no .env
+   - Conexão verificada via API getMe
+   - Bot online e funcional
+
+2. Step 2 - Canal Telegram (@Ofertas_cupons_agora)
+   - Canal criado com ID -1004303411968
+   - Bot adicionado como admin (permissão de publicação)
+   - Mensagem de teste publicada com sucesso
+
+3. Step 3 - Amazon Afiliados
+   - StoreID cadastrado: odcolares2026-20
+   - .env configurado com tag real
+   - Link de afiliado gerado: amazon.com.br/dp/{ASIN}?tag=odcolares2026-20
+   - Teste E2E real: oferta JBL Fone publicada no canal!
+
+4. Correção no parser
+   - Regex Amazon atualizado para aceitar URLs com slug (ex: /produto-nome/dp/ASIN)
+   - 3 novos testes adicionados
+   - 97/97 testes passando
+
+Status atual do .env:
+- [x] TELEGRAM_BOT_TOKEN ✅
+- [x] TELEGRAM_CHANNEL_ID ✅
+- [x] AMAZON_AFFILIATE_TAG ✅ (odcolares2026-20)
+- [ ] ALIEXPRESS_AFFILIATE_ID ⏳
+- [ ] SHOPEE_AFFILIATE_ID ⏳
+- [ ] MERCADOLIVRE_AFFILIATE_ID ⏳
+- [ ] WHATSAPP_GROUP_ID ⏳
+
+SESSÃO 06 - 19/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA
+
+O que foi feito:
+1. Publisher com fallback de imagem
+   - sendPhoto tenta enviar com foto; se falhar (Amazon bloqueia hotlink), fallback para texto
+   - Flash sale publisher com mesmo fallback
+   - cli.ts agora passa imageUrl do ProductFetcher ao processOffer
+   - Teste E2E real: Fone JBL publicado COM IMAGEM no canal via picsum.photos
+
+2. Preparação para deploy
+   - ecosystem.config.cjs — PM2 config completo (logs, restart, memory limit)
+   - package.json: script "postbuild" copia .env + cria dirs data/logs
+   - package.json: script "start:pm2" para iniciar com PM2
+   - build compila limpo: 30 arquivos .js em dist/
+
+3. Qualidade verificada
+   - TypeScript compila sem erros ✅
+   - 97/97 testes passando ✅
+   - Cobertura: WhatsApp 100%, Utils 100%, Database 89%, Afiliados 71%
+   - build pós-build verificado (30 .js em dist/)
+
+Decisões:
+- publisher com try/catch no sendPhoto → fallback silencioso para sendMessage
+- PM2 config preparado para deploy futuro (Linux VPS)
+- postbuild script copia .env + cria pastas data/ e logs/ automaticamente
+
+Status do .env:
+- [x] TELEGRAM_BOT_TOKEN ✅
+- [x] TELEGRAM_CHANNEL_ID ✅
+- [x] AMAZON_AFFILIATE_TAG ✅ (odcolares2026-20)
+- [ ] ALIEXPRESS_AFFILIATE_ID ⏳
+- [ ] SHOPEE_AFFILIATE_ID ⏳
+- [ ] MERCADOLIVRE_AFFILIATE_ID ⏳
+- [ ] WHATSAPP_GROUP_ID ⏳
+
+Arquivos criados/salvos:
+- [x] ecosystem.config.cjs (PM2 deploy config)
+- [x] dist/ (30 .js — build de produção)
+- [x] src/telegram/publisher.ts (fallback de imagem)
+- [x] src/cli.ts (imageUrl do ProductFetcher)
+- [x] package.json (scripts: postbuild, start:pm2)
+- [x] contexto.md atualizado (Sessão 06, novas decisões)
+- [x] SESSAO.txt com sessão 06 registrada
+
+Próximo passo:
+- Cadastrar AliExpress Afiliados (https://portals.aliexpress.com)
+- Cadastrar Shopee Afiliados (https://shopee.com.br/afiliados)
+- Cadastrar Mercado Livre Afiliados (https://mercadolivre.com.br/afiliados)
+- Obter número WhatsApp secundário
+- Fazer deploy em VPS com PM2 (ecosystem.config.cjs)
+
+SESSÃO 08 - 20/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA — MIGRAÇÃO BETA → ALPHA
+
+O que foi feito:
+1. Descoberta do ID de afiliado do Mercado Livre (88981950)
+   - Seguimos o fluxo: perfil de afiliado → link meli.la → inspeção HTML → matt_tool=88981950
+   - ID confirmado extraindo do HTML da página de navegação
+
+2. Pipeline Mercado Livre configurado e testado
+   - .env atualizado: MERCADOLIVRE_AFFILIATE_ID=88981950
+   - Testes unitários: 4/4 passando (extractProductId)
+   - Geração de link real: https://www.mercadolivre.com.br/produto/{id}?matt_tool=88981950
+
+3. Pipeline Amazon verificado
+   - Tag: odcolares2026-20
+   - Link gerado com sucesso: https://www.amazon.com.br/dp/{ASIN}?tag=odcolares2026-20
+
+4. Teste completo do pipeline
+   - 97/97 testes passando
+   - Geração de links Amazon + ML validada com .env real
+   - Ambos os links de afiliado funcionais
+
+5. Promoção Beta → Alpha
+   - contexto.md atualizado: ML marcado como configurado
+   - AFFILIATES.md atualizado: ML como configurado
+   - Checklist Fase 7 atualizado
+
+Status atual:
+- ✅ Amazon Afiliados (odcolares2026-20)
+- ✅ Mercado Livre Afiliados (88981950)
+- ⏳ AliExpress Afiliados (placeholder_ali)
+- ⏳ Shopee Afiliados (placeholder_shopee)
+- ⏳ VPS/Deploy 24/7
+
+Próximo passo:
+- Configurar AliExpress Afiliados e Shopee Afiliados
+- Deploy em VPS
+
+Última atualização: 20/06/2026 19:27
+
+SESSÃO 10 - 22/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA — ATUALIZAÇÃO DE DOCUMENTAÇÃO
+
+O que foi feito:
+
+1. Atualização de todos os artefatos de documentação
+   - config/.env.example: adicionadas vars ML OAuth (ML_CLIENT_ID, ML_SECRET_KEY, ML_ACCESS_TOKEN, ML_REFRESH_TOKEN, AMAZON_MARKETPLACE)
+   - README.md: estrutura atualizada (módulo coupons, scripts _check_db.ts/_dbcheck.ts), testes 98→103, TELEGRAM_OVERVIEW.md adicionado à tabela, DB stats 96/37, data 22/06
+   - contexto.md: Sessão 10 registrada, módulo coupons adicionado à estrutura, testes 103, DB stats 96/37, data/hora atualizada
+   - SESSAO.txt: Esta sessão registrada
+   - WHATSAPP.md, TELEGRAM.md, AFFILIATES.md, FLUXO.md: data atualizada para 22/06/2026
+
+2. Módulo Cupons documentado
+   - src/coupons/types.ts — CouponData, interfaces de cupom
+   - src/coupons/detector.ts — Detector e extrator de cupons promocionais
+   - Gatilho: palavra "cupom" na mensagem
+   - Extrai: código, % desconto, limite, plataforma
+   - Adiciona parâmetro de afiliado (ML e Amazon)
+
+3. Dados atuais do sistema
+   - DB: 96 ofertas (76 ML, 20 Amazon), 37 publicadas
+   - Testes: 103/103 passando, 11 suites
+   - WhatsApp: 2 grupos + newsletter conectados
+   - Bot Telegram rodando em produção
+
+Decisões:
+- Manter TELEGRAM_OVERVIEW.md como visão executiva separada (linkada do README)
+- .env.example reflete agora todas as variáveis do .env real
+
+Próximo passo:
+- Cadastrar AliExpress Afiliados (portals.aliexpress.com)
+- Cadastrar Shopee Afiliados (shopee.com.br/afiliados)
+- Deploy em VPS (24/7)
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📋 SESSÃO 11 - 23/06/2026
+═══════════════════════════════════════════════════════════════════════════════
+
+SESSÃO 11 - 23/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA — DEBUG DE PRODUÇÃO E FIX DE EXTRAÇÃO DE LINKS
+
+O que foi feito:
+
+1. Produção iniciada no terminal (+24h de execução)
+   - Bot rodando com NODE_ENV=production
+   - Ofertas do grupo "+barto ofertas" (newsletter) não estavam sendo publicadas
+   - Identificado via logs: links encontrados no corpo da mensagem mas não extraídos como links de produto
+
+2. Diagnóstico das falhas
+   - Shopee: URLs no formato curto `s.shopee.com.br/XXXXX` e `shp.ee/XXXXX` não eram reconhecidas
+   - Shopee: URLs com formato `/{texto}-i.{shopId}.{itemId}` (ex: `/opaanlp-i.12345.67890`) não extraíam product data
+   - Shopee: query params no final da URL (`?__mobile__=1&...`) quebravam o regex `/\/(\d+)\/(\d+)$/`
+   - AliExpress: URL curta `s.click.aliexpress.com/e/_XXXXX` resolvia para página HTML, não permitindo extrair productId direto
+   - Cupom detector: regex `/\bcupom\b/i` não detectava "RENOVADOS CUPONS SHOPEE" (plural)
+   - tidd.ly: URLs do tidd.ly não eram reconhecidas (domínio não mapeado)
+
+3. Fixes implementados
+
+   a) parser.ts — Novos padrões Shopee:
+      - `/https?:\/\/shp\.ee\/[a-zA-Z0-9]+/g` (URLs curtas)
+      - `/https?:\/\/s\.shopee\.com\.br\/[a-zA-Z0-9]+/g` (URLs curtas .br)
+      - `/-i\.(\d+)\.(\d+)/g` (formato /{texto}-i.{shopId}.{itemId})
+      - `extractLinksFromMessage` agora retorna TODAS as URLs (removeu filtro `isProductLink`)
+
+   b) shopee.ts — Resolução de URL + novos padrões de extração:
+      - `resolveShortUrl()` — segue HTTP redirects (axios com maxRedirects: 0, intercepta 302)
+      - Extração de shopId/itemId do padrão `-i.{shopId}.{itemId}` no extractProductData
+      - Regex `/\/(?:[^/]+\/)?(\d+)\/(\d+)(?:\?|&|$|[/#])/i` — tolera query params no final
+
+   c) aliexpress.ts — Resolução de URL curta:
+      - `resolveAliExpressShortUrl()` — segue redirect de `s.click.aliexpress.com/e/_XXXXX`
+      - Extrai productId da resolved URL (formato `/item/{id}.html`)
+
+   d) coupons/detector.ts — Plural:
+      - `/\\bcupons?\\b/i` — aceita "cupons" (plural) além de "cupom"
+
+   e) monitor.ts — URL desconhecida + fallback _data:
+      - `resolveUnknownUrl()` — segue redirect de domínios não reconhecidos, re-detects platform
+      - Extração de `fullText` do `message.body` com fallbacks para `message._data` (canonicalUrl, matchedText, url, link, title, description, body)
+      - Debug detalhado quando nenhum link é encontrado (bodyLength, lastPart, bodyCompleto)
+
+4. Compilação e validação
+   - `npx tsc` — zero erros ✅
+   - Bot confirmado publicando ofertas Shopee (PS5 Pro id:151, 12:15:29)
+   - Ofertas Mercado Livre (Caneca id:150, 12:06:40) publicando
+   - Ofertas Amazon publicando
+
+5. **Configuração Shopee Afiliados ID 18387911117** (23/06 12:57)
+   - `config/.env`: `SHOPEE_AFFILIATE_ID=placeholder_shopee` → `18387911117`
+   - Rebuild com `npx tsc` — zero erros ✅
+   - Bot reiniciado em produção (12:57)
+   - Pipeline validado: Amazon (Controle Dualsense id:152), ML (Fone Pulse id:154) publicados
+   - Shopee pronto para gerar links com `?af_id=18387911117`
+
+Decisões tomadas:
+- extractLinksFromMessage retorna ALL URLs: filtro isProductLink removido. Detecção de plataforma + resolução de shorteners agora no handleMessage. Permite resolução dinâmica de domínios desconhecidos (tidd.ly → redirect → detecta Magalu/Kabum/etc)
+- Cada módulo de afiliado resolve suas próprias URLs curtas (Shopee resolve shp.ee, AliExpress resolve s.click) — encapsulamento mantido
+- resolveUnknownUrl() no monitor como fallback genérico: segue redirect, re-detects platform, e tenta gerar link afiliado ou detecta cupom
+- Cupom detector aceita plural: regex atualizado para `/\bcupons?\b/i`
+
+Próximo passo:
+- ~~Configurar SHOPEE_AFFILIATE_ID~~ ✅ **Concluído! ID 18387911117 ativo**
+- Configurar ALIEXPRESS_AFFILIATE_ID real no .env (placeholder_ali)
+- Monitorar se páginas /m/cupom-de-desconto da Shopee geram ofertas válidas
+- Deploy em VPS (24/7)
+
+Arquivos modificados:
+- [x] src/whatsapp/monitor.ts (axios, fullText, resolveUnknownUrl, debug logging)
+- [x] src/whatsapp/parser.ts (novos padrões Shopee, extractLinks retorna ALL)
+- [x] src/affiliates/shopee.ts (resolveShortUrl, novos padrões de extração)
+- [x] src/affiliates/aliexpress.ts (resolveAliExpressShortUrl, redirect seguido de extração)
+- [x] src/coupons/detector.ts (plural: /\bcupons?\b/i)
+- [x] config/.env (SHOPEE_AFFILIATE_ID=placeholder_shopee → 18387911117)
+- [x] contexto.md (atualizado)
+- [x] SESSAO.txt (esta sessão registrada)
+- [x] AFFILIATES.md (Shopee status atualizado)
+- [x] README.md (Shopee configurado)
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📊 RESUMO DAS SESSÕES
+═══════════════════════════════════════════════════════════════════════════════
+
+ Total de sessões: 9
+ Status: Código completo, Bot Telegram ✅, Canal ✅, Amazon ✅, ML ✅, PM2 config ✅, E2E testado ✅
+
+ Fases (FLUXO.md):
+ ─────────────────────────────────────────────────────────────────────────────
+ Fase 1: ENTENDER    📋 Escopo definido                          ✅ (12/06)
+ Fase 2: CONTEXTO    📚 Documentação + Graphify inicial          ✅ (12/06)
+ Fase 3: PLANEJAR    📝 Docs externas + TaskManager (20 tasks)   ✅ (12/06)
+ Fase 4: EXECUTAR    💻 31 arquivos .ts, pipeline + CLI + fetcher ✅ (17/06)
+ Fase 5: VALIDAR     🔬 97 testes, 11 suites, 100% passando      ✅ (19/06)
+ Fase 6: REGISTRAR   📄 Contextos atualizados + Sessão 08        ✅ (20/06)
+ Fase 7: DEPLOY      🚀 Bot+Telegram+Amazon+ML ✅ | AliExpress/Shopee ⏳
