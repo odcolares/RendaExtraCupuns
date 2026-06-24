@@ -23,6 +23,8 @@ import {
   updateAffiliateLink,
 } from "./database/offers";
 import { createModuleLogger } from "./utils";
+import { isGenericProductName } from "./utils/helpers";
+import { fetchProductInfo } from "./utils/product-fetcher";
 import type { OfferData } from "./types";
 import type { WhatsAppOfferData, ProcessResult } from "./whatsapp/types";
 import type { Platform } from "./affiliates/types";
@@ -64,6 +66,24 @@ export async function processOffer(
 
   // ── 2. Extrair dados da oferta ──
   const offerData: WhatsAppOfferData = extractOfferData(messageText, url);
+
+  // ── 2b. Enriquecer nome do produto se for genérico ──
+  // Nomes genéricos (ex: "BÁSICAS PRO DIA A DIA") falham na busca ML.
+  // Tenta buscar o nome oficial do produto via scraping da URL.
+  if (isGenericProductName(offerData.name) && url) {
+    log.info("Nome genérico detectado, buscando nome oficial via URL", {
+      nomeAtual: offerData.name.substring(0, 50),
+    });
+    const productInfo = await fetchProductInfo(url);
+    if (productInfo.name) {
+      log.info("Nome enriquecido via URL", {
+        antes: offerData.name.substring(0, 50),
+        depois: productInfo.name.substring(0, 50),
+      });
+      offerData.name = productInfo.name;
+    }
+  }
+
   // Se uma URL de imagem foi fornecida (ex: do ProductFetcher), anexa aos dados
   if (imageUrl) {
     offerData.imageUrl = imageUrl;

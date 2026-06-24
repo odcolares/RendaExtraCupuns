@@ -7,6 +7,7 @@ import {
   slugify,
   delay,
   deepMerge,
+  isGenericProductName,
 } from "../../../src/utils/helpers";
 
 describe("Helpers", () => {
@@ -92,6 +93,56 @@ describe("Helpers", () => {
       const source = { a: 2 };
       deepMerge(target, source);
       expect(target.a).toBe(1);
+    });
+  });
+
+  describe("isGenericProductName", () => {
+    it("detecta nome all-caps como genérico (Kotas style)", () => {
+      expect(isGenericProductName("BÁSICAS PRO DIA A DIA")).toBe(true);
+    });
+
+    it("detecta chamada promocional curta como genérica", () => {
+      expect(isGenericProductName("OFERTA")).toBe(true);
+    });
+
+    it("detecta 'Produto sem nome' como genérico", () => {
+      expect(isGenericProductName("Produto sem nome")).toBe(true);
+    });
+
+    it("rejeita nome real de produto como genérico", () => {
+      expect(isGenericProductName("iPhone 14 Pro Max 256GB")).toBe(false);
+    });
+
+    it("rejeita nome misto (maiúsculas + minúsculas) como genérico", () => {
+      expect(isGenericProductName("Smart TV 50 Polegadas 4K")).toBe(false);
+    });
+
+    it("rejeita nome com detalhes do produto como genérico", () => {
+      expect(
+        isGenericProductName("Fone de Ouvido Gamer Headset Havit H2015d")
+      ).toBe(false);
+    });
+
+    it("detecta lançamento/promoção como genérico", () => {
+      expect(isGenericProductName("LANÇAMENTO IMPERDÍVEL")).toBe(true);
+    });
+
+    it("detecta CxB (Custo x Benefício) como genérico", () => {
+      expect(isGenericProductName("HEADSET COM ÓTIMO CxB")).toBe(true);
+    });
+
+    it("retorna true para string vazia", () => {
+      expect(isGenericProductName("")).toBe(true);
+    });
+
+    it("retorna true para string muito curta", () => {
+      expect(isGenericProductName("ABC")).toBe(true);
+    });
+
+    it("rejeita nome longo e descritivo como genérico", () => {
+      expect(
+        isGenericProductName("Sanduicheira Elétrica Cadence Click 750W 127V")
+      ).toBe(false);
     });
   });
 });
