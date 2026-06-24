@@ -11,7 +11,7 @@
     "dev:core": "ts-node src/index.ts",
     "dev:telegram": "ts-node src/telegram/test-bot.ts",
     "build": "tsc",
-    "postbuild": "node -e \"require('fs').cpSync('config/.env.example', 'dist/config/.env', {force:true}); require('fs').cpSync('config/.env', 'dist/config/.env', {force:true, errorOnNonExist:false}); require('fs').mkdirSync('dist/data', {recursive:true}); require('fs').mkdirSync('dist/logs', {recursive:true}); console.log('✅ Build copiado para dist/');\"",
+    "postbuild": "node -e \"const fs=require('fs'); const src = 'config/.env'; const dst = 'dist/config/.env'; fs.cpSync('config/.env.example', dst, {force:true}); if (fs.existsSync(src)) { fs.cpSync(src, dst, {force:true}); } fs.mkdirSync('dist/data', {recursive:true}); fs.mkdirSync('dist/logs', {recursive:true}); console.log('✅ Build copiado para dist/');\"",
     "start": "node dist/index.js",
     "start:pm2": "pm2 start ecosystem.config.cjs",
     "lint": "tsc --noEmit",
