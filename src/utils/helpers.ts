@@ -72,6 +72,60 @@ export function delay(ms: number): Promise<void> {
 // Objetos
 // ==============================================================
 
+// ==============================================================
+// Product Name Validation
+// ==============================================================
+
+/**
+ * Verifica se um nome de produto extraído do WhatsApp é genérico
+ * (chamada promocional sem nome real do produto).
+ *
+ * Usado pelo processor para decidir se deve buscar nome oficial via URL.
+ *
+ * Exemplos de nomes genéricos:
+ * - "BÁSICAS PRO DIA A DIA" (all-caps, sem identificação de produto)
+ * - "OFERTA" (muito curto)
+ * - "LANÇAMENTO IMPERDÍVEL" (apenas chamada promocional)
+ *
+ * Exemplos de nomes reais:
+ * - "iPhone 14 Pro Max 256GB"
+ * - "Smart TV 50 Polegadas 4K"
+ * - "Fone de Ouvido Gamer Headset Havit H2015d"
+ */
+export function isGenericProductName(name: string): boolean {
+  if (!name || name === "Produto sem nome") return true;
+
+  // Muito curto para ser nome real de produto
+  if (name.length < 8) return true;
+
+  // Muito longo — provavelmente lixo
+  if (name.length > 120) return true;
+
+  // Apenas números ou símbolos
+  if (/^[\d\s%°\-><]+$/.test(name)) return true;
+
+  // Predominantemente MAIÚSCULO (>85%) = chamada promocional genérica
+  const letters = name.match(/[a-zA-ZÀ-ÿ]/g);
+  if (letters && letters.length >= 4) {
+    const upper = (name.match(/[A-ZÀ-Ú]/g) || []).length;
+    if (upper / letters.length > 0.85) return true;
+  }
+
+  // Padrões de texto genérico (chamadas promocionais comuns)
+  const genericPatterns = [
+    /^(LANÇAMENTO|PROMOÇÃO|LIQUIDA|QUEIMA|OFERTA|PROMO).{0,20}$/i,
+    /^[A-Z\sÀ-Ú]{8,}$/,                                    // tudo maiúsculo
+    /^\d+\s*[xX]\s*\d+/,                                    // "12x 49,90"
+    /\b(CxB|custo.?benefício|imperdível|imperdivel)\b/i,
+  ];
+
+  for (const pattern of genericPatterns) {
+    if (pattern.test(name.trim())) return true;
+  }
+
+  return false;
+}
+
 export function deepMerge<T extends Record<string, unknown>>(
   target: T,
   source: Partial<T>

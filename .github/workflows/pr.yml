@@ -1,0 +1,68 @@
+# PR — Pull Request Review & Cleanup
+# Valida PRs para master e limpa branches após merge
+name: PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [master]
+
+  # Também executa cleanup quando um PR é fechado (merged)
+  pull_request_target:
+    types: [closed]
+    branches: [master]
+
+jobs:
+  review:
+    name: PR Review Checks
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Validate PR conventions
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          echo "✅ PR #${{ github.event.pull_request.number }}: $PR_TITLE"
+          echo "Branch: ${{ github.event.pull_request.head.ref }} → ${{ github.event.pull_request.base.ref }}"
+
+  cleanup:
+    name: Delete merged branch
+    if: >
+      github.event_name == 'pull_request_target' &&
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.ref != 'master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete remote branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+        run: |
+          echo "🗑️ Removendo branch: $BRANCH"
+          git push origin --delete "$BRANCH" 2>/dev/null || echo "Branch já removida ou sem permissão"
+          echo "✅ Branch '$BRANCH' deletada com sucesso"

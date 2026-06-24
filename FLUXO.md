@@ -388,7 +388,64 @@ FASE 6 - REGISTRAR
 
 ---
 
-## Template de Execucao
+## Fluxo GitHub (Branch + PR)
+
+**Toda demanda nova — seja feature, fix, melhoria ou infra — DEVE seguir este fluxo.**
+
+Nao existe "push direto na master". Nao existe "commit sem PR". Nao existe "excecao".
+
+```
+1. git checkout master && git pull
+2. git checkout -b feature/descricao-da-demanda
+3. Fazer as mudancas necessarias
+4. git add . && git commit -m "tipo: descricao"
+5. git push origin feature/descricao-da-demanda
+6. Abrir Pull Request no GitHub para master
+   └── CI roda automaticamente (typecheck + testes + build)
+7. Aguardar CI passar + 1 aprovacao de revisao
+8. Clicar "Merge pull request"
+   └── Branch deletada automaticamente
+```
+
+### Exemplo pratico
+
+```bash
+# Assumindo que a demanda é "Adicionar suporte ao AliExpress"
+git checkout master && git pull
+git checkout -b feature/aliexpress-integration
+# ... implementa o codigo ...
+git add src/affiliates/aliexpress.ts src/affiliates/index.ts
+git commit -m "feat: adicionar geracao de links afiliados AliExpress"
+git push origin feature/aliexpress-integration
+# → Abrir PR no GitHub
+# → CI valida
+# → Revisar
+# → Merge
+# → Branch deletada
+```
+
+### Convencao de nomes de branch
+
+| Tipo | Prefixo | Exemplo |
+|------|---------|---------|
+| Nova funcionalidade | `feature/` | `feature/aliexpress-integration` |
+| Correcao de bug | `fix/` | `fix/whatsapp-parse-error` |
+| Melhoria | `enhancement/` | `enhancement/command-ofertas-db` |
+| Documentacao | `docs/` | `docs/vps-deploy-guide` |
+| Refatoracao | `refactor/` | `refactor/database-module` |
+| Infra/CI | `infra/` | `infra/docker-setup` |
+
+### Branch Protection (ativo no GitHub)
+
+A branch `master` possui protecao que IMPEDE:
+- ❌ Push direto na master
+- ❌ Merge sem CI passar
+- ❌ Merge sem 1 aprovacao de revisao
+- ❌ Merge com branch desatualizada (precisa estar sync com master)
+
+Isso vale para TODOS, inclusive admins.
+
+---
 
 Para cada nova demanda, copie e preencha:
 
@@ -434,11 +491,15 @@ Para cada nova demanda, copie e preencha:
 ## Arquivos Relacionados
 
 ```
-contexto.md    -> Status e decisoes do projeto
-SESSAO.txt     -> Checklist de sessoes
-FLUXO.md       -> Este arquivo - fluxo de trabalho
+.github/workflows/ci.yml                -> CI automation
+.github/workflows/pr.yml                -> PR review + cleanup
+.github/ISSUE_TEMPLATE/demanda.md       -> Template de issue
+.github/PULL_REQUEST_TEMPLATE/pull_request.md -> Template de PR
+contexto.md                             -> Status e decisoes do projeto
+SESSAO.txt                              -> Checklist de sessoes
+FLUXO.md                                -> Este arquivo - fluxo de trabalho
 ```
 
 ---
 
-*Ultima atualizacao: 23/06/2026*
+*Ultima atualizacao: 24/06/2026*
