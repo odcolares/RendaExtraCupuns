@@ -105,7 +105,7 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 - [x] GitHub Flow: workflows (ci.yml, pr.yml), templates (issue + PR), FLUXO.md, branch protection
 - [x] Repositório tornado público (necessário para branch protection no Free)
 - [x] Demanda #5: isGenericProductName() + fetchProductInfo() — enriquecimento de nomes genéricos
-- [x] Cadastrar AliExpress Afiliados — ID `RendaExtraCupuns` configurado no .env ✅
+- [x] Cadastrar AliExpress Afiliados — Tracking ID `RendaExtraCupuns` criado e configurado ✅
 - [x] Cadastrar Shopee Afiliados — ID obtido (18387911117)
 - [x] Cadastrar Mercado Livre Afiliados — ID obtido (88981950)
 - [ ] Fazer deploy em VPS/servidor cloud (24/7)
@@ -580,5 +580,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Ultima atualizacao: 26/06/2026*
+*Ultima atualizacao: 26/06/2026 — Sessao 14 (AliExpress concluido + VPS_DEPLOY.md)*
 
