@@ -559,6 +559,7 @@ npm run test:coverage      # Testes com cobertura
 - [TELEGRAM.md](./TELEGRAM.md) - Módulo Telegram
 - [AFFILIATES.md](./AFFILIATES.md) - Módulo de afiliados
 - [FLUXO.md](./FLUXO.md) - Fluxo de trabalho
+- [VPS_DEPLOY.md](./VPS_DEPLOY.md) - Guia de deploy em VPS 24/7
 
 ### Graphify
 - [GRAPH_REPORT.md](./graphify-out/GRAPH_REPORT.md) - Relatório completo
@@ -579,5 +580,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Ultima atualizacao: 25/06/2026 13:30*
+*Ultima atualizacao: 26/06/2026*
 
