@@ -4,7 +4,7 @@
 
 Sistema automatizado que monitora ofertas em grupos WhatsApp, gera links de afiliado e publica em canal próprio no **Telegram**, transformando ofertas em fonte de renda extra via marketing de afiliados.
 
-**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | AliExpress (pronto, sem ID) ✅ | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | Deploy VPS ⏳
+**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | Deploy VPS ⏳
 
 ---
 
@@ -399,7 +399,7 @@ npm run lint           # Verificar erros TypeScript
 - **GitHub**: [github.com/odcolares/RendaExtraCupuns](https://github.com/odcolares/RendaExtraCupuns) ✅
 
 ### 🔴 Ainda necessário (voce) — quando tiver as contas
-1. **AliExpress Afiliados** — https://portals.aliexpress.com → obter ID e colocar no .env (já preparado)
+1. ~~**AliExpress Afiliados**~~ → ✅ **Concluído! ID: RendaExtraCupuns**
 2. ~~**Shopee Afiliados**~~ → ✅ **Concluído! ID 18387911117**
 3. **VPS para deploy 24/7** — Ubuntu 22.04, 2GB RAM, Node 18+
 
@@ -434,4 +434,4 @@ graphify explain "X"        # Explicar conceito
 
 **Status**: **Alpha** operacional. 4 fontes WhatsApp monitoradas. Amazon + Shopee + Mercado Livre configurados e testados E2E. Código no [GitHub](https://github.com/odcolares/RendaExtraCupuns). Deploy aguardando VPS. 🚀
 
-*Última atualização: 23/06/2026*
+*Última atualização: 25/06/2026*
