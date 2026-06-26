@@ -77,7 +77,7 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 - [x] Graphify atualizado (734 nós, 987 arestas, 50 comunidades)
 - [x] CLI mode para inserção manual de ofertas (src/cli.ts)
 - [x] Product Fetcher (src/utils/product-fetcher.ts) — busca dados do produto pela URL
-- [x] FLUXO.md atualizado com Fase 7 (DEPLOY)
+- [x] FLUXO.md atualizado com Fase 7 (DEPLOY) + Fluxo GitHub
 - [x] README.md atualizado com CLI mode + Product Fetcher
 - [x] contexto.md atualizado (sessão 04 — atualização de status geral)
 
@@ -102,7 +102,10 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 - [x] Fix links desconhecidos: `resolveUnknownUrl()` no monitor
 - [x] Extração fallback _data WhatsApp: campos ocultos da mensagem
 - [x] GitHub: repositório criado (odcolares/RendaExtraCupuns) — 68 arquivos, 19.272 linhas
-- [ ] Cadastrar AliExpress Afiliados — obter ID
+- [x] GitHub Flow: workflows (ci.yml, pr.yml), templates (issue + PR), FLUXO.md, branch protection
+- [x] Repositório tornado público (necessário para branch protection no Free)
+- [x] Demanda #5: isGenericProductName() + fetchProductInfo() — enriquecimento de nomes genéricos
+- [x] Cadastrar AliExpress Afiliados — ID `RendaExtraCupuns` configurado no .env ✅
 - [x] Cadastrar Shopee Afiliados — ID obtido (18387911117)
 - [x] Cadastrar Mercado Livre Afiliados — ID obtido (88981950)
 - [ ] Fazer deploy em VPS/servidor cloud (24/7)
@@ -370,7 +373,7 @@ ML_REFRESH_TOKEN=...                                                 # Gerado pe
 | Telegram Bot (@BotFather) | Publicar ofertas | ✅ @RendaExtraCuponsBot |
 | Canal Telegram | Canal para publicar | ✅ @Ofertas_cupons_agora |
 | Amazon Afiliados | Gerar links com tag | ✅ odcolares2026-20 |
-| AliExpress Afiliados | Gerar links com ID | ⏳ Sem ID (graceful: link direto) |
+| AliExpress Afiliados | Gerar links com ID | ✅ **RendaExtraCupuns** |
 | Shopee Afiliados | Gerar links com ID | ✅ **18387911117** |
 | Mercado Livre Afiliados | Gerar links com ID | ✅ 88981950 |
 | Mercado Livre OAuth (API) | Busca de produtos via API | ✅ App criado, OAuth funcional |
@@ -448,7 +451,7 @@ ML_REFRESH_TOKEN=...                                                 # Gerado pe
 
 ### Testes
 - [x] 11 suites de teste
-- [x] 103 testes passando (23/06/2026)
+- [x] 114 testes passando (24/06/2026)
 - [x] Cobertura: WhatsApp 100%, Utils 100%, Database 89%, Afiliados 71%
 - [x] Cobertura: unitária + integração E2E
 - [x] TypeScript compila sem erros
@@ -500,6 +503,9 @@ npm run test:coverage      # Testes com cobertura
 | 09 | **21/06/2026** | **ML OAuth + API Search: App criado, OAuth configurado, novo fluxo /products/search + /products/{id}/items validado. WhatsApp migrado para 2 grupos + newsletter. Bot em produção (12:55). 67 ofertas, 23 publicadas, 98/98 testes.** | **Concluída** |
 | 10 | **22/06/2026** | **Atualização geral de documentação: README, contexto.md, SESSAO.txt, .env.example, módulo coupons documentado, 103/103 testes. DB com 96 ofertas (76 ML, 20 Amazon), 37 publicadas.** | **Concluída** |
 | 11 | **23/06/2026** | **Debug produção +barto ofertas: Fix extração Shopee (novos padrões + resolução URL), AliExpress (resolução URL curta), Cupom detector (plural), Links desconhecidos (tidd.ly → resolução + detecção dinâmica). Bot com ofertas Shopee, ML, Amazon publicando.** | **Concluída** |
+| 12 | **24/06/2026** | **GitHub Flow: CI/CD workflows (ci.yml, pr.yml), templates (issue + PR), FLUXO.md atualizado, branch protection, repo público. Demanda #5: enriquecimento de nome de produto via URL (isGenericProductName + processor). 114 testes.** | **Concluída** |
+| 13 | **25/06/2026** | **AliExpress Afiliados: branch criada (feature/aliexpress-affiliate-id), template .env.example atualizado, aguardando aprovação do perfil no portals.aliexpress.com para inserir ID real** | **Concluída** |
+| 14 | **25/06/2026** | **AliExpress Afiliados: ID RendaExtraCupuns configurado no .env, build + testes validados, commit e PR** | **Concluída** |
 
 ---
 
@@ -507,15 +513,15 @@ npm run test:coverage      # Testes com cobertura
 
 ### 🔴 Passos que dependem de voce (cadastro manual):
 
-1. **AliExpress Afiliados** → https://portals.aliexpress.com
-   - Obter ID → colocar em `ALIEXPRESS_AFFILIATE_ID` no .env (já preparado, graceful fallback ativo)
+1. ~~**AliExpress Afiliados**~~ → ✅ **ID configurado: RendaExtraCupuns** 🎉
+   - Status: **Concluído! Tracking ID criado e configurado no .env** ✅
 2. ~~**Shopee Afiliados**~~ → ✅ **ID 18387911117 configurado!**
 3. **VPS para deploy 24/7**
    - Recomendação: 2GB RAM, 2 vCPUs (Chromium do whatsapp-web.js precisa de RAM)
    - Ubuntu 22.04 LTS, Node 18+
 
 ### 🔵 Melhorias futuras (quando tiver tempo):
-- Melhorar extração de nome dos produtos nas mensagens WhatsApp (nomes genéricos como "BÁSICAS PRO DIA A DIA" reduzem taxa de match na busca ML)
+- ~~Melhorar extração de nome dos produtos nas mensagens WhatsApp~~ ✅ **Concluído! isGenericProductName() + fetch da URL**
 - Páginas `/m/cupom-de-desconto` da Shopee: atualmente o código tenta extrair productData e falha (não é página de produto). Avaliar se deve tratar como cupom puro ou ignorar
 
 ### ✅ Ja configurado (pular):
@@ -540,6 +546,8 @@ npm run test:coverage      # Testes com cobertura
 - **extractLinksFromMessage retorna todas URLs** ✅ filtro removido, resolução dinâmica no handleMessage
 - **Shopee Afiliados** ✅ ID 18387911117 configurado! Links geram com `?af_id=18387911117`
 - **GitHub** ✅ [github.com/odcolares/RendaExtraCupuns](https://github.com/odcolares/RendaExtraCupuns) — 68 arquivos, 19.272 linhas
+- **GitHub Flow** ✅ Workflows CI/PR (ci.yml, pr.yml), templates (issue + PR), branch protection ativo
+- **Enriquecimento nome produto** ✅ isGenericProductName() + fetchProductInfo() quando nome genérico (Demanda #5)
 
 ---
 
@@ -559,6 +567,8 @@ npm run test:coverage      # Testes com cobertura
 
 ### GitHub
 - [Repositório](https://github.com/odcolares/RendaExtraCupuns) - Código fonte
+- [Workflows](https://github.com/odcolares/RendaExtraCupuns/actions) - CI/CD
+- [PR #1](https://github.com/odcolares/RendaExtraCupuns/pull/1) - Validação do GitHub Flow com Demanda #5
 
 ### Externos
 - [Telegraf](https://telegraf.js.org/) - Bot Telegram
@@ -569,5 +579,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Ultima atualizacao: 23/06/2026 12:30*
+*Ultima atualizacao: 25/06/2026 13:30*
 

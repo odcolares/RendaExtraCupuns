@@ -23,8 +23,8 @@ Módulo responsável por gerar links de afiliado automaticamente para diferentes
 - ✅ **Mercado Livre Afiliados (ID: 88981950)**
 - ✅ **Mercado Livre OAuth (API Search — contorna 403 do PolicyAgent)**
 - ✅ **AliExpress** — Sem ID, mas pipeline não trava (fallback link direto)
+- ✅ **AliExpress Afiliados — ID configurado: RendaExtraCupuns** 🎉
 - ✅ **Shopee Afiliados (ID: 18387911117)**
-- ⏳ AliExpress Afiliados — pendente (voce, preencher .env quando tiver)
 - ✅ Gerar links automaticamente
 - ✅ Validar links antes de publicar
 - ✅ Busca automática via API Mercado Livre (fallback quando link é página social)
@@ -879,4 +879,4 @@ npm run affiliates:report
 
 ---
 
-*Última atualização: 23/06/2026*
+*Última atualização: 25/06/2026*
