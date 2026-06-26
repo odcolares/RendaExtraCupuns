@@ -795,11 +795,156 @@ Arquivos modificados:
 - [x] PROPOSTA_COMERCIAL.md (criada)
 
 ═══════════════════════════════════════════════════════════════════════════════
+                        📋 SESSÃO 12 - 24/06/2026
+═══════════════════════════════════════════════════════════════════════════════
+
+SESSÃO 12 - 24/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA — GITHUB FLOW + DEMANDA #5 + INFRA GITHUB
+
+O que foi feito:
+
+1. **Criação da infra GitHub Flow (.github/)**
+   - `.github/workflows/ci.yml` — CI: typecheck + testes + build (Node 18.x + 20.x)
+   - `.github/workflows/pr.yml` — PR review checks + cleanup de branch pós-merge
+   - `.github/ISSUE_TEMPLATE/demanda.md` — template para novas demandas
+   - `.github/PULL_REQUEST_TEMPLATE/pull_request.md` — template para PRs
+
+2. **Branch Protection na master**
+   - Reqer PR obrigatório antes de merge
+   - CI deve passar (Quality Checks 18.x + 20.x)
+   - Branch precisa estar atualizada com master
+   - Vale para TODOS (inclusive admin, enforce_admins=true)
+   - Repositório tornado público (necessário para protection rules no Free)
+   - Auto-delete branch ativado
+
+3. **FLUXO.md atualizado**
+   - Nova seção "Fluxo GitHub (Branch + PR)" com fluxo passo a passo
+   - Convenção de nomes de branch (feature/, fix/, enhancement/, docs/, refactor/, infra/)
+   - Regras de branch protection documentadas
+
+4. **Demanda #5 — Enriquecimento de nome de produto via URL**
+   - `src/utils/helpers.ts` — nova função isGenericProductName()
+   - `src/processor.ts` — enrichment step: se nome genérico + URL → fetchProductInfo()
+   - `tests/unit/utils/helpers.test.ts` — 11 novos testes
+   - 114 testes passando (anteriormente 103)
+
+5. **Validação do GitHub Flow com PR #1**
+   - Branch: enhancement/product-name-from-url
+   - 4 commits: implementação + 3 fixes de CI (lockfile, postbuild, matrix checks)
+   - PR aberto → CI rodou automaticamente → passou ✅
+   - Merge na master via gh CLI → branch deletada ✅
+   - PR: https://github.com/odcolares/RendaExtraCupuns/pull/1
+
+6. **Perfil GitHub atualizado**
+   - Bio alterada via API
+
+Decisões tomadas:
+- `npm ci` trocado por lockfile regenerado com todas as deps opcionais (compatível Linux CI)
+- postbuild usa fs.existsSync() para não falhar quando .env não existe no CI
+- Nome do status check na protection rule usa os nomes reais da matrix (Quality Checks (18.x), Quality Checks (20.x))
+- 0 approvals required (projeto solo, CI já valida)
+- enforce_admins: true (todos seguem o mesmo fluxo)
+
+Próximo passo:
+- Cadastrar AliExpress Afiliados (portals.aliexpress.com) — obter ID
+- Deploy em VPS (24/7)
+- Páginas /m/cupom-desconto da Shopee — avaliar tratamento
+
+Arquivos criados/salvos:
+- [x] .github/workflows/ci.yml (CI workflow)
+- [x] .github/workflows/pr.yml (PR workflow + cleanup)
+- [x] .github/ISSUE_TEMPLATE/demanda.md (issue template)
+- [x] .github/PULL_REQUEST_TEMPLATE/pull_request.md (PR template)
+- [x] src/utils/helpers.ts (isGenericProductName)
+- [x] src/processor.ts (enrichment step)
+- [x] tests/unit/utils/helpers.test.ts (11 testes)
+- [x] FLUXO.md (seção GitHub Flow)
+- [x] package-lock.json (regenerado)
+- [x] package.json (postbuild fix)
+- [x] contexto.md (sessão 12 atualizada)
+- [x] SESSAO.txt (esta sessão registrada)
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📋 SESSÃO 13 - 25/06/2026
+═══════════════════════════════════════════════════════════════════════════════
+
+SESSÃO 13 - 25/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA — PREPARAÇÃO ALIEXPRESS AFILIADOS
+
+O que foi feito:
+
+1. **Branch criada: `feature/aliexpress-affiliate-id`**
+   - `config/.env.example`: adicionado comentário sobre cadastro no portals.aliexpress.com
+   - `config/.env`: placeholder atualizado para `aguardando_aprovacao`
+   - Branch pushada para o GitHub
+
+2. **Documentação atualizada**
+   - `contexto.md`: Fase 7 marcada (branch criada, aguardando aprovação), Sessão 13 adicionada, Próximos Passos atualizados
+   - `README.md`: status AliExpress atualizado (branch criada, aguardando aprovação)
+   - `AFFILIATES.md`: status AliExpress atualizado
+   - `SESSAO.txt`: esta sessão registrada
+
+Próximo passo:
+- Quando chegar o email de aprovação do AliExpress, inserir o ID real no .env, commitar na branch e abrir PR
+
+Arquivos modificados:
+- [x] config/.env.example (comentário AliExpress)
+- [x] contexto.md (sessão 13, status atualizado)
+- [x] README.md (status pendências atualizado)
+- [x] AFFILIATES.md (status AliExpress atualizado)
+- [x] SESSAO.txt (esta sessão registrada)
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📋 SESSÃO 14 - 26/06/2026
+═══════════════════════════════════════════════════════════════════════════════
+
+SESSÃO 14 - 26/06/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA — ALIEXPRESS AFILIADOS + VPS_DEPLOY.MD + PRS #2 #3
+
+O que foi feito:
+
+1. **AliExpress Afiliados — Tracking ID configurado**
+   - Usuário criou Tracking ID `RendaExtraCupuns` no AliExpress Portals e marcou como padrão
+   - `config/.env`: `ALIEXPRESS_AFFILIATE_ID` alterado para `RendaExtraCupuns`
+   - Build + 114/114 testes validados ✅
+   - Branch `feature/aliexpress-affiliate-id` → PR #2 → mergeado na master
+   - Todas as 4 plataformas de afiliados agora configuradas (Amazon, ML, Shopee, AliExpress)
+
+2. **VPS_DEPLOY.md criado**
+   - Documento completo (~400 linhas) com guia de deploy em VPS
+   - Requisitos, provedores, custos, setup passo a passo, WhatsApp session, PM2, troubleshooting
+   - Criado para consulta por agentes colaborativos
+   - Branch `docs/vps-deploy-guide` → PR #3 → mergeado na master
+
+3. **Documentação atualizada**
+   - `contexto.md`: status AliExpress atualizado (concluído), VPS_DEPLOY.md referenciado
+   - `README.md`: data de atualização para 26/06/2026
+   - `SESSAO.txt`: esta sessão registrada
+
+Próximo passo:
+- Contratar VPS e seguir VPS_DEPLOY.md para deploy 24/7
+
+Arquivos criados/modificados:
+- [x] config/.env (ALIEXPRESS_AFFILIATE_ID=RendaExtraCupuns)
+- [x] VPS_DEPLOY.md (guia de deploy VPS — novo)
+- [x] contexto.md (status atualizado)
+- [x] README.md (data atualizada)
+- [x] SESSAO.txt (esta sessão registrada)
+- [x] PR #2 mergeado (AliExpress affiliate ID)
+- [x] PR #3 mergeado (VPS_DEPLOY.md)
+
+═══════════════════════════════════════════════════════════════════════════════
                         📊 RESUMO DAS SESSÕES
 ═══════════════════════════════════════════════════════════════════════════════
 
- Total de sessões: 9
- Status: Código completo, Bot Telegram ✅, Canal ✅, Amazon ✅, ML ✅, Shopee ✅, GitHub ✅, PM2 config ✅, E2E testado ✅
+ Total de sessões: 12
+ Status: Código completo, Bot Telegram ✅, Canal ✅, Amazon ✅, ML ✅, Shopee ✅, AliExpress ✅, GitHub ✅, GitHub Flow ✅, PM2 config ✅, VPS_DEPLOY.md ✅, E2E testado ✅
 
  Fases (FLUXO.md):
  ─────────────────────────────────────────────────────────────────────────────
@@ -808,5 +953,5 @@ Arquivos modificados:
  Fase 3: PLANEJAR    📝 Docs externas + TaskManager (20 tasks)   ✅ (12/06)
  Fase 4: EXECUTAR    💻 31 arquivos .ts, pipeline + CLI + fetcher ✅ (17/06)
  Fase 5: VALIDAR     🔬 97 testes, 11 suites, 100% passando      ✅ (19/06)
- Fase 6: REGISTRAR   📄 Contextos atualizados + Sessão 08        ✅ (20/06)
- Fase 7: DEPLOY      🚀 Bot+Telegram+Amazon+ML+Shopee+GitHub ✅ | AliExpress/VPS ⏳
+ Fase 6: REGISTRAR   📄 Contextos atualizados + Sessão 14        ✅ (26/06)
+ Fase 7: DEPLOY      🚀 Bot+Telegram+Amazon+ML+Shopee+AliExpress+GitHub ✅ | VPS ⏳

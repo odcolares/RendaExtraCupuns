@@ -434,4 +434,4 @@ graphify explain "X"        # Explicar conceito
 
 **Status**: **Alpha** operacional. 4 fontes WhatsApp monitoradas. Amazon + Shopee + Mercado Livre configurados e testados E2E. Código no [GitHub](https://github.com/odcolares/RendaExtraCupuns). Deploy aguardando VPS. 🚀
 
-*Última atualização: 25/06/2026*
+*Última atualização: 26/06/2026*
