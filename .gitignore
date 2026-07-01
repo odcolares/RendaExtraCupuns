@@ -22,6 +22,8 @@ logs/
 
 # Arquivos temporários do OpenCode
 .tmp/
+.omc/
+.omo/
 
 # Graphify output (gerado automaticamente)
 graphify-out/
