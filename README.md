@@ -4,7 +4,7 @@
 
 Sistema automatizado que monitora ofertas em grupos WhatsApp, gera links de afiliado e publica em canal próprio no **Telegram**, transformando ofertas em fonte de renda extra via marketing de afiliados.
 
-**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | Deploy VPS ⏳
+**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | **🌐 Web SaaS Fase 0 ✅** | Deploy VPS ⏳
 
 ---
 
@@ -18,6 +18,7 @@ Sistema automatizado que monitora ofertas em grupos WhatsApp, gera links de afil
 | [🔗 **AFFILIATES.md**](./AFFILIATES.md) | Integração com programas de afiliados |
 | [🔄 **FLUXO.md**](./FLUXO.md) | Fluxo de trabalho (7 fases) |
 | [📋 **contexto.md**](./contexto.md) | Status e decisões do projeto |
+| [🌐 **Web SaaS (Fase 0)**](./web/) | Piloto SaaS: Next.js + Prisma + Auth + Stripe |
 
 ---
 
@@ -97,6 +98,21 @@ Usuario clica → Compra → Comissao
 | **Shopee** | 5-10% | shopee.com.br/afiliados — **ID 18387911117 ✅** |
 | **Mercado Livre** | 3-12% | mercadolivre.com.br/afiliados |
 
+### Web SaaS (Fase 0 — Piloto)
+
+| Tecnologia | Versão | Uso |
+|------------|--------|-----|
+| **Next.js** | 16.0.0 | Framework React (App Router, RSC) |
+| **React** | 19.1.0 | UI library |
+| **TypeScript** | 5.x | Tipagem |
+| **Prisma** | 7.8.0 | ORM + SQLite |
+| **NextAuth** | 5.0.0-beta | Auth (Credentials, JWT, PrismaAdapter) |
+| **Stripe** | 18.x | Pagamento (Checkout + Webhook) |
+| **shadcn/ui** | latest | 11 componentes de UI |
+| **Tailwind CSS** | 4.x | Estilização |
+| **bcryptjs** | 2.4.3 | Hash de senhas |
+| **Vercel** | — | Deploy configurado |
+
 ---
 
 ## Estrutura do Projeto
@@ -172,6 +188,12 @@ RendaExtraCupuns/
 │   │   └── database/                  # offers.test.ts
 │   └── integration/
 │       └── pipeline.test.ts           # Pipeline E2E
+│
+├── web/                               # 🌐 SaaS Fase 0 (Next.js + Prisma + Auth + Stripe)
+│   ├── src/app/                       # Landing, Login, Signup, Dashboard, Admin
+│   ├── src/lib/                       # Auth, Prisma, Stripe, Password
+│   ├── prisma/                        # Schema + migrations SQLite
+│   └── vercel.json                    # Deploy config
 │
 ├── graphify-out/                      # Grafo interativo (734 nós)
 ├── ecosystem.config.cjs               # PM2 deploy config
@@ -434,4 +456,4 @@ graphify explain "X"        # Explicar conceito
 
 **Status**: **Alpha** operacional. 4 fontes WhatsApp monitoradas. Amazon + Shopee + Mercado Livre configurados e testados E2E. Código no [GitHub](https://github.com/odcolares/RendaExtraCupuns). Deploy aguardando VPS. 🚀
 
-*Última atualização: 26/06/2026*
+*Última atualização: 07/07/2026 — Fase 0 SaaS completa (Next.js + Prisma + Auth + Stripe)*
