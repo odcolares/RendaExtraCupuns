@@ -16,6 +16,7 @@ whatsapp-session/
 # Banco de dados (dados reais de ofertas)
 data/*
 !data/.gitkeep
+**/*.db
 
 # Logs
 logs/
