@@ -1014,3 +1014,70 @@ Arquivos modificados:
 - [x] contexto.md (Sessão 15, novas fases, stack, decisões)
 - [x] FLUXO.md (Fase 7 com fork A/B)
 - [x] SESSAO.txt (esta sessão registrada)
+
+
+SESSÃO 15b - 07/07/2026 — FASE 0 SAAS COMPLETA
+─────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA ✅
+
+O que foi feito:
+1. Instalação de 6 skills do ecossistema para o projeto web:
+   - nextjs-framework ✅, prisma-orm ✅, nextauth-js ✅, stripe ✅, shadcn-ui ✅, playwright-e2e-testing ✅
+   - Skills renomeadas (prisma-orm → prisma, playwright-e2e-testing → playwright)
+
+2. Fase 0 — Fundação Web SaaS (Next.js + Prisma + Auth + Stripe + Landing + Dashboard)
+   - Projeto Next.js 16 criado em web/ com create-next-app
+   - 11 componentes shadcn/ui instalados (Button, Card, Input, Label, Dialog, DropdownMenu, Avatar, Table, Badge, Skeleton, Separator)
+   - Tailwind CSS v4 configurado
+   - Prisma 7.8.0 + SQLite: schema com 7 modelos (User, Tenant, Offer, AffiliateConfig, Account, Session, VerificationToken)
+   - Migração 20260707204335_init aplicada
+   - NextAuth v5 (beta): Credentials provider + JWT + PrismaAdapter + roles admin/client
+   - Middleware edge-safe com auth.proxy.ts
+   - Landing page: Hero, Como Funciona, Planos (Free/R$29/R$79), FAQ
+   - Login + Signup com Suspense boundary
+   - Dashboard cliente: cards de métricas, config afiliados
+   - Admin panel: tabela de clientes, stats (total/ativos/pagantes/pagando)
+   - Stripe Checkout subscription + Webhook (checkout.session.completed, customer.subscription.updated/deleted)
+   - Stripe lazy init (build funciona sem env vars)
+   - vercel.json configurado (prisma generate + next build)
+   - AUTH_SECRET gerado e configurado no .env
+
+3. Build aprovado — 10 rotas, zero erros, zero warnings TypeScript
+
+4. Git: 6 commits atômicos → PR #8 mergeado (717955f) na master
+
+Decisões tomadas:
+- shadcn/ui escolhido como design system (consistente, acessível, bonito)
+- Credentials provider (email+senha) em vez de OAuth social (independência do MVP)
+- SQLite no piloto (simples, sem servidor externo)
+- Stripe Checkout + Webhooks para gerenciar assinaturas
+- Dashboard cliente separado do admin (roles diferentes)
+- Rotas organizadas por grupos: (auth), (dashboard)
+
+Próximo passo:
+- Fase 1 — Painel do Cliente completo: onboarding, config WhatsApp/Telegram/grupos, métricas e relatórios
+
+Arquivos criados/modificados:
+- [x] web/ — Projeto Next.js 16 completo (30+ arquivos)
+- [x] web/prisma/schema.prisma — Schema com 7 modelos
+- [x] web/src/lib/auth.ts — NextAuth config
+- [x] web/src/lib/auth.config.ts — Config compartilhada
+- [x] web/src/lib/auth.proxy.ts — Edge-safe auth proxy
+- [x] web/src/lib/prisma.ts — PrismaClient singleton
+- [x] web/src/lib/stripe.ts — Stripe client + planos
+- [x] web/src/lib/password.ts — bcrypt hash/verify
+- [x] web/src/middleware.ts — Proxy middleware
+- [x] web/src/app/page.tsx — Landing page
+- [x] web/src/app/(auth)/login/page.tsx — Login
+- [x] web/src/app/(auth)/signup/page.tsx — Signup
+- [x] web/src/app/(dashboard)/dashboard/page.tsx — Dashboard cliente
+- [x] web/src/app/(dashboard)/admin/page.tsx — Admin panel
+- [x] web/src/app/api/auth/[...nextauth]/route.ts — NextAuth handler
+- [x] web/src/app/api/auth/signup/route.ts — Signup API
+- [x] web/src/app/api/checkout/route.ts — Stripe Checkout
+- [x] web/src/app/api/webhooks/stripe/route.ts — Stripe Webhook
+- [x] web/vercel.json — Deploy Vercel config
+- [x] web/.env — Variáveis de ambiente
+- [x] contexto.md (Fase 0 concluída, stack web, referências, PRs)
+- [x] SESSAO.txt (esta sessão registrada)

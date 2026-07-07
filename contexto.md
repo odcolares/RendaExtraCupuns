@@ -121,14 +121,28 @@ Modelo: Self-service com assinatura mensal
 Stack: Next.js + Prisma + SQLite (piloto) / PostgreSQL (futuro) + Vercel (deploy web)
 ```
 
-**Fase 0 — Fundação (Next.js + Auth + DB + Pagamento)**
-- [ ] Projeto Next.js + estrutura de pastas
-- [ ] Prisma + SQLite (schema: User, Tenant, Offer, AffiliateConfig)
-- [ ] NextAuth com roles (admin / client)
-- [ ] Landing page com planos (Free / R$29 / R$79)
-- [ ] Signup + Login
-- [ ] Stripe/Mercado Pago (modo teste)
-- [ ] Deploy Vercel (grátis)
+**Stack Web (Fase 0 implementada):**
+| Tecnologia | Versão | Uso |
+|------------|--------|-----|
+| **Next.js** | 16.0.0 | Framework React (App Router, Server Actions, RSC) |
+| **React** | 19.1.0 | UI library |
+| **TypeScript** | 5.x | Tipagem |
+| **Prisma** | 7.8.0 | ORM + SQLite |
+| **NextAuth** | 5.0.0-beta.28 | Auth (Credentials provider, JWT, PrismaAdapter) |
+| **Stripe** | 18.x | Pagamento (Checkout + Webhook assinaturas) |
+| **shadcn/ui** | latest | 11 componentes (Button, Card, Input, Dialog, Dropdown, etc.) |
+| **Tailwind CSS** | 4.x | Estilização |
+| **bcryptjs** | 2.4.3 | Hash de senhas |
+| **Vercel** | — | Deploy (vercel.json configurado) |
+
+**Fase 0 — Fundação (Next.js + Auth + DB + Pagamento) ✅**
+- [x] Projeto Next.js + estrutura de pastas
+- [x] Prisma + SQLite (schema: User, Tenant, Offer, AffiliateConfig)
+- [x] NextAuth com roles (admin / client)
+- [x] Landing page com planos (Free / R$29 / R$79)
+- [x] Signup + Login
+- [x] Stripe/Mercado Pago (modo teste)
+- [x] Deploy Vercel (vercel.json configurado)
 
 **Fase 1 — Painel do Cliente**
 - [ ] Dashboard: ofertas publicadas, fontes ativas, métricas
@@ -573,7 +587,7 @@ npm run test:coverage      # Testes com cobertura
 | 12 | **24/06/2026** | **GitHub Flow: CI/CD workflows (ci.yml, pr.yml), templates (issue + PR), FLUXO.md atualizado, branch protection, repo público. Demanda #5: enriquecimento de nome de produto via URL (isGenericProductName + processor). 114 testes.** | **Concluída** |
 | 13 | **25/06/2026** | **AliExpress Afiliados: branch criada (feature/aliexpress-affiliate-id), template .env.example atualizado, aguardando aprovação do perfil no portals.aliexpress.com para inserir ID real** | **Concluída** |
 | 14 | **25/06/2026** | **AliExpress Afiliados: ID RendaExtraCupuns configurado no .env, build + testes validados, commit e PR** | **Concluída** |
-| 15 | **07/07/2026** | **Decisão estratégica: SaaS self-service com módulo web. Piloto local (Next.js + Prisma + SQLite). VPS repriorizado para Fase 3 (multi-tenant). Documentos atualizados.** | **Concluída** |
+| 15 | **07/07/2026** | **Fase 0 SaaS completa: Next.js 16 + Prisma 7 + SQLite + shadcn/ui + NextAuth v5 + Stripe + Landing + Login/Signup + Dashboard cliente + Admin panel + Webhook Stripe + Vercel config. Build aprovado, PR #8 mergeado (717955f).** | **Concluída** |
 
 ---
 
@@ -582,10 +596,17 @@ npm run test:coverage      # Testes com cobertura
 ### 🔴 Direção Estratégica (Sessão 15 — 07/07/2026):
 
 1. ✅ **Bot monousuário + 4 plataformas de afiliados — COMPLETO**
-2. 👉 **Piloto Web SaaS (self-service) — PRÓXIMO**
-   - Next.js + Prisma + SQLite → rodando local + Vercel
-   - Cliente cria conta, paga mensalidade, configura tudo no painel
-3. 📌 **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
+2. ✅ **Piloto Web SaaS (Fase 0) — COMPLETO**
+   - Next.js 16 + Prisma 7 + SQLite + shadcn/ui
+   - NextAuth v5 (Credentials) + roles admin/client
+   - Landing page + Login/Signup + Dashboard cliente + Admin panel
+   - Stripe Checkout + Webhook subscriptions
+   - Vercel configurado (build aprovado, zero erros TS)
+3. 👉 **Fase 1 — Painel do Cliente completo — PRÓXIMO**
+   - Onboarding do cliente (configurar WhatsApp, Telegram, grupos)
+   - Gestão de afiliados e ofertas no painel
+   - Métricas e relatórios
+4. 📌 **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
 
 ### 🔵 Melhorias futuras:
 - Páginas `/m/cupom-de-desconto` da Shopee: avaliar tratamento como cupom puro
@@ -632,6 +653,11 @@ npm run test:coverage      # Testes com cobertura
 - [graph.html](./graphify-out/graph.html) - Grafo interativo
 - [graph.json](./graphify-out/graph.json) - Dados brutos
 
+### Projeto Web (SaaS)
+- [`web/`](./web/) - Projeto Next.js 16 (Fase 0 SaaS)
+- [PR #7](https://github.com/odcolares/RendaExtraCupuns/pull/7) - Docs estratégicas: Fase 8 SaaS Self-Service
+- [PR #8](https://github.com/odcolares/RendaExtraCupuns/pull/8) - Fase 0 Web SaaS: Next.js + Prisma + Auth + Stripe + Landing + Dashboard + Admin
+
 ### GitHub
 - [Repositório](https://github.com/odcolares/RendaExtraCupuns) - Código fonte
 - [Workflows](https://github.com/odcolares/RendaExtraCupuns/actions) - CI/CD
@@ -646,5 +672,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Última atualização: 07/07/2026 — Sessão 15 (Decisão estratégica: SaaS self-service + piloto web local)*
+*Última atualização: 07/07/2026 — Sessão 15 (Fase 0 SaaS completa: Next.js + Prisma + Auth + Stripe + Landing + Dashboard + Admin)*
 
