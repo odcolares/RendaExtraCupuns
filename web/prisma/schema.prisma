@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum UserRole {
+  admin
+  client
+}
+
+enum TenantPlan {
+  free
+  starter
+  professional
+}
+
+enum TenantStatus {
+  active
+  suspended
+  cancelled
+}
+
+enum OfferPlatform {
+  amazon
+  shopee
+  mercadolivre
+  aliexpress
+  outros
+}
+
+enum OfferStatus {
+  pending
+  published
+  failed
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(client)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant   Tenant?  @relation(fields: [tenantId], references: [id])
+  tenantId String?
+
+  accounts  Account[]
+  sessions  Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Tenant {
+  id        String       @id @default(cuid())
+  name      String
+  plan      TenantPlan   @default(free)
+  status    TenantStatus @default(active)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  stripeCustomerId String?
+  stripeSubscriptionId String?
+  expiresAt DateTime?
+
+  users          User[]
+  offers         Offer[]
+  affiliateConfig AffiliateConfig?
+}
+
+model Offer {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  url         String
+  platform    OfferPlatform @default(outros)
+  price       Float?
+  originalPrice Float?
+  discount    Float?
+  imageUrl    String?
+  status      OfferStatus   @default(pending)
+  publishedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model AffiliateConfig {
+  id        String   @id @default(cuid())
+  amazonTag String?
+  shopeeId  String?
+  mlId      String?
+  aliexpressId String?
+
+  tenantId String @unique
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
