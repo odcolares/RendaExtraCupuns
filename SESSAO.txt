@@ -943,8 +943,8 @@ Arquivos criados/modificados:
                         📊 RESUMO DAS SESSÕES
 ═══════════════════════════════════════════════════════════════════════════════
 
- Total de sessões: 12
- Status: Código completo, Bot Telegram ✅, Canal ✅, Amazon ✅, ML ✅, Shopee ✅, AliExpress ✅, GitHub ✅, GitHub Flow ✅, PM2 config ✅, VPS_DEPLOY.md ✅, E2E testado ✅
+ Total de sessões: 15
+ Status: Bot completo (114 testes), 4 plataformas afiliados configuradas ✅ | SaaS Self-Service iniciado 🚧
 
  Fases (FLUXO.md):
  ─────────────────────────────────────────────────────────────────────────────
@@ -952,6 +952,65 @@ Arquivos criados/modificados:
  Fase 2: CONTEXTO    📚 Documentação + Graphify inicial          ✅ (12/06)
  Fase 3: PLANEJAR    📝 Docs externas + TaskManager (20 tasks)   ✅ (12/06)
  Fase 4: EXECUTAR    💻 31 arquivos .ts, pipeline + CLI + fetcher ✅ (17/06)
- Fase 5: VALIDAR     🔬 97 testes, 11 suites, 100% passando      ✅ (19/06)
- Fase 6: REGISTRAR   📄 Contextos atualizados + Sessão 14        ✅ (26/06)
- Fase 7: DEPLOY      🚀 Bot+Telegram+Amazon+ML+Shopee+AliExpress+GitHub ✅ | VPS ⏳
+ Fase 5: VALIDAR     🔬 114 testes, 11 suites, 100% passando    ✅ (24/06)
+ Fase 6: REGISTRAR   📄 Contextos atualizados + Sessão 15        ✅ (07/07)
+ Fase 7: DEPLOY      🚀 Caminho A: Monólito ✅ | Caminho B: SaaS 🚧 (07/07)
+
+═══════════════════════════════════════════════════════════════════════════════
+                        📋 SESSÃO 15 - 07/07/2026
+═══════════════════════════════════════════════════════════════════════════════
+
+SESSÃO 15 - 07/07/2026
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA — DECISÃO ESTRATÉGICA: SAAS SELF-SERVICE
+
+O que foi feito:
+
+1. **Discussão estratégica: Bot → SaaS**
+   - Analisado estado atual: bot monousuário 100% funcional (WhatsApp → Afiliados → Telegram)
+   - VPS_DEPLOY.md descrevia deploy do monólito, mas direção agora é SaaS com painel web
+   - Decisão: construir plataforma self-service com assinatura mensal
+
+2. **Modelo de negócio definido**
+   - Cliente: cria conta, paga mensalidade, configura grupos/afiliados/TG, vê métricas
+   - Admin (você): super admin com visão de todos os clientes e controle de planos
+   - Planos: Free (2 fontes) / R$29-49 Pro (5 fontes + branding) / R$79-149 Enterprise (ilimitado)
+
+3. **Arquitetura do piloto local definida**
+   - Next.js + Prisma + SQLite (web) lado a lado com o bot atual
+   - Bot continua rodando em terminal separado (npm run dev)
+   - Web e bot compartilham o mesmo banco SQLite
+   - Vercel para deploy do web (grátis)
+   - VPS só na Fase 3 (multi-tenant workers com Baileys)
+
+4. **Análise WhatsApp vs Telegram (papéis complementares)**
+   - WhatsApp: diferencial competitivo como FONTE (grupos que o cliente já participa)
+   - Telegram: destino ideal (API oficial, grátis, botões, canais)
+   - Cada um no seu papel — não há substituição
+
+5. **Análise da PROPOSTA_COMERCIAL.md**
+   - Documento descreve venda do BOT (licença/parceria), não do SaaS
+   - Precisará ser substituído por landing page com planos + checkout
+   - Desatualizado: AliExpress como "sem ID" (já configurado)
+
+6. **Documentos atualizados**
+   - contexto.md: Sessão 15, fases SaaS, stack atualizada, decisões registradas
+   - FLUXO.md: Fase 7 com dois caminhos (Monólito A / SaaS B)
+   - SESSAO.txt: esta sessão registrada
+
+Decisões tomadas:
+- SaaS self-service com assinatura substitui modelo de licença/parceria
+- Piloto roda na máquina local (Next.js + bot lado a lado)
+- VPS repriorizado para Fase 3 (multi-tenant workers)
+- Primeira Fase do piloto: Fundação (Next.js + Prisma + Auth + Landing + Pagamento)
+- WhatsApp como fonte é o diferencial — mantido
+- Telegram como destino é o melhor custo/benefício — mantido
+
+Próximo passo:
+- Decidir se inicia a Fase 0 (Next.js + Prisma + Auth + Landing) para começar o piloto
+
+Arquivos modificados:
+- [x] contexto.md (Sessão 15, novas fases, stack, decisões)
+- [x] FLUXO.md (Fase 7 com fork A/B)
+- [x] SESSAO.txt (esta sessão registrada)

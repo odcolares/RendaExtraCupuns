@@ -81,7 +81,9 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 - [x] README.md atualizado com CLI mode + Product Fetcher
 - [x] contexto.md atualizado (sessão 04 — atualização de status geral)
 
-### Fase 7: DEPLOY - EM ANDAMENTO
+### Fase 7: DEPLOY — REPRIORIZADO (SaaS Self-Service)
+
+> **Decisão (Sessão 15):** O deploy em VPS do monólito foi substituído pelo **piloto do módulo web SaaS self-service**. O bot atual continua rodando localmente como fonte de ofertas. O deploy em VPS será necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando.
 - [x] Criar bot no Telegram (@BotFather) — token obtido ✅ @RendaExtraCuponsBot
 - [x] Criar canal no Telegram — @Ofertas_cupons_agora (ID: -1004303411968)
 - [x] Bot adicionado como admin do canal com permissão de publicação
@@ -108,7 +110,50 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 - [x] Cadastrar AliExpress Afiliados — Tracking ID `RendaExtraCupuns` criado e configurado ✅
 - [x] Cadastrar Shopee Afiliados — ID obtido (18387911117)
 - [x] Cadastrar Mercado Livre Afiliados — ID obtido (88981950)
-- [ ] Fazer deploy em VPS/servidor cloud (24/7)
+- [ ] ~~Fazer deploy em VPS/servidor cloud (24/7)~~ → **Repriorizado: piloto web SaaS local primeiro**
+
+### Fase 8: PILOTO WEB SAAS — NOVO (07/07/2026)
+
+```
+Modelo: Self-service com assinatura mensal
+  ├── Cliente: cria conta, paga mensalidade, configura grupos/afiliados/TG, vê métricas
+  └── Admin: super admin com gestão de clientes + dashboard geral
+Stack: Next.js + Prisma + SQLite (piloto) / PostgreSQL (futuro) + Vercel (deploy web)
+```
+
+**Fase 0 — Fundação (Next.js + Auth + DB + Pagamento)**
+- [ ] Projeto Next.js + estrutura de pastas
+- [ ] Prisma + SQLite (schema: User, Tenant, Offer, AffiliateConfig)
+- [ ] NextAuth com roles (admin / client)
+- [ ] Landing page com planos (Free / R$29 / R$79)
+- [ ] Signup + Login
+- [ ] Stripe/Mercado Pago (modo teste)
+- [ ] Deploy Vercel (grátis)
+
+**Fase 1 — Painel do Cliente**
+- [ ] Dashboard: ofertas publicadas, fontes ativas, métricas
+- [ ] Onboarding wizard (conectar WhatsApp, config Telegram)
+- [ ] Configuração de afiliados (Amazon, ML, Shopee, AliExpress)
+- [ ] Histórico de ofertas com busca/filtro
+- [ ] Métricas: total ofertas, por plataforma, por período
+
+**Fase 2 — Super Admin**
+- [ ] Lista de clientes (status, plano, última atividade, ofertas)
+- [ ] Detalhe do cliente (config, ofertas, status worker)
+- [ ] Controle de planos (ativar/suspender/mudar)
+- [ ] Visão geral: clientes ativos, ofertas globais, faturamento estimado
+
+**Fase 3 — Multi-Tenant Workers (VPS)**
+- [ ] Migrar WhatsApp de whatsapp-web.js para Baileys (sem Chromium)
+- [ ] Session Manager: spawn/kill worker por cliente
+- [ ] Adaptar pipeline (processor.ts) para multi-tenant
+- [ ] VPS entra aqui (Hetzner ~€8/mês)
+
+**Fase 4 — Polimento + Monetização**
+- [ ] White-label (branding do cliente nos templates Telegram)
+- [ ] Upgrade/downgrade de planos
+- [ ] Cancelamento + retenção de dados por 30 dias
+- [ ] Self-signup automático pós-pagamento
 
 ---
 
@@ -134,6 +179,23 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 | **Amazon: resolvedor amzn.to com HTML** | `amzn.to` retorna HTTP 202 com página intermediária; resolvedor extrai URL via `<meta refresh>` no HTML |
 | **WhatsApp multiplos grupos + newsletter** | `WHATSAPP_GROUP_IDS` (separados por vírgula) + `WHATSAPP_NEWSLETTER_ID` no config, monitor refatorado para aceitar lista |
 
+### Sessão 15 (07/07/2026) — SaaS Self-Service
+
+Esta sessão redirecionou a estratégia do projeto do deploy VPS do monólito para a construção de um SaaS white-label com painel web e assinatura mensal.
+
+| Decisão | Justificativa |
+|---------|---------------|
+| **Modelo self-service com assinatura** | Cliente cria própria conta, paga mensalidade, configura tudo no painel. Admin (você) gerencia clientes. Gera receita recorrente escalável |
+| **Piloto local (sem VPS)** | Máquina local já tem o bot rodando. Next.js + Prisma + SQLite roda lado a lado sem infra extra. VPS só na Fase 3 (multi-tenant) |
+| **Next.js + Prisma + SQLite no piloto** | SQLite compatível com o banco atual do bot. Futuramente migra pra PostgreSQL sem mudar código (Prisma abstrai) |
+| **NextAuth com roles** | Único login comrole `admin` ou `client` — admin vê todos, cliente vê só os dados dele |
+| **Vercel para deploy web** | Grátis (Hobby), auto-deploy via GitHub, HTTPS, serverless. Painel web sem custo de infra |
+| **VPS repriorizado** | VPS_DEPLOY.md descreve deploy do monólito. Com SaaS, VPS só fará sentido pra workers multi-tenant (Fase 3) |
+| **WhatsApp como fonte mantido** | Diferencial competitivo do produto. Cliente conecta próprio número secundário via QR |
+| **Telegram como destino mantido** | API oficial grátis, botões, formatação, canal público, zero custo por mensagem |
+| **Stripe/Mercado Pago na Fase 0** | Pagamento de assinaturas é requisito de lançamento, não pós-lançamento |
+| **Landing page integrada** | Next.js já serve landing + planos + signup + painel — tudo no mesmo projeto |
+
 ### Arquitetura
 | Decisão | Justificativa |
 |---------|---------------|
@@ -153,14 +215,19 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 ### Stack Tecnológica
 | Tecnologia | Versão | Uso |
 |------------|--------|-----|
-| Node.js | >=18 | Runtime |
-| TypeScript | ^5.4.5 | Linguagem |
-| Telegraf | ^4.16.3 | Bot Telegram |
-| whatsapp-web.js | ^1.25.0 | Cliente WhatsApp |
-| sql.js | ^1.10.3 | SQLite puro JS (WASM) |
-| Winston | ^3.13.0 | Logger |
-| Jest | ^30.4.2 | Testes |
-| ts-jest | ^29.4.11 | TypeScript para Jest |
+| **Node.js** | >=18 | Runtime |
+| **TypeScript** | ^5.4.5 | Linguagem |
+| **Next.js** | 14+ | Web app (admin + client panels) |
+| **Prisma** | 5+ | ORM (SQLite piloto → PostgreSQL futuro) |
+| **NextAuth.js** | 4+ | Autenticação com roles (admin/client) |
+| **Stripe / Mercado Pago** | — | Pagamento de assinaturas |
+| **Telegraf** | ^4.16.3 | Bot Telegram (workers) |
+| **whatsapp-web.js** | ^1.25.0 | Cliente WhatsApp (monolito atual) |
+| **Baileys** | futuro | WhatsApp nativo sem Chromium (workers) |
+| **sql.js** | ^1.10.3 | SQLite WASM (bot atual) |
+| **Winston** | ^3.13.0 | Logger |
+| **Jest** | ^30.4.2 | Testes |
+| **ts-jest** | ^29.4.11 | TypeScript para Jest |
 
 ### Fluxo de Dados
 ```
@@ -506,23 +573,22 @@ npm run test:coverage      # Testes com cobertura
 | 12 | **24/06/2026** | **GitHub Flow: CI/CD workflows (ci.yml, pr.yml), templates (issue + PR), FLUXO.md atualizado, branch protection, repo público. Demanda #5: enriquecimento de nome de produto via URL (isGenericProductName + processor). 114 testes.** | **Concluída** |
 | 13 | **25/06/2026** | **AliExpress Afiliados: branch criada (feature/aliexpress-affiliate-id), template .env.example atualizado, aguardando aprovação do perfil no portals.aliexpress.com para inserir ID real** | **Concluída** |
 | 14 | **25/06/2026** | **AliExpress Afiliados: ID RendaExtraCupuns configurado no .env, build + testes validados, commit e PR** | **Concluída** |
+| 15 | **07/07/2026** | **Decisão estratégica: SaaS self-service com módulo web. Piloto local (Next.js + Prisma + SQLite). VPS repriorizado para Fase 3 (multi-tenant). Documentos atualizados.** | **Concluída** |
 
 ---
 
 ## Proximos Passos
 
-### 🔴 Passos que dependem de voce (cadastro manual):
+### 🔴 Direção Estratégica (Sessão 15 — 07/07/2026):
 
-1. ~~**AliExpress Afiliados**~~ → ✅ **ID configurado: RendaExtraCupuns** 🎉
-   - Status: **Concluído! Tracking ID criado e configurado no .env** ✅
-2. ~~**Shopee Afiliados**~~ → ✅ **ID 18387911117 configurado!**
-3. **VPS para deploy 24/7**
-   - Recomendação: 2GB RAM, 2 vCPUs (Chromium do whatsapp-web.js precisa de RAM)
-   - Ubuntu 22.04 LTS, Node 18+
+1. ✅ **Bot monousuário + 4 plataformas de afiliados — COMPLETO**
+2. 👉 **Piloto Web SaaS (self-service) — PRÓXIMO**
+   - Next.js + Prisma + SQLite → rodando local + Vercel
+   - Cliente cria conta, paga mensalidade, configura tudo no painel
+3. 📌 **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
 
-### 🔵 Melhorias futuras (quando tiver tempo):
-- ~~Melhorar extração de nome dos produtos nas mensagens WhatsApp~~ ✅ **Concluído! isGenericProductName() + fetch da URL**
-- Páginas `/m/cupom-de-desconto` da Shopee: atualmente o código tenta extrair productData e falha (não é página de produto). Avaliar se deve tratar como cupom puro ou ignorar
+### 🔵 Melhorias futuras:
+- Páginas `/m/cupom-de-desconto` da Shopee: avaliar tratamento como cupom puro
 
 ### ✅ Ja configurado (pular):
 - Bot Telegram ✅ @RendaExtraCuponsBot
@@ -580,5 +646,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Ultima atualizacao: 26/06/2026 — Sessao 14 (AliExpress concluido + VPS_DEPLOY.md)*
+*Última atualização: 07/07/2026 — Sessão 15 (Decisão estratégica: SaaS self-service + piloto web local)*
 
