@@ -183,6 +183,11 @@
 
 **Objetivo:** Colocar o sistema em producao
 
+> ⚠️ **Estratégia atual (Sessão 15, 07/07/2026):** O projeto está migrando de "monólito no VPS" para **SaaS self-service com painel web**. Veja abaixo os dois caminhos.
+
+#### Caminho A — Monólito (legado)
+Para deploy do bot monousuário original:
+
 | Acao | Descricao |
 |------|-----------|
 | Configurar ambiente | .env com tokens reais, variaveis de producao |
@@ -200,6 +205,29 @@
 - [ ] .env configurado com tokens reais?
 - [ ] Teste E2E real passou?
 - [ ] Bot rodando 24/7?
+
+#### Caminho B — SaaS Self-Service (ativo)
+Para o módulo web + painel do cliente com assinatura:
+
+| Acao | Descricao |
+|------|-----------|
+| Projeto Next.js | App com landing, auth, dashboard |
+| Prisma + SQLite (piloto) | Schema: User, Tenant, Offer, AffiliateConfig |
+| NextAuth com roles | admin (super) / client (assinante) |
+| Landing + Planos + Signup | Free / R$29 / R$79 — checkout Stripe/MP |
+| Painel do cliente | Dashboard, config grupos/afiliados/TG, métricas |
+| Super admin | Lista clientes, ofertas globais, controle de planos |
+| Deploy Vercel | Auto-deploy via GitHub, HTTPS, grátis |
+| Bot local (fonte) | npm run dev mantido — alimenta o DB compartilhado |
+
+**Skills:** Next.js, Prisma, NextAuth, Stripe/Mercado Pago, Vercel
+
+**Checkpoint:**
+- [ ] Landing + Signup + Login funcionando?
+- [ ] Cliente consegue configurar afiliados e Telegram?
+- [ ] Bot + Web compartilham o mesmo DB?
+- [ ] Admin vê todos os clientes?
+- [ ] Deploy no Vercel funcionando?
 
 ---
 
@@ -221,6 +249,7 @@ FASE                SKILLS
 6. REGISTRAR        graphify --update, Read/Write
 
 7. DEPLOY           CLI, dotenv, deploy (VPS/cloud)
+                    Next.js, Prisma, NextAuth, Stripe/MP, Vercel (SaaS)
 ```
 
 ---
@@ -277,7 +306,10 @@ Ao concluir a demanda:
 | Preciso revisar codigo | code-reviewer | 4/5. Executar/Validar |
 | Preciso analisar arquitetura | graphify | 2. Contexto ou 6. Registrar |
 | Preciso testar | TestEngineer | 5. Validar |
-| Preciso de UI/frontend | frontend-design | 4. Executar |
+| Preciso de UI/frontend | frontend-design, ui-ux-pro-max, shadcn/ui | 4. Executar (SaaS) |
+| Preciso de autenticação | NextAuth.js | 4. Executar (SaaS) |
+| Preciso de ORM/banco | Prisma | 4. Executar (SaaS) |
+| Preciso de pagamento | Stripe / Mercado Pago | 4. Executar (SaaS) |
 | Preciso descobrir mais skills | find-skills | Qualquer fase |
 
 ---
@@ -502,4 +534,4 @@ FLUXO.md                                -> Este arquivo - fluxo de trabalho
 
 ---
 
-*Ultima atualizacao: 24/06/2026*
+*Última atualização: 07/07/2026 — Incluído Caminho B (SaaS Self-Service) na Fase 7*
