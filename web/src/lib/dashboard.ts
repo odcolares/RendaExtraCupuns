@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { startOfDay, subDays } from "date-fns";
+import type { Prisma } from "@/generated/prisma/client";
 
 // ==============================================================
 // Tipos compartilhados
@@ -199,22 +201,22 @@ export async function getPaginatedOffers(
     pageSize = 20,
   } = filters;
 
-  const where: Record<string, unknown> = { tenantId };
+  const where: Prisma.OfferWhereInput = { tenantId };
 
   if (search) {
     where.title = { contains: search };
   }
 
   if (platform) {
-    where.platform = platform;
+    where.platform = platform as "amazon" | "shopee" | "mercadolivre" | "aliexpress" | "outros";
   }
 
   if (status) {
-    where.status = status;
+    where.status = status as "pending" | "published" | "failed";
   }
 
   if (startDate || endDate) {
-    const createdAt: Record<string, Date> = {};
+    const createdAt: Prisma.DateTimeFilter = {};
     if (startDate) createdAt.gte = new Date(startDate);
     if (endDate) createdAt.lte = new Date(endDate);
     where.createdAt = createdAt;
@@ -222,7 +224,7 @@ export async function getPaginatedOffers(
 
   const [data, total] = await Promise.all([
     prisma.offer.findMany({
-      where: where as Parameters<typeof prisma.offer.findMany>[0],
+      where,
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * pageSize,
       take: pageSize,
@@ -236,7 +238,7 @@ export async function getPaginatedOffers(
         createdAt: true,
       },
     }),
-    prisma.offer.count({ where: where as Parameters<typeof prisma.offer.count>[0] }),
+    prisma.offer.count({ where }),
   ]);
 
   return {
@@ -251,6 +253,12 @@ export async function getPaginatedOffers(
 // ==============================================================
 // Update Affiliate Config
 // ==============================================================
+
+export async function getAffiliateConfig(tenantId: string) {
+  return prisma.affiliateConfig.findUnique({
+    where: { tenantId },
+  });
+}
 
 export async function updateAffiliateConfig(
   tenantId: string,

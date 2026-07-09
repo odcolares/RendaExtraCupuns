@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { getDashboardMetrics, getRecentOffers, getOffersByPlatform, getOffersByDay } from "@/lib/dashboard";
+import { getDashboardMetricsAction, getRecentOffersAction, getOffersByDayAction } from "@/actions/affiliates";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"; 
 import { BarChart, Bar, XAxis as XAxis2, YAxis as YAxis2, CartesianGrid as CartesianGrid2 } from "recharts";
 
@@ -23,11 +24,10 @@ export default async function DashboardPage() {
   const user = session.user;
 
   // Get dashboard metrics in parallel for optimal performance
-  const [metrics, recentOffers, offersByDay, offersByPlatform] = await Promise.all([
-    getDashboardMetrics(user.tenantId || ""),
-    getRecentOffers(user.tenantId || ""),
-    getOffersByDay(user.tenantId || ""),
-    getOffersByPlatform(user.tenantId || ""),
+  const [metrics, recentOffers, offersByDay] = await Promise.all([
+    getDashboardMetricsAction(user.tenantId || ""),
+    getRecentOffersAction(user.tenantId || ""),
+    getOffersByDayAction(user.tenantId || ""),
   ]);
 
   const planLabels: Record<string, string> = {
@@ -48,7 +48,7 @@ export default async function DashboardPage() {
     ofertas: day.count,
   }));
 
-  const chartPlatformData = offersByPlatform.map((platform) => ({
+  const chartPlatformData = metrics.platformCounts.map((platform) => ({
     plataforma: platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1),
     quantidade: platform.count,
   }));
@@ -127,18 +127,18 @@ export default async function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {tenant?.affiliateConfig ? (
+          {metrics.affiliateConfig ? (
             <div className="space-y-3">
               {[
-                { label: "Amazon", value: tenant.affiliateConfig.amazonTag },
-                { label: "Shopee", value: tenant.affiliateConfig.shopeeId },
+                { label: "Amazon", value: metrics.affiliateConfig.amazonTag },
+                { label: "Shopee", value: metrics.affiliateConfig.shopeeId },
                 {
                   label: "Mercado Livre",
-                  value: tenant.affiliateConfig.mlId,
+                  value: metrics.affiliateConfig.mlId,
                 },
                 {
                   label: "AliExpress",
-                  value: tenant.affiliateConfig.aliexpressId,
+                  value: metrics.affiliateConfig.aliexpressId,
                 },
               ].map(({ label, value }) => (
                 <div

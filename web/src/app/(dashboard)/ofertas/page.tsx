@@ -1,7 +1,5 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,12 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon, Search, Filter, Download, Eye, Edit, Trash2, Loader2 } from "lucide-react";
+import { getPaginatedOffersAction, getDashboardMetricsAction } from "@/actions/affiliates";
+import Link from "next/link";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Search, Filter, Download, Eye, Edit, Trash2, Loader2, CheckCircle, AlertCircle } from "lucide-react";
-import { getPaginatedOffers } from "@/lib/dashboard";
 
 interface Offer {
   id: string;
@@ -30,82 +28,55 @@ interface OfferFilters {
   search?: string;
   platform?: string;
   status?: string;
-  startDate?: Date;
-  endDate?: Date;
+  startDate?: string;
+  endDate?: string;
   page?: number;
   pageSize?: number;
 }
 
-export default function OffersPage() {
-  const { data: session } = useSession();
-  const [offers, setOffers] = useState<Offer[]>([]);
-  const [totalOffers, setTotalOffers] = useState(0);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [filters, setFilters] = useState<OfferFilters>({ page: 1, pageSize: 10 });
-  const [tenantId, setTenantId] = useState<string | null>(null);
-  const [showDateFilter, setShowDateFilter] = useState(false);
+const platformOptions = [
+  { value: "amazon", label: "Amazon" },
+  { value: "shopee", label: "Shopee" },
+  { value: "mercadolivre", label: "Mercado Livre" },
+  { value: "aliexpress", label: "AliExpress" },
+  { value: "outros", label: "Outros" },
+];
 
-  const platformOptions = [
-    { value: "amazon", label: "Amazon" },
-    { value: "shopee", label: "Shopee" },
-    { value: "mercadolivre", label: "Mercado Livre" },
-    { value: "aliexpress", label: "AliExpress" },
-    { value: "outros", label: "Outros" },
-  ];
+const statusOptions = [
+  { value: "active", label: "Publicado" },
+  { value: "pending", label: "Pendente" },
+  { value: "failed", label: "Falhou" },
+];
 
-  const statusOptions = [
-    { value: "active", label: "Publicado" },
-    { value: "pending", label: "Pendente" },
-    { value: "failed", label: "Falhou" },
-  ];
+export default async function OffersPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const session = await auth();
+  
+  if (!session?.user) {
+    redirect("/login");
+  }
 
-  useEffect(() => {
-    setTenantId(session?.user?.tenantId || null);
-  }, [session?.user?.tenantId]);
+  const user = session.user;
+  const tenantId = user.tenantId;
+  const resolvedSearchParams = await searchParams;
 
-  useEffect(() => {
-    if (tenantId) {
-      loadOffers();
-    }
-  }, [tenantId, filters]);
-
-  const loadOffers = async () => {
-    if (!tenantId) return;
-    
-    setLoading(true);
-    try {
-      const result = await getPaginatedOffers(tenantId, filters);
-      setOffers(result.data);
-      setTotalOffers(result.total);
-      setPage(result.page);
-      setTotalPages(result.totalPages);
-    } catch (error) {
-      console.error("Failed to load offers:", error);
-    } finally {
-      setLoading(false);
-    }
+  const filters = {
+    search: (resolvedSearchParams.search as string) || "",
+    platform: (resolvedSearchParams.platform as string) || "",
+    status: (resolvedSearchParams.status as string) || "",
+    startDate: (resolvedSearchParams.startDate as string) || "",
+    endDate: (resolvedSearchParams.endDate as string) || "",
+    page: parseInt((resolvedSearchParams.page as string) || "1"),
+    pageSize: 10,
   };
 
-  const handleFilterChange = (key: keyof OfferFilters, value: unknown) => {
-    setFilters(prev => ({
-      ...prev,
-      [key]: value as never,
-      page: 1,
-    }));
-  };
-
-  const clearFilters = () => {
-    setFilters({
-      page: 1,
-      pageSize: 10,
-    });
-    setShowDateFilter(false);
-  };
-
-  const hasActiveFilters = filters.search || filters.platform || filters.status || filters.startDate || filters.endDate;
+  const [offersResult, metrics] = await Promise.all([
+    getPaginatedOffersAction(tenantId || "", filters),
+    getDashboardMetricsAction(tenantId || ""),
+  ]);
 
   const formatPrice = (price: number | null) => {
     if (price === null) return "—";
@@ -115,37 +86,14 @@ export default function OffersPage() {
     }).format(price);
   };
 
-  const getPlatformBadgeVariant = (platform: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      amazon: "default",
-      shopee: "secondary",
-      mercadolivre: "outline",
-      aliexpress: "destructive",
-      outros: "outline",
-    };
-    return variants[platform] || "default";
-  };
-
-  const getStatusBadgeVariant = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      published: "default",
-      pending: "secondary",
-      failed: "destructive",
-    };
-    return variants[status] || "default";
-  };
-
   const StatusBadge = ({ status }: { status: string }) => {
-    const variants = {
-      published: "bg-green-100 text-green-800 border-green-200",
+    const variants: Record<string, string> = {
+      active: "bg-green-100 text-green-800 border-green-200",
       pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
       failed: "bg-red-100 text-red-800 border-red-200",
     };
     return (
-      <Badge
-        variant="outline"
-        className={`text-xs ${variants[status as keyof typeof variants] || "bg-gray-100 text-gray-800"}`}
-      >
+      <Badge variant="outline" className={`text-xs ${variants[status] || "bg-gray-100 text-gray-800"}`}>
         {status === "published" ? "Publicado" : status === "pending" ? "Pendente" : status === "failed" ? "Falhou" : status}
       </Badge>
     );
@@ -196,9 +144,13 @@ export default function OffersPage() {
                   id="search"
                   placeholder="Título da oferta..."
                   value={filters.search || ""}
-                  onChange={(e) => handleFilterChange("search", e.target.value)}
+onChange={(e) => {
+                      const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                      params.set("search", e.target.value);
+                      params.set("page", "1");
+                      window.location.search = params.toString();
+                    }}
                   className="pl-10"
-                  disabled={loading}
                 />
               </div>
             </div>
@@ -207,8 +159,16 @@ export default function OffersPage() {
               <Label htmlFor="platform">Plataforma</Label>
               <Select
                 value={filters.platform || ""}
-                onValueChange={(value) => handleFilterChange("platform", value || undefined)}
-                disabled={loading}
+                onValueChange={(value) => {
+                  const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                  if (value) {
+                    params.set("platform", value);
+                  } else {
+                    params.delete("platform");
+                  }
+                  params.set("page", "1");
+                  window.location.search = params.toString();
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todas as plataformas" />
@@ -228,8 +188,16 @@ export default function OffersPage() {
               <Label htmlFor="status">Status</Label>
               <Select
                 value={filters.status || ""}
-                onValueChange={(value) => handleFilterChange("status", value || undefined)}
-                disabled={loading}
+                onValueChange={(value) => {
+                  const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                  if (value) {
+                    params.set("status", value);
+                  } else {
+                    params.delete("status");
+                  }
+                  params.set("page", "1");
+                  window.location.search = params.toString();
+                }}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Todos os status" />
@@ -247,18 +215,17 @@ export default function OffersPage() {
 
             <div className="space-y-2">
               <Label>Data</Label>
-              <Popover open={showDateFilter} onOpenChange={setShowDateFilter}>
-                <PopoverTrigger asChild>
+              <Popover>
+                <PopoverTrigger>
                   <Button
                     variant="outline"
                     className="w-full justify-start text-left font-normal"
-                    disabled={loading}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {filters.startDate || filters.endDate ? (
                       <>
-                        {filters.startDate && format(filters.startDate, "dd/MM/yyyy")}
-                        {filters.endDate && ` - ${format(filters.endDate, "dd/MM/yyyy")}`}
+                        {filters.startDate && format(new Date(filters.startDate), "dd/MM/yyyy")}
+                        {filters.endDate && ` - ${format(new Date(filters.endDate), "dd/MM/yyyy")}`}
                       </>
                     ) : (
                       <span>Selecione o período</span>
@@ -272,13 +239,17 @@ export default function OffersPage() {
                       <Input
                         id="start-date"
                         type="date"
-                        value={filters.startDate ? format(filters.startDate, "yyyy-MM-dd") : ""}
-                        onChange={(e) =>
-                          handleFilterChange(
-                            "startDate",
-                            e.target.value ? new Date(e.target.value) : undefined
-                          )
-                        }
+                        value={filters.startDate || ""}
+                        onChange={(e) => {
+                          const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                          if (e.target.value) {
+                            params.set("startDate", e.target.value);
+                          } else {
+                            params.delete("startDate");
+                          }
+                          params.set("page", "1");
+                          window.location.search = params.toString();
+                        }}
                       />
                     </div>
                     <div className="space-y-2">
@@ -286,21 +257,28 @@ export default function OffersPage() {
                       <Input
                         id="end-date"
                         type="date"
-                        value={filters.endDate ? format(filters.endDate, "yyyy-MM-dd") : ""}
-                        onChange={(e) =>
-                          handleFilterChange(
-                            "endDate",
-                            e.target.value ? new Date(e.target.value) : undefined
-                          )
-                        }
+                        value={filters.endDate || ""}
+                        onChange={(e) => {
+                          const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                          if (e.target.value) {
+                            params.set("endDate", e.target.value);
+                          } else {
+                            params.delete("endDate");
+                          }
+                          params.set("page", "1");
+                          window.location.search = params.toString();
+                        }}
                       />
                     </div>
                     <div className="flex gap-2">
                       <Button
                         size="sm"
                         onClick={() => {
-                          handleFilterChange("startDate", undefined);
-                          handleFilterChange("endDate", undefined);
+                          const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                          params.delete("startDate");
+                          params.delete("endDate");
+                          params.set("page", "1");
+                          window.location.search = params.toString();
                         }}
                       >
                         Limpar
@@ -312,21 +290,23 @@ export default function OffersPage() {
             </div>
           </div>
 
-          {hasActiveFilters && (
+          {filters.search || filters.platform || filters.status || filters.startDate || filters.endDate ? (
             <div className="flex justify-between items-center mt-4 pt-4 border-t">
               <div className="text-sm text-muted-foreground">
-                {totalOffers} oferta{totalOffers !== 1 ? "s" : ""} encontrada{totalOffers !== 1 ? "s" : ""}
+                {offersResult.total} oferta{offersResult.total !== 1 ? "s" : ""} encontrada{offersResult.total !== 1 ? "s" : ""}
               </div>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={clearFilters}
-                disabled={loading}
+                onClick={() => {
+                  const params = new URLSearchParams();
+                  window.location.search = params.toString();
+                }}
               >
                 Limpar filtros
               </Button>
             </div>
-          )}
+          ) : null}
         </CardContent>
       </Card>
 
@@ -335,20 +315,13 @@ export default function OffersPage() {
         <CardHeader>
           <CardTitle>Ofertas Encontradas</CardTitle>
           <CardDescription>
-            {loading
-              ? "Carregando..."
-              : `${totalOffers} oferta${totalOffers !== 1 ? "s" : ""} (Página ${page} de ${totalPages})`}
+            {offersResult.total} oferta{offersResult.total !== 1 ? "s" : ""} (Página {offersResult.page} de {offersResult.totalPages})
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin" />
-              <span className="ml-2">Carregando ofertas...</span>
-            </div>
-          ) : offers.length === 0 ? (
+          {offersResult.data.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <span className="h-12 w-12 mx-auto mb-4 opacity-50">📭</span>
               <p>Nenhuma oferta encontrada com os filtros selecionados.</p>
             </div>
           ) : (
@@ -365,7 +338,7 @@ export default function OffersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {offers.map((offer) => (
+                  {offersResult.data.map((offer) => (
                     <TableRow key={offer.id}>
                       <TableCell className="font-medium max-w-xs truncate" title={offer.title}>
                         {offer.title}
@@ -382,28 +355,13 @@ export default function OffersPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                            title="Visualizar"
-                          >
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Visualizar">
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0"
-                            title="Editar"
-                          >
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Editar">
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                            title="Excluir"
-                          >
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive" title="Excluir">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
@@ -416,29 +374,36 @@ export default function OffersPage() {
           )}
 
           {/* Paginação */}
-          {totalPages > 1 && (
+          {offersResult.totalPages > 1 && (
             <div className="flex items-center justify-between px-2 py-4">
               <div className="text-sm text-muted-foreground">
-                Página {page} de {totalPages}
+                Página {offersResult.page} de {offersResult.totalPages}
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleFilterChange("page", Math.max(1, page - 1))}
-                  disabled={loading || page <= 1}
+onClick={() => {
+                      const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                      params.set("page", Math.max(1, offersResult.page - 1).toString());
+                      window.location.search = params.toString();
+                    }}
+                  disabled={offersResult.page <= 1}
                 >
                   Anterior
                 </Button>
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                {Array.from({ length: Math.min(5, offersResult.totalPages) }, (_, i) => {
                   const pageNumber = i + 1;
                   return (
                     <Button
                       key={pageNumber}
-                      variant={page === pageNumber ? "default" : "outline"}
+                      variant={offersResult.page === pageNumber ? "default" : "outline"}
                       size="sm"
-                      onClick={() => handleFilterChange("page", pageNumber)}
-                      disabled={loading}
+                      onClick={() => {
+                        const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                        params.set("page", pageNumber.toString());
+                        window.location.search = params.toString();
+                      }}
                     >
                       {pageNumber}
                     </Button>
@@ -447,8 +412,12 @@ export default function OffersPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleFilterChange("page", Math.min(totalPages, page + 1))}
-                  disabled={loading || page >= totalPages}
+onClick={() => {
+                      const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
+                      params.set("page", Math.min(offersResult.totalPages, offersResult.page + 1).toString());
+                      window.location.search = params.toString();
+                    }}
+                  disabled={offersResult.page >= offersResult.totalPages}
                 >
                   Próximo
                 </Button>
