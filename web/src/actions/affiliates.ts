@@ -249,7 +249,9 @@ export async function updateFonteAction(
 ) {
   const fonte = await prisma.fonte.update({
     where: { id },
-    data: {
+  await prisma.fonte.delete({
+    where: { id, tenantId },
+  });
       name: data.name,
       url: data.url,
       isActive: data.isActive,
