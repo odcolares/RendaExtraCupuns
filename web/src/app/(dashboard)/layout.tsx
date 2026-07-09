@@ -55,36 +55,16 @@ export default async function DashboardLayout({
           <SidebarContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard">
-                    <Home className="mr-2 h-4 w-4" />
-                    Dashboard
-                  </Link>
-                </SidebarMenuButton>
+                <SidebarMenuButton render={<Link href="/dashboard"><Home className="mr-2 h-4 w-4" />Dashboard</Link>} />
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/ofertas">
-                    <MessageCircle className="mr-2 h-4 w-4" />
-                    Ofertas
-                  </Link>
-                </SidebarMenuButton>
+                <SidebarMenuButton render={<Link href="/dashboard/ofertas"><MessageCircle className="mr-2 h-4 w-4" />Ofertas</Link>} />
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/afiliados">
-                    <Store className="mr-2 h-4 w-4" />
-                    Afiliados
-                  </Link>
-                </SidebarMenuButton>
+                <SidebarMenuButton render={<Link href="/dashboard/afiliados"><Store className="mr-2 h-4 w-4" />Afiliados</Link>} />
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/dashboard/onboarding">
-                    <Clock className="mr-2 h-4 w-4" />
-                    Onboarding
-                  </Link>
-                </SidebarMenuButton>
+                <SidebarMenuButton render={<Link href="/dashboard/onboarding"><Clock className="mr-2 h-4 w-4" />Onboarding</Link>} />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarContent>
