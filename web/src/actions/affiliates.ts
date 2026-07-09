@@ -227,6 +227,13 @@ export async function createFonteAction(
       url: data.url,
       isActive: data.isActive ?? true,
     },
+  const fonte = await prisma.fonte.update({
+    where: { id, tenantId },
+    data: {
+      name: data.name,
+      url: data.url,
+      isActive: data.isActive,
+    },
   });
   revalidatePath("/dashboard");
   return fonte;
