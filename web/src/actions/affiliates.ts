@@ -86,7 +86,7 @@ export async function getDashboardMetricsAction(tenantId: string) {
     failedOffers,
     todayOffers,
     thisMonthOffers,
-    activeSources: 0,
+    activeSources: await prisma.fonte.count({ where: { tenantId, isActive: true }}),
     plan: tenant?.plan ?? "free",
     status: tenant?.status ?? "active",
     platformCounts: platformCounts.map((p) => ({
@@ -193,4 +193,77 @@ export async function getPaginatedOffersAction(
     pageSize,
     totalPages: Math.ceil(total / pageSize),
   };
+}
+export async function getFontesAction(tenantId: string) {
+  return prisma.fonte.findMany({
+    where: { tenantId },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      name: true,
+      url: true,
+      isActive: true,
+      lastChecked: true,
+      totalOffersFound: true,
+      totalOffersPublished: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
+export async function createFonteAction(
+  tenantId: string,
+  data: {
+    name: string;
+    url: string;
+    isActive?: boolean;
+  }
+) {
+  const fonte = await prisma.fonte.create({
+    data: {
+      tenantId,
+      name: data.name,
+      url: data.url,
+      isActive: data.isActive ?? true,
+    },
+  const fonte = await prisma.fonte.update({
+    where: { id, tenantId },
+    data: {
+      name: data.name,
+      url: data.url,
+      isActive: data.isActive,
+    },
+  });
+  revalidatePath("/dashboard");
+  return fonte;
+}
+
+export async function updateFonteAction(
+  id: string,
+  data: {
+    name?: string;
+    url?: string;
+    isActive?: boolean;
+  }
+) {
+  const fonte = await prisma.fonte.update({
+    where: { id },
+  await prisma.fonte.delete({
+    where: { id, tenantId },
+  });
+      name: data.name,
+      url: data.url,
+      isActive: data.isActive,
+    },
+  });
+  revalidatePath("/dashboard");
+  return fonte;
+}
+
+export async function deleteFonteAction(id: string) {
+  await prisma.fonte.delete({
+    where: { id },
+  });
+  revalidatePath("/dashboard");
 }
