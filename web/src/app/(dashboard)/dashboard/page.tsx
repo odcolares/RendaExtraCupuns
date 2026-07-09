@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,7 +9,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { redirect } from "next/navigation";
+import { getDashboardMetrics, getRecentOffers, getOffersByPlatform, getOffersByDay } from "@/lib/dashboard";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"; 
+import { BarChart, Bar, XAxis as XAxis2, YAxis as YAxis2, CartesianGrid as CartesianGrid2 } from "recharts";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -21,15 +22,13 @@ export default async function DashboardPage() {
 
   const user = session.user;
 
-  const tenant = user.tenantId
-    ? await prisma.tenant.findUnique({
-        where: { id: user.tenantId },
-        include: {
-          affiliateConfig: true,
-          _count: { select: { offers: true } },
-        },
-      })
-    : null;
+  // Get dashboard metrics in parallel for optimal performance
+  const [metrics, recentOffers, offersByDay, offersByPlatform] = await Promise.all([
+    getDashboardMetrics(user.tenantId || ""),
+    getRecentOffers(user.tenantId || ""),
+    getOffersByDay(user.tenantId || ""),
+    getOffersByPlatform(user.tenantId || ""),
+  ]);
 
   const planLabels: Record<string, string> = {
     free: "Free",
@@ -43,6 +42,17 @@ export default async function DashboardPage() {
     cancelled: "secondary",
   };
 
+  // Transform data for chart components
+  const chartData = offersByDay.map((day) => ({
+    date: day.date,
+    ofertas: day.count,
+  }));
+
+  const chartPlatformData = offersByPlatform.map((platform) => ({
+    plataforma: platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1),
+    quantidade: platform.count,
+  }));
+
   return (
     <div className="space-y-8">
       <div>
@@ -52,7 +62,8 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      {/* Cards de Métricas */}
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground font-medium">
@@ -62,13 +73,11 @@ export default async function DashboardPage() {
           <CardContent>
             <div className="flex items-center gap-2">
               <span className="text-2xl font-bold">
-                {tenant ? planLabels[tenant.plan] : "—"}
+                {planLabels[metrics.plan] || metrics.plan}
               </span>
-              {tenant && (
-                <Badge variant={statusVariants[tenant.status]}>
-                  {tenant.status === "active" ? "Ativo" : tenant.status}
-                </Badge>
-              )}
+              <Badge variant={statusVariants[metrics.status]}>
+                {metrics.status === "active" ? "Ativo" : metrics.status}
+              </Badge>
             </div>
           </CardContent>
         </Card>
@@ -80,22 +89,32 @@ export default async function DashboardPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <span className="text-2xl font-bold">
-              {tenant?._count.offers ?? 0}
-            </span>
+            <span className="text-2xl font-bold">{metrics.totalOffers}</span>
+            <p className="text-xs text-muted-foreground mt-1">
+              {metrics.publishedOffers} publicadas, {metrics.pendingOffers} pendentes
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground font-medium">
-              Status
+              Ofertas Hoje
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <span className="text-2xl font-bold">
-              {tenant?.status === "active" ? "Operacional" : "Pendente"}
-            </span>
+            <span className="text-2xl font-bold">{metrics.todayOffers}</span>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground font-medium">
+              Ativas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <span className="text-2xl font-bold">{metrics.activeSources}</span>
           </CardContent>
         </Card>
       </div>

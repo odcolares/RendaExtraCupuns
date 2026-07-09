@@ -11,6 +11,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarTrigger,
+  SidebarContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarInset,
+} from "@/components/ui/sidebar";
+import { Home, Store, MessageCircle, Clock } from "lucide-react";
 
 export default async function DashboardLayout({
   children,
@@ -38,61 +49,105 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 z-50 w-full border-b bg-background">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/dashboard" className="font-bold text-xl">
-            <span className="text-primary">RendaExtra</span>
-            <span className="text-muted-foreground">Cupuns</span>
-          </Link>
+    <SidebarProvider>
+      <div className="flex min-h-screen">
+        <Sidebar className="border-r">
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard">
+                    <Home className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/ofertas">
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Ofertas
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/afiliados">
+                    <Store className="mr-2 h-4 w-4" />
+                    Afiliados
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/dashboard/onboarding">
+                    <Clock className="mr-2 h-4 w-4" />
+                    Onboarding
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+        </Sidebar>
 
-          <div className="flex items-center gap-4">
-            {user.role === "admin" && (
-              <Link href="/admin">
-                <Button variant="ghost" size="sm">
-                  Admin
-                </Button>
+        <SidebarInset className="flex-1">
+          <header className="sticky top-0 z-50 w-full border-b bg-background">
+            <div className="flex h-16 items-center justify-between px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Link href="/dashboard" className="font-bold text-xl">
+                <span className="text-primary">RendaExtra</span>
+                <span className="text-muted-foreground">Cupuns</span>
               </Link>
-            )}
-            <DropdownMenu>
-              <DropdownMenuTrigger className="cursor-pointer">
-                <Avatar className="h-9 w-9">
-                  <AvatarFallback>{initials || "U"}</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col">
-                    <span>{user.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {user.email}
-                    </span>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <Link href="/dashboard">
-                  <DropdownMenuItem>Dashboard</DropdownMenuItem>
-                </Link>
+
+              <div className="flex items-center gap-4">
                 {user.role === "admin" && (
                   <Link href="/admin">
-                    <DropdownMenuItem>Admin</DropdownMenuItem>
+                    <Button variant="ghost" size="sm">
+                      Admin
+                    </Button>
                   </Link>
                 )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <form action={handleLogout} className="w-full">
-                    <button type="submit" className="w-full text-left">
-                      Sair
-                    </button>
-                  </form>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </header>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="cursor-pointer">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback>{initials || "U"}</AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>
+                      <div className="flex flex-col">
+                        <span>{user.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {user.email}
+                        </span>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <Link href="/dashboard">
+                      <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                    </Link>
+                    {user.role === "admin" && (
+                      <Link href="/admin">
+                        <DropdownMenuItem>Admin</DropdownMenuItem>
+                      </Link>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <form action={handleLogout} className="w-full">
+                        <button type="submit" className="w-full text-left">
+                          Sair
+                        </button>
+                      </form>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </header>
 
-      <main className="flex-1 container mx-auto px-4 py-8">{children}</main>
-    </div>
+          <main className="flex-1 p-8 pt-20">{children}</main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 }
