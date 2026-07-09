@@ -63,6 +63,9 @@ export default async function DashboardLayout({
               <SidebarMenuItem>
                 <SidebarMenuButton render={<Link href="/dashboard/afiliados"><Store className="mr-2 h-4 w-4" />Afiliados</Link>} />
               </SidebarMenuItem>
+               <SidebarMenuItem>
+                 <SidebarMenuButton render={<Link href="/dashboard/fontes"><Store className="mr-2 h-4 w-4" />Fontes</Link>} />
+               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton render={<Link href="/dashboard/onboarding"><Clock className="mr-2 h-4 w-4" />Onboarding</Link>} />
               </SidebarMenuItem>

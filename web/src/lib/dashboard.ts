@@ -95,7 +95,7 @@ export async function getDashboardMetrics(
     failedOffers,
     todayOffers,
     thisMonthOffers,
-    activeSources: 0, // será populado quando tivermos fontes cadastradas
+      activeSources: await prisma.fonte.count({ where: { tenantId, isActive: true }}),
     plan: tenant?.plan ?? "free",
     status: tenant?.status ?? "active",
   };

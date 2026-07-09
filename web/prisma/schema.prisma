@@ -104,6 +104,7 @@ model Tenant {
   users          User[]
   offers         Offer[]
   affiliateConfig AffiliateConfig?
+  fontes         Fonte[]
 }
 
 model Offer {
@@ -134,4 +135,22 @@ model AffiliateConfig {
 
   tenantId String @unique
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// Fonte (WhastApp Group/Newsletter being monitored)
+model Fonte {
+  id        String   @id @default(cuid())
+  name      String
+  url       String   // WhatsApp group/newsletter ID or invite link
+  isActive  Boolean  @default(true)
+  lastChecked DateTime  @default(now())
+  totalOffersFound  Int   @default(0)
+  totalOffersPublished  Int   @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
 }
