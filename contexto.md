@@ -112,28 +112,29 @@ Criar um agente (bot) que monitora ofertas em grupos WhatsApp, gera links de afi
 - [x] Cadastrar Mercado Livre Afiliados — ID obtido (88981950)
 - [ ] ~~Fazer deploy em VPS/servidor cloud (24/7)~~ → **Repriorizado: piloto web SaaS local primeiro**
 
-### Fase 8: PILOTO WEB SAAS — NOVO (07/07/2026)
+### Fase 8: PILOTO WEB SAAS — ATUALIZADO (10/07/2026)
 
 ```
 Modelo: Self-service com assinatura mensal
   ├── Cliente: cria conta, paga mensalidade, configura grupos/afiliados/TG, vê métricas
   └── Admin: super admin com gestão de clientes + dashboard geral
-Stack: Next.js + Prisma + SQLite (piloto) / PostgreSQL (futuro) + Vercel (deploy web)
+Stack: Next.js + Prisma + Turso (SQLite compatível) + Vercel (deploy web)
 ```
 
-**Stack Web (Fase 0 implementada):**
+**Stack Web (Fase 0 + Fase 1 + Deploy):**
 | Tecnologia | Versão | Uso |
 |------------|--------|-----|
-| **Next.js** | 16.0.0 | Framework React (App Router, Server Actions, RSC) |
+| **Next.js** | 16.0.0 → 16.2.10 | Framework React (App Router, Server Actions, RSC) |
 | **React** | 19.1.0 | UI library |
 | **TypeScript** | 5.x | Tipagem |
-| **Prisma** | 7.8.0 | ORM + SQLite |
+| **Prisma** | 7.8.0 | ORM (adapter libSQL) |
+| **Turso (libSQL)** | — | Banco serverless (SQLite-compatível, AWS us-east-1) |
 | **NextAuth** | 5.0.0-beta.28 | Auth (Credentials provider, JWT, PrismaAdapter) |
 | **Stripe** | 18.x | Pagamento (Checkout + Webhook assinaturas) |
-| **shadcn/ui** | latest | 11 componentes (Button, Card, Input, Dialog, Dropdown, etc.) |
+| **shadcn/ui** | latest | 11+ componentes (Button, Card, Input, Dialog, etc.) |
 | **Tailwind CSS** | 4.x | Estilização |
 | **bcryptjs** | 2.4.3 | Hash de senhas |
-| **Vercel** | — | Deploy (vercel.json configurado) |
+| **Vercel** | — | Deploy production (rendaextra-cupuns.vercel.app) |
 
 **Fase 0 — Fundação (Next.js + Auth + DB + Pagamento) ✅**
 - [x] Projeto Next.js + estrutura de pastas
@@ -142,14 +143,26 @@ Stack: Next.js + Prisma + SQLite (piloto) / PostgreSQL (futuro) + Vercel (deploy
 - [x] Landing page com planos (Free / R$29 / R$79)
 - [x] Signup + Login
 - [x] Stripe/Mercado Pago (modo teste)
-- [x] Deploy Vercel (vercel.json configurado)
+- [x] Deploy Vercel configurado (vercel.json)
 
-**Fase 1 — Painel do Cliente**
-- [ ] Dashboard: ofertas publicadas, fontes ativas, métricas
-- [ ] Onboarding wizard (conectar WhatsApp, config Telegram)
-- [ ] Configuração de afiliados (Amazon, ML, Shopee, AliExpress)
-- [ ] Histórico de ofertas com busca/filtro
-- [ ] Métricas: total ofertas, por plataforma, por período
+**Fase 1 — Painel do Cliente ✅ (PRs #10, #11, #12 — 09/07/2026)**
+- [x] Dashboard com métricas reais: ofertas publicadas, fontes ativas, total/período
+- [x] Onboarding wizard (conectar WhatsApp, config Telegram)
+- [x] Configuração de afiliados (Amazon, ML, Shopee, AliExpress)
+- [x] Histórico de ofertas com busca/filtro
+- [x] Métricas: total ofertas, por plataforma, por período
+- [x] Gestão de fontes WhatsApp (CRUD completo: criar, editar, excluir fontes)
+- [x] Sidebar de navegação com links para todas as páginas
+- [x] Página /dashboard/fontes para gerenciar grupos/newsletters
+- [x] Modelo Fonte adicionado ao banco + migração
+
+**Fase 1.5 — Turso + Deploy Vercel ✅ (10/07/2026)**
+- [x] Banco Turso serverless criado (libSQL, AWS us-east-1)
+- [x] Prisma adaptado com @prisma/adapter-libsql
+- [x] Migrations SQL aplicadas ao Turso (8 tabelas)
+- [x] DATABASE_URL + TURSO_AUTH_TOKEN configurados no Vercel
+- [x] Deploy Vercel production — build limpo, site live
+- [x] URL: https://web-gamma-hazel-30.vercel.app
 
 **Fase 2 — Super Admin**
 - [ ] Lista de clientes (status, plano, última atividade, ofertas)
@@ -588,12 +601,16 @@ npm run test:coverage      # Testes com cobertura
 | 13 | **25/06/2026** | **AliExpress Afiliados: branch criada (feature/aliexpress-affiliate-id), template .env.example atualizado, aguardando aprovação do perfil no portals.aliexpress.com para inserir ID real** | **Concluída** |
 | 14 | **25/06/2026** | **AliExpress Afiliados: ID RendaExtraCupuns configurado no .env, build + testes validados, commit e PR** | **Concluída** |
 | 15 | **07/07/2026** | **Fase 0 SaaS completa: Next.js 16 + Prisma 7 + SQLite + shadcn/ui + NextAuth v5 + Stripe + Landing + Login/Signup + Dashboard cliente + Admin panel + Webhook Stripe + Vercel config. Build aprovado, PR #8 mergeado (717955f).** | **Concluída** |
+| 16 | **09/07/2026** | **Fase 1 — Painel do Cliente completo (PR #10): Dashboard com métricas reais, onboarding wizard, configuração de afiliados, histórico de ofertas com busca/filtro, sidebar de navegação. (3383315)** | **Concluída** |
+| 17 | **09/07/2026** | **Fase 1 — Final fixes (PR #11): Sidebar completa, calendário, popover, select, tooltip, hook use-mobile, métricas reais no dashboard. (49078a2)** | **Concluída** |
+| 18 | **09/07/2026** | **Fase 1 — Gestão de fontes WhatsApp (PR #12): Modelo Fonte, CRUD de fontes, página /dashboard/fontes, métricas de fontes ativas. (7ff5f24)** | **Concluída** |
+| 19 | **10/07/2026** | **Deploy Vercel + Turso: Turso serverless (libSQL, AWS us-east-1), Prisma adapter, migrations aplicadas, env vars Vercel configuradas, build + deploy production, site live** | **Concluída** |
 
 ---
 
 ## Proximos Passos
 
-### 🔴 Direção Estratégica (Sessão 15 — 07/07/2026):
+### 🔴 Direção Estratégica (10/07/2026):
 
 1. ✅ **Bot monousuário + 4 plataformas de afiliados — COMPLETO**
 2. ✅ **Piloto Web SaaS (Fase 0) — COMPLETO**
@@ -602,11 +619,23 @@ npm run test:coverage      # Testes com cobertura
    - Landing page + Login/Signup + Dashboard cliente + Admin panel
    - Stripe Checkout + Webhook subscriptions
    - Vercel configurado (build aprovado, zero erros TS)
-3. 👉 **Fase 1 — Painel do Cliente completo — PRÓXIMO**
-   - Onboarding do cliente (configurar WhatsApp, Telegram, grupos)
+3. ✅ **Fase 1 — Painel do Cliente completo (PRs #10, #11, #12) — COMPLETO**
+   - Dashboard com métricas reais (ofertas publicadas, fontes ativas)
+   - Onboarding wizard completo
    - Gestão de afiliados e ofertas no painel
-   - Métricas e relatórios
-4. 📌 **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
+   - CRUD de fontes WhatsApp (/dashboard/fontes)
+   - Sidebar de navegação com todas as páginas
+4. 👉 **Fase 2 — Super Admin — PRÓXIMO**
+   - Lista de clientes com detalhes (status, plano, última atividade)
+   - Controle de planos (ativar/suspender/mudar)
+   - Visão geral: clientes ativos, ofertas globais, faturamento estimado
+5. ✅ **Deploy Vercel + Turso — CONCLUÍDO (10/07/2026)**
+   - Banco Turso serverless em AWS us-east-1
+   - Prisma adaptado com libSQL adapter
+   - Migrations aplicadas ao Turso
+   - Site live em https://web-gamma-hazel-30.vercel.app
+6. 🌐 **Dominio próprio** — Configurar domínio personalizado no Vercel (ex: rendaextra.app)
+7. 📌 **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
 
 ### 🔵 Melhorias futuras:
 - Páginas `/m/cupom-de-desconto` da Shopee: avaliar tratamento como cupom puro
@@ -672,5 +701,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Última atualização: 07/07/2026 — Sessão 15 (Fase 0 SaaS completa: Next.js + Prisma + Auth + Stripe + Landing + Dashboard + Admin)*
+*Última atualização: 10/07/2026 — Fase 1.5 concluída (Turso serverless + Deploy Vercel production + Site live)*
 

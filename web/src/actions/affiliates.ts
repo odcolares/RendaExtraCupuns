@@ -227,6 +227,20 @@ export async function createFonteAction(
       url: data.url,
       isActive: data.isActive ?? true,
     },
+  });
+  revalidatePath("/dashboard");
+  return fonte;
+}
+
+export async function updateFonteAction(
+  id: string,
+  tenantId: string,
+  data: {
+    name?: string;
+    url?: string;
+    isActive?: boolean;
+  }
+) {
   const fonte = await prisma.fonte.update({
     where: { id, tenantId },
     data: {
@@ -239,31 +253,9 @@ export async function createFonteAction(
   return fonte;
 }
 
-export async function updateFonteAction(
-  id: string,
-  data: {
-    name?: string;
-    url?: string;
-    isActive?: boolean;
-  }
-) {
-  const fonte = await prisma.fonte.update({
-    where: { id },
+export async function deleteFonteAction(id: string, tenantId: string) {
   await prisma.fonte.delete({
     where: { id, tenantId },
-  });
-      name: data.name,
-      url: data.url,
-      isActive: data.isActive,
-    },
-  });
-  revalidatePath("/dashboard");
-  return fonte;
-}
-
-export async function deleteFonteAction(id: string) {
-  await prisma.fonte.delete({
-    where: { id },
   });
   revalidatePath("/dashboard");
 }

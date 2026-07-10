@@ -4,7 +4,7 @@
 
 Sistema automatizado que monitora ofertas em grupos WhatsApp, gera links de afiliado e publica em canal próprio no **Telegram**, transformando ofertas em fonte de renda extra via marketing de afiliados.
 
-**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | **🌐 Web SaaS Fase 0 ✅** | Deploy VPS ⏳
+**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | **🌐 Web SaaS Fase 0+1 ✅** | **Turso serverless ✅** | **Deploy Vercel 🟢 Live**
 
 ---
 
@@ -98,20 +98,21 @@ Usuario clica → Compra → Comissao
 | **Shopee** | 5-10% | shopee.com.br/afiliados — **ID 18387911117 ✅** |
 | **Mercado Livre** | 3-12% | mercadolivre.com.br/afiliados |
 
-### Web SaaS (Fase 0 — Piloto)
+### Web SaaS (Fase 0+1 — Piloto + Turso + Deploy)
 
 | Tecnologia | Versão | Uso |
 |------------|--------|-----|
-| **Next.js** | 16.0.0 | Framework React (App Router, RSC) |
+| **Next.js** | 16.2.10 | Framework React (App Router, RSC) |
 | **React** | 19.1.0 | UI library |
 | **TypeScript** | 5.x | Tipagem |
-| **Prisma** | 7.8.0 | ORM + SQLite |
+| **Prisma** | 7.8.0 | ORM (adapter libSQL) |
+| **Turso (libSQL)** | — | Banco serverless (AWS us-east-1) |
 | **NextAuth** | 5.0.0-beta | Auth (Credentials, JWT, PrismaAdapter) |
 | **Stripe** | 18.x | Pagamento (Checkout + Webhook) |
-| **shadcn/ui** | latest | 11 componentes de UI |
+| **shadcn/ui** | latest | 11+ componentes de UI |
 | **Tailwind CSS** | 4.x | Estilização |
 | **bcryptjs** | 2.4.3 | Hash de senhas |
-| **Vercel** | — | Deploy configurado |
+| **Vercel** | — | Deploy production (live) |
 
 ---
 
@@ -403,9 +404,9 @@ npm run lint           # Verificar erros TypeScript
 
 ---
 
-## Pendências (Deploy)
+## Status do Projeto
 
-### ✅ Já configurado
+### ✅ Completado
 - Bot Telegram @RendaExtraCuponsBot ✅
 - Canal @Ofertas_cupons_agora (ID: -1004303411968) ✅
 - Amazon Afiliados (tag: odcolares2026-20) ✅
@@ -415,15 +416,18 @@ npm run lint           # Verificar erros TypeScript
 - WhatsApp sessão salva ✅
 - PM2 ecosystem.config.cjs ✅
 - Build script com postbuild ✅
-- **Ofertas multi-plataforma**: Shopee (PS5 Pro), ML (Caneca), Amazon — pipeline validado com +barto ofertas ✅
-- **URL resolution**: Shopee (`shp.ee`, `s.shopee.com.br`), AliExpress (`s.click.aliexpress.com`), desconhecidas (`tidd.ly`) resolvidas via HTTP redirect ✅
-- **Shopee Afiliados ID**: 18387911117 ✅ — links com `?af_id=18387911117`
+- **Ofertas multi-plataforma**: Shopee, ML, Amazon, AliExpress — pipeline validado ✅
+- **URL resolution**: Shopee (`shp.ee`), AliExpress (`s.click.aliexpress.com`), desconhecidas (`tidd.ly`) resolvidas via HTTP redirect ✅
+- **Shopee Afiliados ID**: 18387911117 ✅
 - **GitHub**: [github.com/odcolares/RendaExtraCupuns](https://github.com/odcolares/RendaExtraCupuns) ✅
+- **Web SaaS Fase 0+1**: Next.js + Prisma + Auth + Stripe + shadcn/ui ✅
+- **Turso serverless**: Banco libSQL em AWS us-east-1 ✅
+- **Deploy Vercel**: https://web-gamma-hazel-30.vercel.app 🟢 Live
 
-### 🔴 Ainda necessário (voce) — quando tiver as contas
-1. ~~**AliExpress Afiliados**~~ → ✅ **Concluído! ID: RendaExtraCupuns**
-2. ~~**Shopee Afiliados**~~ → ✅ **Concluído! ID 18387911117**
-3. **VPS para deploy 24/7** — Ubuntu 22.04, 2GB RAM, Node 18+
+### 🔴 Próximos passos
+1. 👉 **Fase 2 — Super Admin**: Lista de clientes, controle de planos, visão geral de faturamento
+2. **Domínio próprio**: Configurar domínio personalizado no Vercel (ex: rendaextra.app)
+3. **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
 
 ---
 
@@ -454,6 +458,6 @@ graphify explain "X"        # Explicar conceito
 
 ---
 
-**Status**: **Alpha** operacional. 4 fontes WhatsApp monitoradas. Amazon + Shopee + Mercado Livre configurados e testados E2E. Código no [GitHub](https://github.com/odcolares/RendaExtraCupuns). Deploy aguardando VPS. 🚀
+**Status**: **Alpha** operacional. 4 fontes WhatsApp monitoradas. Amazon + Shopee + Mercado Livre + AliExpress configurados e testados E2E. Código no [GitHub](https://github.com/odcolares/RendaExtraCupuns). 🌐 **Web SaaS (Fase 0+1) live em https://web-gamma-hazel-30.vercel.app** com Turso serverless. 🚀
 
-*Última atualização: 07/07/2026 — Fase 0 SaaS completa (Next.js + Prisma + Auth + Stripe)*
+*Última atualização: 10/07/2026 — Fase 1.5 concluída (Turso serverless + Deploy Vercel production)*
