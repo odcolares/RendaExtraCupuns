@@ -29,6 +29,19 @@ import type { OfferData } from "./types";
 import type { WhatsAppOfferData, ProcessResult } from "./whatsapp/types";
 import type { Platform } from "./affiliates/types";
 
+// ==============================================================
+// Helpers
+// ==============================================================
+
+/**
+ * Verifica se a URL é de cupom da Shopee (/m/cupom-de-desconto/).
+ * Essas são páginas sociais de cupons, não produtos —
+ * não devem tentar gerar link de afiliado de produto.
+ */
+function isShopeeCouponUrl(url: string): boolean {
+  return /shopee\.com\.br\/m\/cupom-de-desconto\//i.test(url);
+}
+
 const log = createModuleLogger("Processor");
 
 // ==============================================================
@@ -59,7 +72,7 @@ export async function processOffer(
   log.info("Iniciando pipeline", { url: url.substring(0, 60) });
 
   // ── 1. Verificar duplicata ──
-  if (isDuplicate(url)) {
+  if (await isDuplicate(url)) {
     log.warn("Oferta duplicada ignorada", { url: url.substring(0, 60) });
     return { success: false, error: "duplicate" };
   }
@@ -102,11 +115,19 @@ export async function processOffer(
   }
   log.info("Plataforma detectada", { platform: platform || offerData.platform });
 
+  // ── 3b. Detectar URL de cupom Shopee (/m/cupom-de-desconto/) ──
+  // Essas são páginas sociais de cupons, não produtos — pula geração de link de produto
+  const isCouponUrl = isShopeeCouponUrl(url);
+  if (isCouponUrl) {
+    log.info("URL de cupom Shopee detectada — pulando link de produto", { url });
+  }
+
   // ── 4. Gerar link de afiliado ──
   let affiliateLink: string | null = null;
   const effectivePlatform = (platform || offerData.platform) as Platform | null;
 
-  if (effectivePlatform) {
+  // Só tenta gerar link de afiliado de PRODUTO se NÃO for URL de cupom Shopee
+  if (effectivePlatform && !isCouponUrl) {
     try {
       const linkResult = await generateAffiliateLink(url, effectivePlatform);
       if (linkResult) {
@@ -262,9 +283,9 @@ export async function processOffer(
       }`,
     };
 
-    const dbId = insertOffer(couponOffer, undefined);
+    const dbId = await insertOffer(couponOffer, undefined);
     if (dbId && published) {
-      markAsPublished(dbId);
+      await markAsPublished(dbId);
     }
 
     log.info("Pipeline de cupom concluído", {
@@ -290,14 +311,14 @@ export async function processOffer(
     imageUrl: offerData.imageUrl,
   };
 
-  const dbId = insertOffer(offerForDb, affiliateLink || undefined);
+  const dbId = await insertOffer(offerForDb, affiliateLink || undefined);
 
   if (dbId && published) {
-    markAsPublished(dbId);
+    await markAsPublished(dbId);
   }
 
   if (dbId && affiliateLink) {
-    updateAffiliateLink(dbId, affiliateLink);
+    await updateAffiliateLink(dbId, affiliateLink);
   }
 
   log.info("Pipeline concluído", {

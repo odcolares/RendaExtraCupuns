@@ -1,32 +1,59 @@
 /**
- * CRUD de ofertas no banco SQLite.
+ * CRUD de ofertas no banco via Prisma (Turso/libSQL).
  *
- * Operações síncronas sobre a tabela 'offers'.
+ * Substitui o sql.js local — agora grava no mesmo Turso que o web SaaS usa.
  */
 
-import { getDb, saveToDisk } from "./index";
+import { prisma } from "../lib/prisma";
 import { createModuleLogger } from "../utils";
 import type { OfferData } from "../types";
 
 const log = createModuleLogger("DatabaseOffers");
 
 // ==============================================================
-// Types
+// Helpers
 // ==============================================================
 
-export interface OfferRow {
-  id: number;
-  name: string;
-  original_price: number | null;
-  current_price: number | null;
-  discount: number | null;
-  platform: string;
-  original_url: string;
-  affiliate_link: string | null;
-  offer_data: string | null;
-  detected_at: string;
-  published: boolean;
-  published_at: string | null;
+/**
+ * Obtém o tenantId do cliente de teste (cliente@teste.com).
+ * Cache em memória para evitar queries repetidas.
+ */
+let cachedTestTenantId: string | null = null;
+
+async function getTestTenantId(): Promise<string> {
+  if (cachedTestTenantId) return cachedTestTenantId;
+
+  const user = await prisma.user.findUnique({
+    where: { email: "cliente@teste.com" },
+    select: { tenantId: true },
+  });
+
+  if (!user?.tenantId) {
+    throw new Error("Tenant do cliente de teste não encontrado. Rode o seed primeiro.");
+  }
+
+  cachedTestTenantId = user.tenantId;
+  log.debug("Tenant de teste resolvido", { tenantId: cachedTestTenantId });
+  return cachedTestTenantId;
+}
+
+/**
+ * Mapeia plataforma do bot para enum do Prisma.
+ */
+function mapPlatform(platform: string): "amazon" | "shopee" | "mercadolivre" | "aliexpress" | "outros" {
+  const p = platform.toLowerCase();
+  if (p.includes("amazon")) return "amazon";
+  if (p.includes("shopee")) return "shopee";
+  if (p.includes("mercadolivre") || p.includes("ml.uv") || p.includes("meli.la")) return "mercadolivre";
+  if (p.includes("aliexpress")) return "aliexpress";
+  return "outros";
+}
+
+/**
+ * Mapeia status do bot para enum do Prisma.
+ */
+function mapStatus(published: boolean): "pending" | "published" | "failed" {
+  return published ? "published" : "pending";
 }
 
 // ==============================================================
@@ -34,45 +61,38 @@ export interface OfferRow {
 // ==============================================================
 
 /**
- * Insere uma nova oferta no banco.
- * Retorna o ID gerado, ou null se já existir (url duplicada).
+ * Insere uma nova oferta no banco associada ao tenant de teste.
+ * Retorna o ID gerado, ou null se já existir (url duplicada no dia).
  */
-export function insertOffer(
+export async function insertOffer(
   offer: OfferData,
   affiliateLink?: string
-): number | null {
-  const db = getDb();
+): Promise<string | null> {
+  const tenantId = await getTestTenantId();
 
-  // Verificar duplicata primeiro
-  if (isDuplicate(offer.originalUrl || "")) {
+  // Verificar duplicata (mesma URL no mesmo dia)
+  if (await isDuplicate(offer.originalUrl || "")) {
     log.debug("Oferta duplicada ignorada", { url: offer.originalUrl });
     return null;
   }
 
-  const stmt = db.prepare(`
-    INSERT INTO offers (name, original_price, current_price, discount, platform,
-                        original_url, affiliate_link, offer_data)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `);
+  const created = await prisma.offer.create({
+    data: {
+      title: offer.name,
+      description: offer.description ?? null,
+      url: offer.originalUrl || "",
+      platform: mapPlatform(offer.platform),
+      price: offer.currentPrice ?? null,
+      originalPrice: offer.originalPrice ?? null,
+      discount: offer.discount ?? null,
+      imageUrl: offer.imageUrl ?? null,
+      status: "pending",
+      tenantId,
+    },
+  });
 
-  stmt.run([
-    offer.name,
-    offer.originalPrice ?? null,
-    offer.currentPrice ?? null,
-    offer.discount ?? null,
-    offer.platform,
-    offer.originalUrl || "",
-    affiliateLink || null,
-    JSON.stringify(offer),
-  ]);
-  stmt.free();
-
-  const result = db.exec("SELECT last_insert_rowid() as id");
-  const id: number = result[0].values[0][0] as number;
-
-  saveToDisk();
-  log.info("Oferta inserida", { id, produto: offer.name });
-  return id;
+  log.info("Oferta inserida no Turso", { id: created.id, produto: offer.name });
+  return created.id;
 }
 
 // ==============================================================
@@ -82,60 +102,54 @@ export function insertOffer(
 /**
  * Busca uma oferta pelo ID.
  */
-export function getOfferById(id: number): OfferRow | null {
-  const db = getDb();
-  const stmt = db.prepare("SELECT * FROM offers WHERE id = ?");
-  stmt.bind([id]);
-
-  if (stmt.step()) {
-    const row = stmt.getAsObject() as unknown as OfferRow;
-    stmt.free();
-    return row;
-  }
-
-  stmt.free();
-  return null;
+export async function getOfferById(id: string): Promise<{
+  id: string;
+  title: string;
+  description: string | null;
+  url: string;
+  platform: string;
+  price: number | null;
+  originalPrice: number | null;
+  discount: number | null;
+  imageUrl: string | null;
+  status: string;
+  publishedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+} | null> {
+  return prisma.offer.findUnique({
+    where: { id },
+  });
 }
 
 /**
- * Retorna as N ofertas mais recentes.
+ * Retorna as N ofertas mais recentes do tenant de teste.
  */
-export function getRecentOffers(limit: number = 10): OfferRow[] {
-  const db = getDb();
-  const stmt = db.prepare(
-    "SELECT * FROM offers ORDER BY detected_at DESC LIMIT ?"
-  );
-  stmt.bind([limit]);
-
-  const rows: OfferRow[] = [];
-  while (stmt.step()) {
-    rows.push(stmt.getAsObject() as unknown as OfferRow);
-  }
-  stmt.free();
-
-  return rows;
+export async function getRecentOffers(limit: number = 10) {
+  const tenantId = await getTestTenantId();
+  return prisma.offer.findMany({
+    where: { tenantId },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
 }
 
 /**
- * Busca ofertas por plataforma.
+ * Busca ofertas por plataforma do tenant de teste.
  */
-export function getOffersByPlatform(
+export async function getOffersByPlatform(
   platform: string,
   limit: number = 20
-): OfferRow[] {
-  const db = getDb();
-  const stmt = db.prepare(
-    "SELECT * FROM offers WHERE platform = ? ORDER BY detected_at DESC LIMIT ?"
-  );
-  stmt.bind([platform, limit]);
-
-  const rows: OfferRow[] = [];
-  while (stmt.step()) {
-    rows.push(stmt.getAsObject() as unknown as OfferRow);
-  }
-  stmt.free();
-
-  return rows;
+) {
+  const tenantId = await getTestTenantId();
+  return prisma.offer.findMany({
+    where: {
+      tenantId,
+      platform: mapPlatform(platform),
+    },
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
 }
 
 // ==============================================================
@@ -145,23 +159,25 @@ export function getOffersByPlatform(
 /**
  * Marca uma oferta como publicada no Telegram.
  */
-export function markAsPublished(offerId: number): void {
-  const db = getDb();
-  db.run(
-    "UPDATE offers SET published = 1, published_at = datetime('now') WHERE id = ?",
-    [offerId]
-  );
-  saveToDisk();
+export async function markAsPublished(offerId: string): Promise<void> {
+  await prisma.offer.update({
+    where: { id: offerId },
+    data: {
+      status: "published",
+      publishedAt: new Date(),
+    },
+  });
   log.info("Oferta marcada como publicada", { id: offerId });
 }
 
 /**
  * Atualiza o link de afiliado de uma oferta.
  */
-export function updateAffiliateLink(offerId: number, link: string): void {
-  const db = getDb();
-  db.run("UPDATE offers SET affiliate_link = ? WHERE id = ?", [link, offerId]);
-  saveToDisk();
+export async function updateAffiliateLink(offerId: string, link: string): Promise<void> {
+  await prisma.offer.update({
+    where: { id: offerId },
+    data: { url: link }, // Prisma usa 'url' para o link
+  });
   log.debug("Link de afiliado atualizado", { id: offerId });
 }
 
@@ -179,23 +195,27 @@ export function updateAffiliateLink(offerId: number, link: string): void {
  * @param url - URL do produto ou cupom
  * @returns true se a URL já foi registrada no dia corrente
  */
-export function isDuplicate(url: string): boolean {
+export async function isDuplicate(url: string): Promise<boolean> {
   if (!url) return false;
 
-  const db = getDb();
-  const stmt = db.prepare(
-    "SELECT COUNT(*) as count FROM offers WHERE original_url = ? AND date(detected_at) = date('now')"
-  );
-  stmt.bind([url]);
+  const tenantId = await getTestTenantId();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
 
-  if (stmt.step()) {
-    const row = stmt.getAsObject() as { count: number };
-    stmt.free();
-    return row.count > 0;
-  }
+  const count = await prisma.offer.count({
+    where: {
+      tenantId,
+      url,
+      createdAt: {
+        gte: today,
+        lt: tomorrow,
+      },
+    },
+  });
 
-  stmt.free();
-  return false;
+  return count > 0;
 }
 
 // ==============================================================
@@ -203,30 +223,29 @@ export function isDuplicate(url: string): boolean {
 // ==============================================================
 
 /**
- * Retorna estatísticas básicas do banco.
+ * Retorna estatísticas básicas do banco do tenant de teste.
  */
-export function getStats(): {
+export async function getStats(): Promise<{
   total: number;
   published: number;
   pending: number;
   byPlatform: Record<string, number>;
-} {
-  const db = getDb();
+}> {
+  const tenantId = await getTestTenantId();
 
-  const totalResult = db.exec("SELECT COUNT(*) as c FROM offers");
-  const total = (totalResult[0]?.values[0][0] as number) || 0;
+  const [total, published, byPlatformRaw] = await Promise.all([
+    prisma.offer.count({ where: { tenantId } }),
+    prisma.offer.count({ where: { tenantId, status: "published" } }),
+    prisma.offer.groupBy({
+      by: ["platform"],
+      where: { tenantId },
+      _count: { platform: true },
+    }),
+  ]);
 
-  const publishedResult = db.exec(
-    "SELECT COUNT(*) as c FROM offers WHERE published = 1"
-  );
-  const published = (publishedResult[0]?.values[0][0] as number) || 0;
-
-  const platformResult = db.exec(
-    "SELECT platform, COUNT(*) as c FROM offers GROUP BY platform ORDER BY c DESC"
-  );
   const byPlatform: Record<string, number> = {};
-  for (const row of platformResult[0]?.values || []) {
-    byPlatform[row[0] as string] = row[1] as number;
+  for (const row of byPlatformRaw) {
+    byPlatform[row.platform] = row._count.platform;
   }
 
   return {
@@ -238,7 +257,7 @@ export function getStats(): {
 }
 
 // ==============================================================
-// Barrel (re-exporta funções de index.ts)
+// Barrel (re-exporta funções de index.ts para compatibilidade)
 // ==============================================================
 
 export { initDatabase, getDb, closeDatabase, saveToDisk } from "./index";

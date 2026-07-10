@@ -201,6 +201,9 @@ function addAffiliateParam(url: string, platformKey: string): string {
     case "amazon":
       affiliateId = process.env.AMAZON_AFFILIATE_TAG || process.env.AMAZON_TAG;
       break;
+    case "shopee":
+      affiliateId = process.env.SHOPEE_AFFILIATE_ID;
+      break;
   }
 
   if (!affiliateId) return url;
@@ -212,6 +215,9 @@ function addAffiliateParam(url: string, platformKey: string): string {
   }
   if (platformKey === "amazon") {
     return `${url}${separator}tag=${affiliateId}`;
+  }
+  if (platformKey === "shopee") {
+    return `${url}${separator}af_id=${affiliateId}`;
   }
 
   return url;

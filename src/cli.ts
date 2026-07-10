@@ -84,7 +84,7 @@ function printHelp(): void {
   console.log();
 }
 
-function printPreview(offer: WhatsAppOfferData): void {
+async function printPreview(offer: WhatsAppOfferData): Promise<void> {
   const fetched = state.fetchedInfo;
 
   console.log();
@@ -132,7 +132,7 @@ function printPreview(offer: WhatsAppOfferData): void {
   }
   console.log();
 
-  if (offer.originalUrl && isDuplicate(offer.originalUrl)) {
+  if (offer.originalUrl && await isDuplicate(offer.originalUrl)) {
     console.log(`  ${YELLOW}⚠ Esta URL já existe no banco (duplicada)${RESET}`);
   }
 
@@ -140,29 +140,31 @@ function printPreview(offer: WhatsAppOfferData): void {
   console.log();
 }
 
-function printStats(): void {
-  const stats = getStats();
-  console.log();
-  console.log(`${BOLD}${CYAN}┌─────────────── ESTATÍSTICAS ───────────────┐${RESET}`);
-  console.log();
-  console.log(`  ${BOLD}Total de ofertas:${RESET}  ${stats.total}`);
-  console.log(`  ${BOLD}Publicadas:${RESET}       ${stats.published}`);
-  console.log(`  ${BOLD}Pendentes:${RESET}        ${stats.pending}`);
-  console.log();
+function printStats(): Promise<void> {
+  return (async () => {
+    const stats = await getStats();
+    console.log();
+    console.log(`${BOLD}${CYAN}┌─────────────── ESTATÍSTICAS ───────────────┐${RESET}`);
+    console.log();
+    console.log(`  ${BOLD}Total de ofertas:${RESET}  ${stats.total}`);
+    console.log(`  ${BOLD}Publicadas:${RESET}       ${stats.published}`);
+    console.log(`  ${BOLD}Pendentes:${RESET}        ${stats.pending}`);
+    console.log();
 
-  if (Object.keys(stats.byPlatform).length > 0) {
-    console.log(`  ${BOLD}Por plataforma:${RESET}`);
-    for (const [platform, count] of Object.entries(stats.byPlatform)) {
-      console.log(`    ${platform}: ${count}`);
+    if (Object.keys(stats.byPlatform).length > 0) {
+      console.log(`  ${BOLD}Por plataforma:${RESET}`);
+      for (const [platform, count] of Object.entries(stats.byPlatform)) {
+        console.log(`    ${platform}: ${count}`);
+      }
     }
-  }
 
-  console.log(`${BOLD}${CYAN}└──────────────────────────────────────────────┘${RESET}`);
-  console.log();
+    console.log(`${BOLD}${CYAN}└──────────────────────────────────────────────┘${RESET}`);
+    console.log();
+  })();
 }
 
-function printRecent(): void {
-  const offers = getRecentOffers(10);
+async function printRecent(): Promise<void> {
+  const offers = await getRecentOffers(10);
   console.log();
   console.log(`${BOLD}${CYAN}┌────────── OFERTAS RECENTES ──────────┐${RESET}`);
   console.log();
@@ -171,8 +173,8 @@ function printRecent(): void {
     console.log(`  ${YELLOW}Nenhuma oferta cadastrada ainda.${RESET}`);
   } else {
     for (const offer of offers) {
-      const pub = offer.published ? `${GREEN}✓${RESET}` : `${YELLOW}─${RESET}`;
-      const name = offer.name.substring(0, 45).padEnd(47, " ");
+      const pub = offer.publishedAt ? `${GREEN}✓${RESET}` : `${YELLOW}─${RESET}`;
+      const name = offer.title.substring(0, 45).padEnd(47, " ");
       console.log(`  ${pub} ${BOLD}${name}${RESET} ${GRAY}${offer.platform}${RESET}`);
     }
   }

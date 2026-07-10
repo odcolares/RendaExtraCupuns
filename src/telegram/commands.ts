@@ -51,8 +51,8 @@ Aqui você encontra as melhores ofertas com links de afiliado.
   // ── /ofertas ────────────────────────────────────────────────
   bot.command("ofertas", async (ctx: Context) => {
     try {
-      const offers = getRecentOffers(10);
-      const stats = getStats();
+      const offers = await getRecentOffers(10);
+      const stats = await getStats();
 
       if (offers.length === 0) {
         await ctx.reply(
@@ -64,8 +64,8 @@ Aqui você encontra as melhores ofertas com links de afiliado.
       }
 
       const lines = offers.map((o, i) => {
-        const price = o.current_price
-          ? `R$ ${o.current_price.toFixed(2)}`
+        const price = o.price
+          ? `R$ ${o.price.toFixed(2)}`
           : "Preço não informado";
         const emoji =
           o.platform === "amazon"
@@ -77,7 +77,7 @@ Aqui você encontra as melhores ofertas com links de afiliado.
                 : o.platform === "aliexpress"
                   ? "🇨🇳"
                   : "🔗";
-        return `${i + 1}${emoji} *${o.name}* — ${price}`;
+        return `${i + 1}${emoji} *${o.title}* — ${price}`;
       });
 
       const message = [
@@ -139,9 +139,9 @@ Para configurar, use:
   // ── /status ─────────────────────────────────────────────────
   bot.command("status", async (ctx: Context) => {
     try {
-      const stats = getStats();
-      const recent = getRecentOffers(1);
-      const ultima = recent.length > 0 ? recent[0].detected_at : "—";
+      const stats = await getStats();
+      const recent = await getRecentOffers(1);
+      const ultima = recent.length > 0 ? recent[0].createdAt.toISOString() : "—";
       const porPlataforma = Object.entries(stats.byPlatform)
         .map(([p, c]) => `  • ${p}: ${c}`)
         .join("\n");

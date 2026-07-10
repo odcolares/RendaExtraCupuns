@@ -10,6 +10,7 @@ const config: Config = {
   testMatch: ["**/*.test.ts"],
   verbose: true,
   clearMocks: true,
+  setupFiles: ["<rootDir>/tests/setup.ts"],
   collectCoverageFrom: [
     "src/**/*.ts",
     "!src/index.ts",
