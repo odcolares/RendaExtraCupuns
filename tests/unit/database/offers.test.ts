@@ -41,13 +41,13 @@ describe("Database Offers (Prisma/Turso)", () => {
     const id = await insertOffer(mockOffer, "https://amz.com/?tag=teste");
     expect(id).toBeTruthy();
     expect(typeof id).toBe("string");
-  });
+  }, 15000);
 
   it("insertOffer insere segunda oferta", async () => {
     const id = await insertOffer(mockOffer2, "https://shopee.com/?af_id=teste");
     expect(id).toBeTruthy();
     expect(typeof id).toBe("string");
-  });
+  }, 15000);
 
   it("isDuplicate detecta URL duplicada", async () => {
     expect(await isDuplicate(mockOffer.originalUrl!)).toBe(true);

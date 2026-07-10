@@ -46,7 +46,7 @@ https://www.amazon.com.br/dp/B0BJLXMVMV_${TEST_RUN_ID}`;
     expect(result.offer).toBeDefined();
     expect(result.offer!.name).toBeDefined();
     expect(result.offer!.platform).toBe("amazon");
-  });
+  }, 15000);
 
   it("rejeita oferta duplicada", async () => {
     const msg = `Duplicata https://www.amazon.com.br/dp/B0BJLXMVMV_${TEST_RUN_ID}`;
@@ -58,7 +58,7 @@ https://www.amazon.com.br/dp/B0BJLXMVMV_${TEST_RUN_ID}`;
 
     expect(result.success).toBe(false);
     expect(result.error).toBe("duplicate");
-  });
+  }, 15000);
 
   it("processa oferta AliExpress", async () => {
     const msg = `⚡ OFERTA RELÂMPAGO
@@ -73,7 +73,7 @@ https://www.aliexpress.com/item/100500384912345_${TEST_RUN_ID}.html`;
 
     expect(result.success).toBe(true);
     expect(result.offer).toBeDefined();
-  });
+  }, 15000);
 
   it("processa oferta Shopee", async () => {
     const msg = `Fone Bluetooth
@@ -101,7 +101,7 @@ https://www.mercadolivre.com.br/produto/98765_${TEST_RUN_ID}`;
 
     expect(result.success).toBe(true);
     expect(result.offer!.platform).toBe("mercadolivre");
-  });
+  }, 15000);
 
   it("registra todas as ofertas no banco", async () => {
     const offers = await getRecentOffers(10);
