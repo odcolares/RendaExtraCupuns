@@ -21,7 +21,7 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from "@/components/ui/sidebar";
-import { Home, Store, MessageCircle, Clock } from "lucide-react";
+import { Home, Store, MessageCircle, Clock, Users, BarChart3, DollarSign } from "lucide-react";
 
 export default async function DashboardLayout({
   children,
@@ -69,6 +69,23 @@ export default async function DashboardLayout({
               <SidebarMenuItem>
                 <SidebarMenuButton render={<Link href="/dashboard/onboarding"><Clock className="mr-2 h-4 w-4" />Onboarding</Link>} />
               </SidebarMenuItem>
+
+              {user.role === "admin" && (
+                <>
+                  <SidebarMenuItem className="mt-4 px-3">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Admin</p>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton render={<Link href="/admin"><Users className="mr-2 h-4 w-4" />Clientes</Link>} />
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton render={<Link href="/admin/ofertas"><BarChart3 className="mr-2 h-4 w-4" />Ofertas Globais</Link>} />
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton render={<Link href="/admin/faturamento"><DollarSign className="mr-2 h-4 w-4" />Faturamento</Link>} />
+                  </SidebarMenuItem>
+                </>
+              )}
             </SidebarMenu>
           </SidebarContent>
         </Sidebar>
