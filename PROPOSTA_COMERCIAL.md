@@ -43,7 +43,7 @@ GRUPOS WHATSAPP  →  ROBÔ AUTOMATIZADO  →  CANAL TELEGRAM
 | **Amazon** | 1 a 10% | ✅ Ativo (tag: `odcolares2026-20`) |
 | **Shopee** | 5 a 10% | ✅ Ativo (ID: `18387911117`) |
 | **Mercado Livre** | 3 a 12% | ✅ Ativo (ID: `88981950`) |
-| **AliExpress** | 3 a 9% | 🔧 Pronto (sem ID ainda) |
+| **AliExpress** | 3 a 9% | ✅ Ativo (Tracking ID: `RendaExtraCupuns`) |
 
 **4 plataformas na prática.** Se o link for de qualquer uma delas, o robô gera o link de afiliado automaticamente.
 
@@ -58,7 +58,7 @@ GRUPOS WHATSAPP  →  ROBÔ AUTOMATIZADO  →  CANAL TELEGRAM
 | Ofertas no banco | 150+ |
 | Publicadas no Telegram | 50+ |
 | Fontes monitoradas | **4** (2 grupos + 1 broadcast + 1 newsletter) |
-| Testes automatizados | **103** passando |
+| Testes automatizados | **114** passando |
 
 ### Exemplos de ofertas que o robô já publicou sozinho:
 
@@ -150,20 +150,28 @@ VOCÊ                              ROBÔ
 
 ---
 
-## Modelos de Parceria
+## Modelos de Contratação
 
-### 🚀 Modelo A — Licença de Uso
-- Código configurado com **seus IDs de afiliado**
-- Instalação em servidor próprio (ou na nuvem)
-- **Você fica com 100% das comissões**
+### 🚀 Modelo A — SaaS Self-Service (Recomendado)
+- **Assinatura mensal** com planos Free / Pro / Enterprise
+- Painel web completo: dashboard, configuração de afiliados, histórico de ofertas
+- **Você configura tudo no painel** — sem precisar de servidor ou instalação
+- Gestão de fontes WhatsApp integrada
+- Onboarding wizard guiado
 - Suporte técnico incluso
 
-### 🤝 Modelo B — Parceria Operacional
+### 📦 Modelo B — Licença de Uso (Bot Tradicional)
+- Código configurado com **seus IDs de afiliado**
+- Instalação em servidor próprio (VPS) ou na nuvem
+- **Você fica com 100% das comissões**
+- Ideal para quem tem servidor próprio
+
+### 🤝 Modelo C — Parceria Operacional
 - Eu opero o robô 24h/dia no meu servidor
 - Divisão de comissão: **60% você / 40% operação**
 - Acompanhamento mensal de resultados
 
-### 🔧 Modelo C — Personalizado
+### 🔧 Modelo D — Personalizado
 - Adaptações específicas (novas plataformas, formatos de mensagem, fontes extras)
 - Orçamento sob consulta
 
@@ -191,10 +199,10 @@ Dezenas. O rate limit é de **30 mensagens/hora** no Telegram por canal.
 ## Próximo Passo
 
 ```
-1. Escolher modelo (A, B ou C)
-2. Criar contas de afiliados
-3. Configurar (5 minutos)
-4. Robô começa a publicar
+1. Acessar o painel web (SaaS) ou escolher licença
+2. Criar conta + pagamento
+3. Configurar afiliados e fontes no painel (5 min)
+4. Robô começa a publicar automaticamente
 5. Você ganha comissão dormindo
 ```
 
@@ -202,5 +210,5 @@ Dezenas. O rate limit é de **30 mensagens/hora** no Telegram por canal.
 
 ---
 
-*Documento gerado em: 23/06/2026*
-*Sistema: RendaExtraCupuns — v1.0 (Alpha)*
+*Documento atualizado em: 10/07/2026*
+*Sistema: RendaExtraCupuns — v1.0 (Alpha)* | *Web SaaS: Fase 1 concluída*

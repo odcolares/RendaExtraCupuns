@@ -217,17 +217,22 @@ Para o módulo web + painel do cliente com assinatura:
 | Landing + Planos + Signup | Free / R$29 / R$79 — checkout Stripe/MP |
 | Painel do cliente | Dashboard, config grupos/afiliados/TG, métricas |
 | Super admin | Lista clientes, ofertas globais, controle de planos |
-| Deploy Vercel | Auto-deploy via GitHub, HTTPS, grátis |
+| Prisma + Turso (libSQL) | Schema: User, Tenant, Offer, AffiliateConfig, Fonte |
+| NextAuth com roles | admin (super) / client (assinante) |
+| Landing + Planos + Signup | Free / R$29 / R$79 — checkout Stripe/MP |
+| Painel do cliente | Dashboard, config grupos/afiliados/TG, métricas, fontes |
+| Super admin | Lista clientes, ofertas globais, controle de planos |
+| Deploy Vercel | Auto-deploy via GitHub, HTTPS, grátis 🟢 Live |
 | Bot local (fonte) | npm run dev mantido — alimenta o DB compartilhado |
 
-**Skills:** Next.js, Prisma, NextAuth, Stripe/Mercado Pago, Vercel
+**Skills:** Next.js, Prisma, NextAuth, Stripe/Mercado Pago, Turso, Vercel
 
 **Checkpoint:**
-- [ ] Landing + Signup + Login funcionando?
-- [ ] Cliente consegue configurar afiliados e Telegram?
+- [ ] Landing + Signup + Login funcionando? ✅
+- [ ] Cliente consegue configurar afiliados e Telegram? ✅
 - [ ] Bot + Web compartilham o mesmo DB?
 - [ ] Admin vê todos os clientes?
-- [ ] Deploy no Vercel funcionando?
+- [ ] Deploy no Vercel funcionando? ✅ (Turso serverless AWS us-east-1)
 
 ---
 
@@ -534,4 +539,4 @@ FLUXO.md                                -> Este arquivo - fluxo de trabalho
 
 ---
 
-*Última atualização: 07/07/2026 — Incluído Caminho B (SaaS Self-Service) na Fase 7*
+*Última atualização: 10/07/2026 — Fase 7 atualizada (Turso serverless + Deploy Vercel 🟢 Live)*

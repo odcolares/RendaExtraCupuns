@@ -1081,3 +1081,54 @@ Arquivos criados/modificados:
 - [x] web/.env — Variáveis de ambiente
 - [x] contexto.md (Fase 0 concluída, stack web, referências, PRs)
 - [x] SESSAO.txt (esta sessão registrada)
+
+SESSÃO 19 - 10/07/2026 — TURSO + DEPLOY VERCELL
+─────────────────────────────────────────────────────────────────────────────────
+
+STATUS: CONCLUÍDA ✅ — Deploy Vercel production com banco Turso serverless
+
+O que foi feito:
+
+1. **Banco Turso serverless criado via API REST**
+   - Nome: `rendaextra-cupuns-odcolares`
+   - Localização: `aws-us-east-1` (plano starter grátis)
+   - Token JWT gerado e configurado no `.env`
+   - Turso CLI não tem build Windows — tudo via API REST
+
+2. **Prisma adaptado para libSQL (Turso)**
+   - `web/prisma/schema.prisma`: provider `sqlite` mantido (libSQL é compatível)
+   - `web/src/lib/prisma.ts`: migrado para `PrismaLibSql({ url, authToken })`
+   - Prisma config movido para `web/prisma.config.ts`
+   - `@prisma/adapter-libsql` + `@libsql/client` instalados
+   - `npx prisma generate` — gerado com sucesso
+   - `npx tsc --noEmit` — zero erros TypeScript
+   - `npm run build` — Next.js 16.2.10, 14 rotas compiladas sem erros
+
+3. **Migrations aplicadas ao Turso via script**
+   - Script `web/scripts/apply-migration-turso.ts` criado
+   - Conexão direta via `@libsql/client`
+   - 8 tabelas criadas: Account, AffiliateConfig, Fonte, Offer, Session, Tenant, User, VerificationToken
+   - Schema `_prisma_migrations` registrado
+
+4. **Deploy Vercel production**
+   - Token Vercel fornecido pelo usuário
+   - Projeto renomeado de `web` para `rendaextra-cupuns`
+   - DATABASE_URL + TURSO_AUTH_TOKEN configurados nas env vars do Vercel
+   - Build: Prisma generate + Next.js build — 14 rotas, 0 erros
+   - Site live: https://web-gamma-hazel-30.vercel.app
+
+5. **Documentação atualizada**
+   - contexto.md: Sessão 19, Fase 1.5, stack com Turso, Próximos Passos atualizados
+   - README.md: status com Deploy Vercel 🟢 Live, Turso na stack, data 10/07/2026
+   - SESSAO.txt: esta sessão registrada
+
+Decisões tomadas:
+- Turso (libSQL) em vez de PostgreSQL: compatível com SQLite, sem mudança de schema, serverless grátis
+- PrismaLibSql adapter: mesma DX do Prisma, troca só a string de conexão
+- Vercel para deploy web (Hobby, grátis, HTTPS, serverless)
+- Token Vercel `vcp_...` do tipo full account token
+- Site não tem domínio `rendaextra-cupuns.vercel.app` — Vercel não cria domínio automático pós-rename. URL atual: `web-gamma-hazel-30.vercel.app`
+
+Próximo passo:
+- Fase 2 — Super Admin: lista de clientes, controle de planos, visão geral de faturamento
+- Configurar domínio próprio no Vercel

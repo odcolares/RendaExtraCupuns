@@ -8,6 +8,10 @@
  */
 
 import { Telegraf, Context } from "telegraf";
+import { getRecentOffers, getStats } from "../database/offers";
+import { createModuleLogger } from "../utils";
+
+const log = createModuleLogger("TelegramCommands");
 
 // ==============================================================
 // Tipos de callback data (compartilhados com buttons.ts)
@@ -46,22 +50,50 @@ Aqui você encontra as melhores ofertas com links de afiliado.
 
   // ── /ofertas ────────────────────────────────────────────────
   bot.command("ofertas", async (ctx: Context) => {
-    await ctx.reply("⏳ Carregando ofertas recentes...", {
-      parse_mode: "Markdown",
-    });
+    try {
+      const offers = getRecentOffers(10);
+      const stats = getStats();
 
-    // TODO: buscar do banco quando o módulo database estiver pronto
-    const mockMessage = `
-📋 *Últimas ofertas:*
+      if (offers.length === 0) {
+        await ctx.reply(
+          "📋 *Nenhuma oferta encontrada.*\n\n" +
+            "As ofertas aparecerão aqui conforme forem detectadas no WhatsApp.",
+          { parse_mode: "Markdown" }
+        );
+        return;
+      }
 
-1️⃣ iPhone 14 Pro - R$ 3.749
-2️⃣ Samsung S23 - R$ 2.999
-3️⃣ AirPods Pro - R$ 1.499
+      const lines = offers.map((o, i) => {
+        const price = o.current_price
+          ? `R$ ${o.current_price.toFixed(2)}`
+          : "Preço não informado";
+        const emoji =
+          o.platform === "amazon"
+            ? "📦"
+            : o.platform === "mercadolivre"
+              ? "🟡"
+              : o.platform === "shopee"
+                ? "🛒"
+                : o.platform === "aliexpress"
+                  ? "🇨🇳"
+                  : "🔗";
+        return `${i + 1}${emoji} *${o.name}* — ${price}`;
+      });
 
-Digite o número para ver detalhes.
-    `;
+      const message = [
+        `📋 *Últimas ofertas (${stats.total} total, ${stats.published} publicadas):*\n`,
+        ...lines,
+        "",
+        "💡 Dica: Ative as notificações para não perder ofertas!",
+      ].join("\n");
 
-    await ctx.reply(mockMessage, { parse_mode: "Markdown" });
+      await ctx.reply(message, { parse_mode: "Markdown" });
+    } catch (err) {
+      log.error("Erro ao buscar ofertas", { error: (err as Error).message });
+      await ctx.reply(
+        "❌ Erro ao carregar ofertas. Tente novamente mais tarde."
+      );
+    }
   });
 
   // ── /categorias ─────────────────────────────────────────────
@@ -106,17 +138,34 @@ Para configurar, use:
 
   // ── /status ─────────────────────────────────────────────────
   bot.command("status", async (ctx: Context) => {
-    const message = `
+    try {
+      const stats = getStats();
+      const recent = getRecentOffers(1);
+      const ultima = recent.length > 0 ? recent[0].detected_at : "—";
+      const porPlataforma = Object.entries(stats.byPlatform)
+        .map(([p, c]) => `  • ${p}: ${c}`)
+        .join("\n");
+
+      const message = `
 📊 *Status do Bot*
 
 🤖 Bot: Online
-📢 Canal: @ofertas_afiliado_br
-👥 Inscritos: pendente
-📦 Ofertas hoje: pendente
-⏰ Última oferta: pendente
-    `;
+📦 Ofertas totais: ${stats.total}
+✅ Publicadas: ${stats.published}
+⏳ Pendentes: ${stats.pending}
+🕐 Última oferta: ${ultima}
 
-    await ctx.reply(message, { parse_mode: "Markdown" });
+*Por plataforma:*
+${porPlataforma || "  —"}
+      `;
+
+      await ctx.reply(message, { parse_mode: "Markdown" });
+    } catch (err) {
+      log.error("Erro ao buscar status", { error: (err as Error).message });
+      await ctx.reply("📊 *Status do Bot*\n\n🤖 Bot: Online\n📦 Dados: indisponíveis", {
+        parse_mode: "Markdown",
+      });
+    }
   });
 
   // ── /help ───────────────────────────────────────────────────

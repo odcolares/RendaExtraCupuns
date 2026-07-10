@@ -5,6 +5,8 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+  // Turso/libSQL is SQLite-compatible — the driver adapter handles the connection
+  // URL is configured in prisma.config.ts
 }
 
 enum UserRole {
