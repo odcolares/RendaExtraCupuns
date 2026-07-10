@@ -4,7 +4,7 @@
   "description": "Bot automatizado que monitora ofertas no WhatsApp e publica no Telegram com links de afiliado",
   "private": true,
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.19.0"
   },
   "scripts": {
     "dev": "ts-node src/index.ts",
