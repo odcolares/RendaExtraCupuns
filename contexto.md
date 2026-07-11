@@ -625,17 +625,25 @@ npm run test:coverage      # Testes com cobertura
    - Gestão de afiliados e ofertas no painel
    - CRUD de fontes WhatsApp (/dashboard/fontes)
    - Sidebar de navegação com todas as páginas
-4. 👉 **Fase 2 — Super Admin — PRÓXIMO**
-   - Lista de clientes com detalhes (status, plano, última atividade)
-   - Controle de planos (ativar/suspender/mudar)
-   - Visão geral: clientes ativos, ofertas globais, faturamento estimado
+4. ✅ **Fase 2 — Super Admin — CONCLUÍDO (PR #14)**
+    - Lista de clientes com detalhes (status, plano, última atividade)
+    - Controle de planos (ativar/suspender/mudar)
+    - Visão geral: clientes ativos, ofertas globais, faturamento estimado
 5. ✅ **Deploy Vercel + Turso — CONCLUÍDO (10/07/2026)**
-   - Banco Turso serverless em AWS us-east-1
-   - Prisma adaptado com libSQL adapter
-   - Migrations aplicadas ao Turso
-   - Site live em https://web-gamma-hazel-30.vercel.app
-6. 🌐 **Dominio próprio** — Configurar domínio personalizado no Vercel (ex: rendaextra.app)
-7. 📌 **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
+    - Banco Turso serverless em AWS us-east-1
+    - Prisma adaptado com libSQL adapter
+    - Migrations aplicadas ao Turso
+    - Site live em https://web-gamma-hazel-30.vercel.app
+6. ✅ **Bot → Turso Integration — CONCLUÍDO (10/07/2026)**
+    - Bot grava ofertas no mesmo Turso do web SaaS (Prisma + libSQL adapter)
+    - Schema Prisma compartilhado (raiz `prisma/schema.prisma`)
+    - Cliente Prisma único (`src/lib/prisma.ts`) usado por bot + web
+    - Ofertas associadas ao tenant do cliente teste (`cliente@teste.com`)
+    - Pipeline async: detecta URLs `/m/cupom-de-desconto/` da Shopee como cupom puro
+    - Cupom detector: `addAffiliateParam` suporta Shopee (`af_id=`)
+    - Testes: 114 passando (unit + integration), URLs únicas por run
+7. 🌐 **Dominio próprio** — Configurar domínio personalizado no Vercel (ex: rendaextra.app)
+8. 📌 **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
 
 ### 🔵 Melhorias futuras:
 - Páginas `/m/cupom-de-desconto` da Shopee: avaliar tratamento como cupom puro
@@ -701,5 +709,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Última atualização: 10/07/2026 — Fase 1.5 concluída (Turso serverless + Deploy Vercel production + Site live)*
+*Última atualização: 10/07/2026 — Fase 2 concluída (Super Admin + Bot→Turso→Web integrado) + 114 testes passando*
 
