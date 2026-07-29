@@ -6,7 +6,9 @@
  */
 
 import { Client, LocalAuth } from "whatsapp-web.js";
-import qrcode from "qrcode-terminal";
+import qrcodeTerminal from "qrcode-terminal";
+import QRCode from "qrcode";
+import path from "path";
 
 console.log("═══════════════════════════════════════════");
 console.log("  RendaExtraCupuns — Gerador de QR Code");
@@ -35,8 +37,17 @@ client.on("qr", (qr: string) => {
   console.log("\n📱 ESCANEIE O QR CODE ABAIXO com o WhatsApp do chip novo:");
   console.log("   (WhatsApp → ⋮ → Dispositivos Linkados → Linkar)");
   console.log();
-  qrcode.generate(qr, { small: false });
+  qrcodeTerminal.generate(qr, { small: false });
   console.log();
+
+  const pngPath = path.resolve(__dirname, "../../whatsapp-qr.png");
+  QRCode.toFile(pngPath, qr, { type: "png", width: 400, margin: 2 })
+    .then(() => {
+      console.log(`📷 QR salvo como imagem: ${pngPath}`);
+      console.log("   Abra esta imagem no celular e escaneie com o WhatsApp.");
+      console.log();
+    })
+    .catch((err) => console.error("Erro ao salvar PNG:", err));
 });
 
 client.on("authenticated", () => {
