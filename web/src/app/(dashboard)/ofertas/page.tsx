@@ -1,38 +1,47 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useCallback, useState } from "react";
+import { useSession } from "next-auth/react";
+import { redirect, useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Search, Filter, Download, Eye, Edit, Trash2, Loader2 } from "lucide-react";
-import { getPaginatedOffersAction, getDashboardMetricsAction } from "@/actions/affiliates";
-import Link from "next/link";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Search,
+  Filter,
+  Eye,
+  Edit,
+  Trash2,
+  Inbox,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { getPaginatedOffersAction } from "@/actions/affiliates";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-
-interface Offer {
-  id: string;
-  title: string;
-  platform: string;
-  price: number | null;
-  status: string;
-  publishedAt: Date | null;
-  createdAt: Date;
-}
-
-interface OfferFilters {
-  search?: string;
-  platform?: string;
-  status?: string;
-  startDate?: string;
-  endDate?: string;
-  page?: number;
-  pageSize?: number;
-}
 
 const platformOptions = [
   { value: "amazon", label: "Amazon" },
@@ -43,286 +52,250 @@ const platformOptions = [
 ];
 
 const statusOptions = [
-  { value: "active", label: "Publicado" },
+  { value: "published", label: "Publicado" },
   { value: "pending", label: "Pendente" },
   { value: "failed", label: "Falhou" },
 ];
 
-export default async function OffersPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const session = await auth();
-  
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, { label: string; className: string }> = {
+    published: { label: "Publicado", className: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" },
+    pending: { label: "Pendente", className: "bg-amber-500/15 text-amber-600 border-amber-500/30" },
+    failed: { label: "Falhou", className: "bg-red-500/15 text-red-600 border-red-500/30" },
+  };
+  const { label, className } = map[status] || { label: status, className: "bg-muted text-muted-foreground" };
+  return <Badge variant="outline" className={className}>{label}</Badge>;
+}
+
+function PlatformBadge({ platform }: { platform: string }) {
+  const labels: Record<string, string> = {
+    amazon: "Amazon",
+    shopee: "Shopee",
+    mercadolivre: "Mercado Livre",
+    aliexpress: "AliExpress",
+    outros: "Outros",
+  };
+  const colors: Record<string, string> = {
+    amazon: "bg-[#FF9900]/15 text-[#FF9900] border-[#FF9900]/30",
+    shopee: "bg-[#EE4D2D]/15 text-[#EE4D2D] border-[#EE4D2D]/30",
+    mercadolivre: "bg-[#FFE600]/20 text-[#B8960F] border-[#FFE600]/40",
+    aliexpress: "bg-[#FF4747]/15 text-[#FF4747] border-[#FF4747]/30",
+  };
+  return (
+    <Badge variant="outline" className={`text-xs ${colors[platform] || "bg-muted text-muted-foreground"}`}>
+      {labels[platform] || platform}
+    </Badge>
+  );
+}
+
+function formatPrice(price: number | null) {
+  if (price === null) return "—";
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(price);
+}
+
+export default function OffersPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   if (!session?.user) {
     redirect("/login");
   }
 
-  const user = session.user;
-  const tenantId = user.tenantId;
-  const resolvedSearchParams = await searchParams;
+  const tenantId = session.user.tenantId;
+  const [data, setData] = useState<{
+    offers: Array<{
+      id: string;
+      title: string;
+      platform: string;
+      price: number | null;
+      status: string;
+      publishedAt: Date | null;
+      createdAt: Date;
+    }>;
+    total: number;
+    page: number;
+    totalPages: number;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Read filters from URL
   const filters = {
-    search: (resolvedSearchParams.search as string) || "",
-    platform: (resolvedSearchParams.platform as string) || "",
-    status: (resolvedSearchParams.status as string) || "",
-    startDate: (resolvedSearchParams.startDate as string) || "",
-    endDate: (resolvedSearchParams.endDate as string) || "",
-    page: parseInt((resolvedSearchParams.page as string) || "1"),
-    pageSize: 10,
+    search: searchParams.get("search") || "",
+    platform: searchParams.get("platform") || "",
+    status: searchParams.get("status") || "",
+    startDate: searchParams.get("startDate") || "",
+    endDate: searchParams.get("endDate") || "",
+    page: parseInt(searchParams.get("page") || "1"),
   };
 
-  const [offersResult, metrics] = await Promise.all([
-    getPaginatedOffersAction(tenantId || "", filters),
-    getDashboardMetricsAction(tenantId || ""),
-  ]);
+  // Fetch data
+  useState(() => {
+    getPaginatedOffersAction(tenantId || "", {
+      search: filters.search,
+      platform: filters.platform,
+      status: filters.status,
+      startDate: filters.startDate,
+      endDate: filters.endDate,
+      page: filters.page,
+      pageSize: 10,
+    }).then((result) => {
+      setData({
+        offers: result.data,
+        total: result.total,
+        page: result.page,
+        totalPages: result.totalPages,
+      });
+      setLoading(false);
+    });
+  });
 
-  const formatPrice = (price: number | null) => {
-    if (price === null) return "—";
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price);
-  };
+  const updateFilter = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
+      if (key !== "page") params.set("page", "1");
+      router.push(`/ofertas?${params.toString()}`);
+    },
+    [searchParams, router]
+  );
 
-  const StatusBadge = ({ status }: { status: string }) => {
-    const variants: Record<string, string> = {
-      active: "bg-green-100 text-green-800 border-green-200",
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      failed: "bg-red-100 text-red-800 border-red-200",
-    };
-    return (
-      <Badge variant="outline" className={`text-xs ${variants[status] || "bg-gray-100 text-gray-800"}`}>
-        {status === "published" ? "Publicado" : status === "pending" ? "Pendente" : status === "failed" ? "Falhou" : status}
-      </Badge>
-    );
-  };
+  const clearFilters = useCallback(() => {
+    router.push("/ofertas");
+  }, [router]);
 
-  const PlatformBadge = ({ platform }: { platform: string }) => {
-    const labels: Record<string, string> = {
-      amazon: "Amazon",
-      shopee: "Shopee",
-      mercadolivre: "Mercado Livre",
-      aliexpress: "AliExpress",
-      outros: "Outros",
-    };
-    return (
-      <Badge variant="secondary" className="text-xs">
-        {labels[platform] || platform}
-      </Badge>
-    );
-  };
+  const hasFilters =
+    filters.search ||
+    filters.platform ||
+    filters.status ||
+    filters.startDate ||
+    filters.endDate;
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Histórico de Ofertas</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Histórico de Ofertas</h1>
         <p className="text-muted-foreground mt-1">
-          Visualize, filtre e gerencie todas as ofertas publicadas por seus canais
+          Visualize, filtre e gerencie todas as ofertas publicadas
         </p>
       </div>
 
-      {/* Filtros */}
+      {/* Filters */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
+            <Filter className="size-5" />
             Filtros
           </CardTitle>
           <CardDescription>
-            Filtre as ofertas por texto, plataforma, status e período de data
+            Filtre por texto, plataforma, status e período
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div className="space-y-2">
-              <Label htmlFor="search">Busca por título</Label>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="search">Busca</Label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
                   id="search"
                   placeholder="Título da oferta..."
-                  value={filters.search || ""}
-onChange={(e) => {
-                      const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                      params.set("search", e.target.value);
-                      params.set("page", "1");
-                      window.location.search = params.toString();
-                    }}
+                  value={filters.search}
+                  onChange={(e) => updateFilter("search", e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="platform">Plataforma</Label>
               <Select
-                value={filters.platform || ""}
-                onValueChange={(value) => {
-                  const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                  if (value) {
-                    params.set("platform", value);
-                  } else {
-                    params.delete("platform");
-                  }
-                  params.set("page", "1");
-                  window.location.search = params.toString();
-                }}
+                value={filters.platform}
+                onValueChange={(v) => updateFilter("platform", v || "")}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Todas as plataformas" />
+                <SelectTrigger id="platform">
+                  <SelectValue placeholder="Todas" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">Todas</SelectItem>
-                  {platformOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  {platformOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <Label htmlFor="status">Status</Label>
               <Select
-                value={filters.status || ""}
-                onValueChange={(value) => {
-                  const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                  if (value) {
-                    params.set("status", value);
-                  } else {
-                    params.delete("status");
-                  }
-                  params.set("page", "1");
-                  window.location.search = params.toString();
-                }}
+                value={filters.status}
+                onValueChange={(v) => updateFilter("status", v || "")}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Todos os status" />
+                <SelectTrigger id="status">
+                  <SelectValue placeholder="Todos" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="">Todos</SelectItem>
-                  {statusOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  {statusOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label>Data</Label>
-              <Popover>
-                <PopoverTrigger>
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start text-left font-normal"
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {filters.startDate || filters.endDate ? (
-                      <>
-                        {filters.startDate && format(new Date(filters.startDate), "dd/MM/yyyy")}
-                        {filters.endDate && ` - ${format(new Date(filters.endDate), "dd/MM/yyyy")}`}
-                      </>
-                    ) : (
-                      <span>Selecione o período</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-4" align="start">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="start-date">Data inicial</Label>
-                      <Input
-                        id="start-date"
-                        type="date"
-                        value={filters.startDate || ""}
-                        onChange={(e) => {
-                          const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                          if (e.target.value) {
-                            params.set("startDate", e.target.value);
-                          } else {
-                            params.delete("startDate");
-                          }
-                          params.set("page", "1");
-                          window.location.search = params.toString();
-                        }}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="end-date">Data final</Label>
-                      <Input
-                        id="end-date"
-                        type="date"
-                        value={filters.endDate || ""}
-                        onChange={(e) => {
-                          const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                          if (e.target.value) {
-                            params.set("endDate", e.target.value);
-                          } else {
-                            params.delete("endDate");
-                          }
-                          params.set("page", "1");
-                          window.location.search = params.toString();
-                        }}
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                          params.delete("startDate");
-                          params.delete("endDate");
-                          params.set("page", "1");
-                          window.location.search = params.toString();
-                        }}
-                      >
-                        Limpar
-                      </Button>
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
+            <div className="flex flex-col gap-2">
+              <Label>Data inicial</Label>
+              <Input
+                type="date"
+                value={filters.startDate}
+                onChange={(e) => updateFilter("startDate", e.target.value)}
+              />
             </div>
           </div>
 
-          {filters.search || filters.platform || filters.status || filters.startDate || filters.endDate ? (
-            <div className="flex justify-between items-center mt-4 pt-4 border-t">
-              <div className="text-sm text-muted-foreground">
-                {offersResult.total} oferta{offersResult.total !== 1 ? "s" : ""} encontrada{offersResult.total !== 1 ? "s" : ""}
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  const params = new URLSearchParams();
-                  window.location.search = params.toString();
-                }}
-              >
+          {hasFilters && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t">
+              <p className="text-sm text-muted-foreground">
+                {data ? `${data.total} oferta${data.total !== 1 ? "s" : ""} encontrada${data.total !== 1 ? "s" : ""}` : "Carregando..."}
+              </p>
+              <Button variant="ghost" size="sm" onClick={clearFilters}>
                 Limpar filtros
               </Button>
             </div>
-          ) : null}
+          )}
         </CardContent>
       </Card>
 
-      {/* Lista de ofertas */}
+      {/* Results */}
       <Card>
         <CardHeader>
-          <CardTitle>Ofertas Encontradas</CardTitle>
+          <CardTitle>Ofertas</CardTitle>
           <CardDescription>
-            {offersResult.total} oferta{offersResult.total !== 1 ? "s" : ""} (Página {offersResult.page} de {offersResult.totalPages})
+            {data
+              ? `${data.total} oferta${data.total !== 1 ? "s" : ""} (Página ${data.page} de ${data.totalPages})`
+              : "Carregando..."}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {offersResult.data.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <span className="h-12 w-12 mx-auto mb-4 opacity-50">📭</span>
-              <p>Nenhuma oferta encontrada com os filtros selecionados.</p>
+          {loading ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              <span className="text-sm">Carregando ofertas...</span>
+            </div>
+          ) : !data || data.offers.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <Inbox className="size-12 mb-4 opacity-40" />
+              <p>Nenhuma oferta encontrada.</p>
             </div>
           ) : (
             <div className="rounded-md border">
@@ -333,13 +306,13 @@ onChange={(e) => {
                     <TableHead>Plataforma</TableHead>
                     <TableHead>Preço</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Data de Criação</TableHead>
+                    <TableHead>Data</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {offersResult.data.map((offer) => (
-                    <TableRow key={offer.id}>
+                  {data.offers.map((offer) => (
+                    <TableRow key={offer.id} className="hover:bg-brand-pink/5 transition-colors">
                       <TableCell className="font-medium max-w-xs truncate" title={offer.title}>
                         {offer.title}
                       </TableCell>
@@ -351,18 +324,18 @@ onChange={(e) => {
                         <StatusBadge status={offer.status} />
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
-                        {format(offer.createdAt, "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                        {format(new Date(offer.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                       </TableCell>
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Visualizar">
-                            <Eye className="h-4 w-4" />
+                        <div className="flex justify-end gap-1">
+                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-pink" title="Visualizar">
+                            <Eye className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0" title="Editar">
-                            <Edit className="h-4 w-4" />
+                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-pink" title="Editar">
+                            <Edit className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-destructive hover:text-destructive" title="Excluir">
-                            <Trash2 className="h-4 w-4" />
+                          <Button variant="ghost" size="icon" className="size-8 text-destructive hover:text-destructive" title="Excluir">
+                            <Trash2 className="size-4" />
                           </Button>
                         </div>
                       </TableCell>
@@ -373,53 +346,42 @@ onChange={(e) => {
             </div>
           )}
 
-          {/* Paginação */}
-          {offersResult.totalPages > 1 && (
+          {/* Pagination */}
+          {data && data.totalPages > 1 && (
             <div className="flex items-center justify-between px-2 py-4">
-              <div className="text-sm text-muted-foreground">
-                Página {offersResult.page} de {offersResult.totalPages}
-              </div>
+              <p className="text-sm text-muted-foreground">
+                Página {data.page} de {data.totalPages}
+              </p>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-onClick={() => {
-                      const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                      params.set("page", Math.max(1, offersResult.page - 1).toString());
-                      window.location.search = params.toString();
-                    }}
-                  disabled={offersResult.page <= 1}
+                  onClick={() => updateFilter("page", String(data.page - 1))}
+                  disabled={data.page <= 1}
                 >
+                  <ChevronLeft className="size-4 mr-1" />
                   Anterior
                 </Button>
-                {Array.from({ length: Math.min(5, offersResult.totalPages) }, (_, i) => {
-                  const pageNumber = i + 1;
-                  return (
+                {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => i + 1).map(
+                  (pageNum) => (
                     <Button
-                      key={pageNumber}
-                      variant={offersResult.page === pageNumber ? "default" : "outline"}
+                      key={pageNum}
+                      variant={data.page === pageNum ? "default" : "outline"}
                       size="sm"
-                      onClick={() => {
-                        const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                        params.set("page", pageNumber.toString());
-                        window.location.search = params.toString();
-                      }}
+                      onClick={() => updateFilter("page", String(pageNum))}
                     >
-                      {pageNumber}
+                      {pageNum}
                     </Button>
-                  );
-                })}
+                  )
+                )}
                 <Button
                   variant="outline"
                   size="sm"
-onClick={() => {
-                      const params = new URLSearchParams(resolvedSearchParams as Record<string, string>);
-                      params.set("page", Math.min(offersResult.totalPages, offersResult.page + 1).toString());
-                      window.location.search = params.toString();
-                    }}
-                  disabled={offersResult.page >= offersResult.totalPages}
+                  onClick={() => updateFilter("page", String(data.page + 1))}
+                  disabled={data.page >= data.totalPages}
                 >
                   Próximo
+                  <ChevronRight className="size-4 ml-1" />
                 </Button>
               </div>
             </div>
