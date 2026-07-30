@@ -10,9 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Crown, Tags, TrendingUp, Radio } from "lucide-react";
 import { getDashboardMetricsAction, getRecentOffersAction, getOffersByDayAction } from "@/actions/affiliates";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"; 
-import { BarChart, Bar, XAxis as XAxis2, YAxis as YAxis2, CartesianGrid as CartesianGrid2 } from "recharts";
+import { OffersLineChart, PlatformBarChart } from "@/components/charts";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -23,7 +23,6 @@ export default async function DashboardPage() {
 
   const user = session.user;
 
-  // Get dashboard metrics in parallel for optimal performance
   const [metrics, recentOffers, offersByDay] = await Promise.all([
     getDashboardMetricsAction(user.tenantId || ""),
     getRecentOffersAction(user.tenantId || ""),
@@ -42,7 +41,6 @@ export default async function DashboardPage() {
     cancelled: "secondary",
   };
 
-  // Transform data for chart components
   const chartData = offersByDay.map((day) => ({
     date: day.date,
     ofertas: day.count,
@@ -64,9 +62,10 @@ export default async function DashboardPage() {
 
       {/* Cards de Métricas */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card>
+        <Card className="border-l-4 border-l-brand-pink bg-brand-pink/5">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground font-medium">
+            <CardTitle className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
+              <Crown className="w-4 h-4" />
               Plano
             </CardTitle>
           </CardHeader>
@@ -82,9 +81,10 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-brand-cyan bg-brand-cyan/5">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground font-medium">
+            <CardTitle className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
+              <Tags className="w-4 h-4" />
               Total de Ofertas
             </CardTitle>
           </CardHeader>
@@ -96,9 +96,10 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-[oklch(0.7_0.2_80)] bg-[oklch(0.7_0.2_80)/5]">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground font-medium">
+            <CardTitle className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
+              <TrendingUp className="w-4 h-4" />
               Ofertas Hoje
             </CardTitle>
           </CardHeader>
@@ -107,9 +108,10 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-[oklch(0.6_0.2_300)] bg-[oklch(0.6_0.2_300)/5]">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground font-medium">
+            <CardTitle className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
+              <Radio className="w-4 h-4" />
               Ativas
             </CardTitle>
           </CardHeader>
@@ -119,7 +121,7 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <Card>
+      <Card className="border-t-2 border-t-brand-pink/30">
         <CardHeader>
           <CardTitle>Configuração de Afiliados</CardTitle>
           <CardDescription>
@@ -130,20 +132,23 @@ export default async function DashboardPage() {
           {metrics.affiliateConfig ? (
             <div className="space-y-3">
               {[
-                { label: "Amazon", value: metrics.affiliateConfig.amazonTag },
-                { label: "Shopee", value: metrics.affiliateConfig.shopeeId },
+                { label: "Amazon", value: metrics.affiliateConfig.amazonTag, color: "#FF9900" },
+                { label: "Shopee", value: metrics.affiliateConfig.shopeeId, color: "#EE4D2D" },
                 {
                   label: "Mercado Livre",
                   value: metrics.affiliateConfig.mlId,
+                  color: "#FFE600",
                 },
                 {
                   label: "AliExpress",
                   value: metrics.affiliateConfig.aliexpressId,
+                  color: "#FF4747",
                 },
-              ].map(({ label, value }) => (
+              ].map(({ label, value, color }) => (
                 <div
                   key={label}
-                  className="flex items-center justify-between py-2 border-b last:border-b-0"
+                  className="flex items-center justify-between py-2 border-b last:border-b-0 pl-3 border-l-2"
+                  style={{ borderLeftColor: color }}
                 >
                   <span className="text-sm font-medium">{label}</span>
                   <span className="text-sm text-muted-foreground">
@@ -159,6 +164,30 @@ export default async function DashboardPage() {
               Nenhuma configuração encontrada.
             </p>
           )}
+        </CardContent>
+      </Card>
+
+      <Card className="border-t-2 border-t-brand-pink/30">
+        <CardHeader>
+          <CardTitle>Ofertas por Dia</CardTitle>
+          <CardDescription>
+            Distribuição de ofertas capturadas nos últimos dias
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <OffersLineChart data={chartData} />
+        </CardContent>
+      </Card>
+
+      <Card className="border-t-2 border-t-brand-pink/30">
+        <CardHeader>
+          <CardTitle>Ofertas por Plataforma</CardTitle>
+          <CardDescription>
+            Quantidade de ofertas por plataforma de afiliados
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <PlatformBarChart data={chartPlatformData} />
         </CardContent>
       </Card>
 
