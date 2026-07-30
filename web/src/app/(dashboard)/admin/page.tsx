@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CheckCircle, DollarSign, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,6 +31,18 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
   active: "default",
   suspended: "destructive",
   cancelled: "secondary",
+};
+
+const planClass: Record<string, string> = {
+  free: "bg-muted text-muted-foreground",
+  starter: "bg-brand-pink/15 text-brand-pink",
+  professional: "bg-amber-500/15 text-amber-600",
+};
+
+const statusClass: Record<string, string> = {
+  active: "bg-emerald-500/15 text-emerald-600",
+  suspended: "bg-red-500/15 text-red-600",
+  cancelled: "bg-muted text-muted-foreground",
 };
 
 export default async function AdminPage(props: {
@@ -99,24 +112,33 @@ export default async function AdminPage(props: {
       </div>
 
       {/* Stats cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        {[
-          { label: "Total Clientes", value: stats.total },
-          { label: "Ativos", value: stats.active },
-          { label: "Gratuitos", value: stats.free },
-          { label: "Pagantes", value: stats.paying },
-        ].map(({ label, value }) => (
-          <Card key={label}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm text-muted-foreground font-medium">
-                {label}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <span className="text-2xl font-bold">{value}</span>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="rounded-lg border border-border bg-card p-4 border-l-2 border-l-brand-pink bg-brand-pink/5">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground font-medium">Total Clientes</p>
+            <Users className="size-5 text-brand-pink" />
+          </div>
+          <p className="text-2xl font-bold mt-2">{stats.total}</p>
+        </div>
+        <div className="rounded-lg border border-border bg-card p-4 border-l-2 border-l-emerald-500">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground font-medium">Planos Ativos</p>
+            <CheckCircle className="size-5 text-emerald-500" />
+          </div>
+          <p className="text-2xl font-bold mt-2">{stats.active}</p>
+        </div>
+        <div className="rounded-lg border border-border bg-card p-4 border-l-2 border-l-brand-cyan">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground font-medium">Faturamento</p>
+            <DollarSign className="size-5 text-brand-cyan" />
+          </div>
+          <p className="text-2xl font-bold mt-2">
+            {(stats.paying * 97).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </p>
+        </div>
       </div>
 
       {/* Search + Filters */}
@@ -193,7 +215,7 @@ export default async function AdminPage(props: {
                 </TableHeader>
                 <TableBody>
                   {tenants.map((tenant) => (
-                    <TableRow key={tenant.id}>
+                    <TableRow key={tenant.id} className="hover:bg-brand-pink/5 transition-colors">
                       <TableCell>
                         <Link
                           href={`/admin/clientes/${tenant.id}`}
@@ -208,26 +230,35 @@ export default async function AdminPage(props: {
                         </Link>
                       </TableCell>
                       <TableCell>
-                        <form
-                          action={async (formData: FormData) => {
-                            "use server";
-                            await changePlanAction(
-                              tenant.id,
-                              formData.get("plan") as "free" | "starter" | "professional"
-                            );
-                          }}
-                        >
-                          <select
-                            name="plan"
-                            defaultValue={tenant.plan}
-                            onChange={(e) => e.target.form?.requestSubmit()}
-                            className="flex h-8 w-[120px] rounded-md border border-input bg-background px-2 text-xs ring-offset-background"
+                        <div className="flex items-center gap-2">
+                          <Badge className={`${planClass[tenant.plan]} border-0 font-medium`}>
+                            {tenant.plan === "free"
+                              ? "Free"
+                              : tenant.plan === "starter"
+                              ? "Starter"
+                              : "Professional"}
+                          </Badge>
+                          <form
+                            action={async (formData: FormData) => {
+                              "use server";
+                              await changePlanAction(
+                                tenant.id,
+                                formData.get("plan") as "free" | "starter" | "professional"
+                              );
+                            }}
                           >
-                            <option value="free">Free</option>
-                            <option value="starter">Starter</option>
-                            <option value="professional">Professional</option>
-                          </select>
-                        </form>
+                            <select
+                              name="plan"
+                              defaultValue={tenant.plan}
+                              onChange={(e) => e.target.form?.requestSubmit()}
+                              className="flex h-8 w-[120px] rounded-md border border-input bg-background px-2 text-xs ring-offset-background"
+                            >
+                              <option value="free">Free</option>
+                              <option value="starter">Starter</option>
+                              <option value="professional">Professional</option>
+                            </select>
+                          </form>
+                        </div>
                       </TableCell>
                       <TableCell>
                         <form
@@ -237,10 +268,10 @@ export default async function AdminPage(props: {
                           }}
                         >
                           <button type="submit" className="cursor-pointer">
-                            <Badge
-                              variant={statusVariant[tenant.status]}
-                              className="hover:opacity-80"
-                            >
+                              <Badge
+                                variant={statusVariant[tenant.status]}
+                                className={`${statusClass[tenant.status]} hover:opacity-80 border-0`}
+                              >
                               {tenant.status === "active"
                                 ? "Ativo"
                                 : tenant.status === "suspended"
@@ -259,7 +290,7 @@ export default async function AdminPage(props: {
                         <div className="flex justify-end gap-2">
                           <Link
                             href={`/admin/clientes/${tenant.id}`}
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 px-3"
+                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-brand-pink h-8 px-3"
                           >
                             Detalhes
                           </Link>

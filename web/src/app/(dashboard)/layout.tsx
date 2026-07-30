@@ -21,7 +21,8 @@ import {
   SidebarMenuButton,
   SidebarInset,
 } from "@/components/ui/sidebar";
-import { Home, Store, MessageCircle, Clock, Users, BarChart3, DollarSign } from "lucide-react";
+import { headers } from "next/headers";
+import { Home, Store, MessageCircle, Clock, Users, BarChart3, DollarSign, CreditCard, UserCircle, LifeBuoy } from "lucide-react";
 
 export default async function DashboardLayout({
   children,
@@ -42,6 +43,10 @@ export default async function DashboardLayout({
     .toUpperCase()
     .slice(0, 2);
 
+  const headersList = await headers();
+  const currentPath = headersList.get("x-invoke-path") || headersList.get("x-middleware-invoke") || headersList.get("x-next-url") || "";
+  const isActive = (href: string) => currentPath === href;
+
   async function handleLogout() {
     "use server";
     const { signOut } = await import("@/lib/auth");
@@ -51,38 +56,49 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
-        <Sidebar className="border-r">
+        <Sidebar className="border-r border-border/50">
           <SidebarContent>
+            <div className="h-1 bg-gradient-to-r from-brand-pink to-brand-cyan" />
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<Link href="/dashboard"><Home className="mr-2 h-4 w-4" />Dashboard</Link>} />
+                <SidebarMenuButton className={`transition-all duration-200 ${isActive("/dashboard") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/dashboard"><Home className="mr-2 h-4 w-4" />Dashboard</Link>} />
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<Link href="/dashboard/ofertas"><MessageCircle className="mr-2 h-4 w-4" />Ofertas</Link>} />
+                <SidebarMenuButton className={`transition-all duration-200 ${isActive("/ofertas") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/ofertas"><MessageCircle className="mr-2 h-4 w-4" />Ofertas</Link>} />
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<Link href="/dashboard/afiliados"><Store className="mr-2 h-4 w-4" />Afiliados</Link>} />
+                <SidebarMenuButton className={`transition-all duration-200 ${isActive("/afiliados") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/afiliados"><Store className="mr-2 h-4 w-4" />Afiliados</Link>} />
               </SidebarMenuItem>
                <SidebarMenuItem>
-                 <SidebarMenuButton render={<Link href="/dashboard/fontes"><Store className="mr-2 h-4 w-4" />Fontes</Link>} />
+                 <SidebarMenuButton className={`transition-all duration-200 ${isActive("/fontes") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/fontes"><Store className="mr-2 h-4 w-4" />Fontes</Link>} />
                </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton render={<Link href="/dashboard/onboarding"><Clock className="mr-2 h-4 w-4" />Onboarding</Link>} />
+                <SidebarMenuButton className={`transition-all duration-200 ${isActive("/onboarding") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/onboarding"><Clock className="mr-2 h-4 w-4" />Onboarding</Link>} />
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton className={`transition-all duration-200 ${isActive("/assinatura") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/assinatura"><CreditCard className="mr-2 h-4 w-4" />Assinatura</Link>} />
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton className={`transition-all duration-200 ${isActive("/conta") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/conta"><UserCircle className="mr-2 h-4 w-4" />Minha Conta</Link>} />
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton className={`transition-all duration-200 ${isActive("/suporte") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/suporte"><LifeBuoy className="mr-2 h-4 w-4" />Suporte</Link>} />
               </SidebarMenuItem>
 
               {user.role === "admin" && (
                 <>
-                  <SidebarMenuItem className="mt-4 px-3">
+                  <div className="my-2 h-px bg-gradient-to-r from-brand-pink/50 to-transparent" />
+                  <SidebarMenuItem className="mt-2 px-3">
                     <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Admin</p>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton render={<Link href="/admin"><Users className="mr-2 h-4 w-4" />Clientes</Link>} />
+                    <SidebarMenuButton className={`transition-all duration-200 ${isActive("/admin") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/admin"><Users className="mr-2 h-4 w-4" />Clientes</Link>} />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton render={<Link href="/admin/ofertas"><BarChart3 className="mr-2 h-4 w-4" />Ofertas Globais</Link>} />
+                    <SidebarMenuButton className={`transition-all duration-200 ${isActive("/admin/ofertas") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/admin/ofertas"><BarChart3 className="mr-2 h-4 w-4" />Ofertas Globais</Link>} />
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton render={<Link href="/admin/faturamento"><DollarSign className="mr-2 h-4 w-4" />Faturamento</Link>} />
+                    <SidebarMenuButton className={`transition-all duration-200 ${isActive("/admin/faturamento") ? "bg-brand-pink/10 text-brand-pink border-l-2 border-l-brand-pink rounded-none" : ""}`} render={<Link href="/admin/faturamento"><DollarSign className="mr-2 h-4 w-4" />Faturamento</Link>} />
                   </SidebarMenuItem>
                 </>
               )}
@@ -109,7 +125,7 @@ export default async function DashboardLayout({
                 )}
                 <DropdownMenu>
                   <DropdownMenuTrigger className="cursor-pointer">
-                    <Avatar className="h-9 w-9">
+                    <Avatar className="h-9 w-9 ring-2 ring-brand-pink/20">
                       <AvatarFallback>{initials || "U"}</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>

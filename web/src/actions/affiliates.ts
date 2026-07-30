@@ -31,7 +31,7 @@ export async function updateAffiliateConfigAction(
     update: data,
     create: { tenantId, ...data },
   });
-  revalidatePath("/dashboard/afiliados");
+  revalidatePath("/afiliados");
   return config;
 }
 
