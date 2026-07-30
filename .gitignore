@@ -7,6 +7,11 @@ dist/
 # Config sensível (tokens, senhas, IDs de afiliado)
 config/.env
 .env
+.env.local
+.env.*.local
+*.local
+web/.env
+web/.env.local
 
 # Sessão WhatsApp (dados de autenticação)
 whatsapp-session/

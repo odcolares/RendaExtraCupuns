@@ -434,7 +434,7 @@ RendaExtraCupuns/
 ### Variáveis de Ambiente (config/.env)
 ```bash
 # Telegram
-TELEGRAM_BOT_TOKEN=8497096404:AAGwbeKZ0348Qtym9OhRNHaKfJHbziqMEVo  # @RendaExtraCuponsBot
+TELEGRAM_BOT_TOKEN=TOKEN_REVOGADO  # @RendaExtraCuponsBot (substituir pelo novo token após revogação)
 TELEGRAM_CHANNEL_ID=-1004303411968                                   # @Ofertas_cupons_agora
 
 # WhatsApp
