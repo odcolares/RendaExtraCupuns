@@ -19,11 +19,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  changePlanAction,
-  toggleTenantStatusAction,
-  cancelTenantAction,
-} from "@/actions/admin";
+import { toggleTenantStatusAction } from "@/actions/admin";
+import { PlanSelect } from "@/components/admin/plan-select";
+import { ConfirmButton } from "@/components/admin/confirm-button";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
   active: "default",
@@ -133,21 +131,14 @@ export default async function ClientDetailPage(props: {
           </form>
 
           {tenant.status !== "cancelled" && (
-            <form
-              action={async () => {
-                "use server";
-                await cancelTenantAction(id);
-              }}
-              onSubmit={(e) => {
-                if (!confirm("Tem certeza? Esta ação cancela o plano do cliente.")) {
-                  e.preventDefault();
-                }
-              }}
+            <ConfirmButton
+              tenantId={id}
+              message="Tem certeza? Esta ação cancela o plano do cliente."
+              variant="outline"
+              size="sm"
             >
-              <Button type="submit" variant="outline" size="sm">
-                Cancelar Plano
-              </Button>
-            </form>
+              Cancelar Plano
+            </ConfirmButton>
           )}
         </div>
       </div>
@@ -162,26 +153,11 @@ export default async function ClientDetailPage(props: {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <form
-                action={async (formData: FormData) => {
-                  "use server";
-                  await changePlanAction(
-                    id,
-                    formData.get("plan") as "free" | "starter" | "professional"
-                  );
-                }}
-              >
-                <select
-                  name="plan"
-                  defaultValue={tenant.plan}
-                  onChange={(e) => e.target.form?.requestSubmit()}
-                  className="flex h-9 w-[140px] rounded-md border border-input bg-background px-2 text-sm font-medium"
-                >
-                  <option value="free">Free</option>
-                  <option value="starter">Starter</option>
-                  <option value="professional">Professional</option>
-                </select>
-              </form>
+              <PlanSelect
+                tenantId={id}
+                defaultValue={tenant.plan}
+                className="flex h-9 w-[140px] rounded-md border border-input bg-background px-2 text-sm font-medium"
+              />
             </div>
           </CardContent>
         </Card>
