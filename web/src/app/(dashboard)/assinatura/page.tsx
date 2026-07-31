@@ -50,9 +50,8 @@ export default async function AssinaturaPage() {
   }
 
   const tenant = await getSubscriptionAction();
-  if (!tenant) throw new Error("Tenant não encontrado");
-
-  const currentPlan = tenant.plan as PlanKey;
+  const currentPlan = (tenant?.plan ?? "free") as PlanKey;
+  const tenantStatus = tenant?.status ?? "active";
 
   return (
     <div className="space-y-6">
@@ -85,10 +84,10 @@ export default async function AssinaturaPage() {
               </p>
             </div>
             <Badge
-              variant={statusVariants[tenant.status] || "outline"}
+              variant={statusVariants[tenantStatus] || "outline"}
               className="text-sm"
             >
-              {statusLabels[tenant.status] || tenant.status}
+              {statusLabels[tenantStatus] || tenantStatus}
             </Badge>
           </div>
           <ul className="space-y-2">

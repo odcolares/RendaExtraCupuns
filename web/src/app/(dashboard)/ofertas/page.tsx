@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { redirect, useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -97,15 +97,11 @@ function formatPrice(price: number | null) {
 }
 
 export default function OffersPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  if (!session?.user) {
-    redirect("/login");
-  }
-
-  const tenantId = session.user.tenantId;
+  const tenantId = session?.user?.tenantId;
   const [data, setData] = useState<{
     offers: Array<{
       id: string;
@@ -133,7 +129,10 @@ export default function OffersPage() {
   };
 
   // Fetch data
-  useState(() => {
+  useEffect(() => {
+    if (!tenantId) return;
+    let cancelled = false;
+    setLoading(true);
     getPaginatedOffersAction(tenantId || "", {
       search: filters.search,
       platform: filters.platform,
@@ -143,15 +142,12 @@ export default function OffersPage() {
       page: filters.page,
       pageSize: 10,
     }).then((result) => {
-      setData({
-        offers: result.data,
-        total: result.total,
-        page: result.page,
-        totalPages: result.totalPages,
-      });
+      if (cancelled) return;
+      setData({ offers: result.data, total: result.total, page: result.page, totalPages: result.totalPages });
       setLoading(false);
     });
-  });
+    return () => { cancelled = true; };
+  }, [tenantId, filters.search, filters.platform, filters.status, filters.startDate, filters.endDate, filters.page]);
 
   const updateFilter = useCallback(
     (key: string, value: string) => {
@@ -170,6 +166,11 @@ export default function OffersPage() {
   const clearFilters = useCallback(() => {
     router.push("/ofertas");
   }, [router]);
+
+  if (status === "loading") return <div className="p-8 text-muted-foreground">Carregando…</div>;
+  if (!session?.user) {
+    redirect("/login");
+  }
 
   const hasFilters =
     filters.search ||

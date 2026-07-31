@@ -375,13 +375,13 @@ export default function OnboardingPage() {
                 Acessar Dashboard
               </Button>
             </Link>
-            <Link href="/dashboard/afiliados">
+            <Link href="/afiliados">
               <Button variant="ghost" className="w-full justify-start">
                 <Store className="mr-2 h-4 w-4" />
                 Configurar Afiliados
               </Button>
             </Link>
-            <Link href="/dashboard/ofertas">
+            <Link href="/ofertas">
               <Button variant="ghost" className="w-full justify-start">
                 <MessageCircle className="mr-2 h-4 w-4" />
                 Ver Histórico de Ofertas

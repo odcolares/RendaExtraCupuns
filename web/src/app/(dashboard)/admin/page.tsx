@@ -21,10 +21,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  changePlanAction,
-  toggleTenantStatusAction,
-} from "@/actions/admin";
+import { toggleTenantStatusAction } from "@/actions/admin";
+import { PlanSelect } from "@/components/admin/plan-select";
 import type { Prisma } from "@/generated/prisma/client";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
@@ -238,26 +236,11 @@ export default async function AdminPage(props: {
                               ? "Starter"
                               : "Professional"}
                           </Badge>
-                          <form
-                            action={async (formData: FormData) => {
-                              "use server";
-                              await changePlanAction(
-                                tenant.id,
-                                formData.get("plan") as "free" | "starter" | "professional"
-                              );
-                            }}
-                          >
-                            <select
-                              name="plan"
-                              defaultValue={tenant.plan}
-                              onChange={(e) => e.target.form?.requestSubmit()}
-                              className="flex h-8 w-[120px] rounded-md border border-input bg-background px-2 text-xs ring-offset-background"
-                            >
-                              <option value="free">Free</option>
-                              <option value="starter">Starter</option>
-                              <option value="professional">Professional</option>
-                            </select>
-                          </form>
+                          <PlanSelect
+                            tenantId={tenant.id}
+                            defaultValue={tenant.plan}
+                            className="flex h-8 w-[120px] rounded-md border border-input bg-background px-2 text-xs ring-offset-background"
+                          />
                         </div>
                       </TableCell>
                       <TableCell>

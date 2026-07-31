@@ -14,7 +14,7 @@ async function requireAuth() {
 export async function getSubscriptionAction() {
   const session = await requireAuth();
   const tenantId = session.user.tenantId;
-  if (!tenantId) throw new Error("Sem tenant");
+  if (!tenantId) return null;
 
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
