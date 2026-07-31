@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Providers from "@/components/providers";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -161,7 +162,9 @@ export default async function DashboardLayout({
             </div>
           </header>
 
-          <main className="flex-1 p-8 pt-20">{children}</main>
+          <main className="flex-1 p-8 pt-20">
+            <Providers>{children}</Providers>
+          </main>
         </SidebarInset>
       </div>
     </SidebarProvider>

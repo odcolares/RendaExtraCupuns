@@ -97,10 +97,11 @@ function formatPrice(price: number | null) {
 }
 
 export default function OffersPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  if (status === "loading") return <div className="p-8 text-muted-foreground">Carregando…</div>;
   if (!session?.user) {
     redirect("/login");
   }
