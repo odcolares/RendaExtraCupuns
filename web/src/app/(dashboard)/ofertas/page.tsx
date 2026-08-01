@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 import {
   Table,
   TableBody,
@@ -181,12 +182,11 @@ export default function OffersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Histórico de Ofertas</h1>
-        <p className="text-muted-foreground mt-1">
-          Visualize, filtre e gerencie todas as ofertas publicadas
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Ofertas"
+        title="Histórico de Ofertas"
+        description="Visualize, filtre e gerencie todas as ofertas publicadas"
+      />
 
       {/* Filters */}
       <Card>
@@ -299,7 +299,7 @@ export default function OffersPage() {
               <p>Nenhuma oferta encontrada.</p>
             </div>
           ) : (
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -313,7 +313,7 @@ export default function OffersPage() {
                 </TableHeader>
                 <TableBody>
                   {data.offers.map((offer) => (
-                    <TableRow key={offer.id} className="hover:bg-brand-pink/5 transition-colors">
+                    <TableRow key={offer.id} className="hover:bg-muted/50 transition-colors">
                       <TableCell className="font-medium max-w-xs truncate" title={offer.title}>
                         {offer.title}
                       </TableCell>
@@ -329,10 +329,10 @@ export default function OffersPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-pink" title="Visualizar">
+                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-primary" title="Visualizar">
                             <Eye className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-pink" title="Editar">
+                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-primary" title="Editar">
                             <Edit className="size-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="size-8 text-destructive hover:text-destructive" title="Excluir">
