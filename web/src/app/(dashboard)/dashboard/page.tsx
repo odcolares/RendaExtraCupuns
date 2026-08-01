@@ -9,8 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Crown, Tags, TrendingUp, Radio } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
+import { MetricCard } from "@/components/metric-card";
 import { getDashboardMetricsAction, getRecentOffersAction, getOffersByDayAction } from "@/actions/affiliates";
 import { OffersLineChart, PlatformBarChart } from "@/components/charts";
 
@@ -35,12 +36,6 @@ export default async function DashboardPage() {
     professional: "Professional",
   };
 
-  const statusVariants: Record<string, "secondary" | "default" | "destructive"> = {
-    active: "default",
-    suspended: "destructive",
-    cancelled: "secondary",
-  };
-
   const chartData = offersByDay.map((day) => ({
     date: day.date,
     ofertas: day.count,
@@ -53,75 +48,45 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Bem-vindo, {user.name}!
-        </p>
-      </div>
+      <PageHeader
+        title="Dashboard"
+        description={`Bem-vindo, ${user.name}!`}
+      />
 
       {/* Cards de Métricas */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="border-l-4 border-l-brand-pink bg-brand-pink/5">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
-              <Crown className="w-4 h-4" />
-              Plano
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold">
-                {planLabels[metrics.plan] || metrics.plan}
-              </span>
-              <Badge variant={statusVariants[metrics.status]}>
-                {metrics.status === "active" ? "Ativo" : metrics.status}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
+        <MetricCard
+          icon={Crown}
+          label="Plano"
+          value={planLabels[metrics.plan] || metrics.plan}
+          hint={metrics.status === "active" ? "Ativo" : metrics.status}
+          accent="primary"
+        />
 
-        <Card className="border-l-4 border-l-brand-cyan bg-brand-cyan/5">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
-              <Tags className="w-4 h-4" />
-              Total de Ofertas
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <span className="text-2xl font-bold">{metrics.totalOffers}</span>
-            <p className="text-xs text-muted-foreground mt-1">
-              {metrics.publishedOffers} publicadas, {metrics.pendingOffers} pendentes
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard
+          icon={Tags}
+          label="Total de Ofertas"
+          value={String(metrics.totalOffers)}
+          hint={`${metrics.publishedOffers} publicadas, ${metrics.pendingOffers} pendentes`}
+          accent="teal"
+        />
 
-        <Card className="border-l-4 border-l-[oklch(0.7_0.2_80)] bg-[oklch(0.7_0.2_80)/5]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
-              <TrendingUp className="w-4 h-4" />
-              Ofertas Hoje
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <span className="text-2xl font-bold">{metrics.todayOffers}</span>
-          </CardContent>
-        </Card>
+        <MetricCard
+          icon={TrendingUp}
+          label="Ofertas Hoje"
+          value={String(metrics.todayOffers)}
+          accent="amber"
+        />
 
-        <Card className="border-l-4 border-l-[oklch(0.6_0.2_300)] bg-[oklch(0.6_0.2_300)/5]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground font-medium flex items-center gap-1.5">
-              <Radio className="w-4 h-4" />
-              Ativas
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <span className="text-2xl font-bold">{metrics.activeSources}</span>
-          </CardContent>
-        </Card>
+        <MetricCard
+          icon={Radio}
+          label="Ativas"
+          value={String(metrics.activeSources)}
+          accent="violet"
+        />
       </div>
 
-      <Card className="border-t-2 border-t-brand-pink/30">
+      <Card className="border-t-2 border-t-brand-primary/30">
         <CardHeader>
           <CardTitle>Configuração de Afiliados</CardTitle>
           <CardDescription>
@@ -167,7 +132,7 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-t-2 border-t-brand-pink/30">
+      <Card className="border-t-2 border-t-brand-primary/30">
         <CardHeader>
           <CardTitle>Ofertas por Dia</CardTitle>
           <CardDescription>
@@ -179,7 +144,7 @@ export default async function DashboardPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-t-2 border-t-brand-pink/30">
+      <Card className="border-t-2 border-t-brand-primary/30">
         <CardHeader>
           <CardTitle>Ofertas por Plataforma</CardTitle>
           <CardDescription>

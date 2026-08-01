@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { PageHeader } from "@/components/page-header";
 
 const platformLabels: Record<string, string> = {
   amazon: "Amazon",
@@ -92,12 +93,11 @@ export default async function GlobalOffersPage(props: {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Ofertas Globais</h1>
-        <p className="text-muted-foreground mt-1">
-          Todas as ofertas de todos os clientes
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Admin"
+        title="Ofertas Globais"
+        description="Todas as ofertas de todos os clientes"
+      />
 
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-4">

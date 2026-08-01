@@ -26,6 +26,7 @@ import {
   XCircle,
   Radio,
 } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 
 export default async function FontesPage() {
   const session = await auth();
@@ -40,23 +41,20 @@ export default async function FontesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Fontes do WhatsApp
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Grupos e newsletters que estão sendo monitorados
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Fontes"
+        title="Fontes do WhatsApp"
+        description="Grupos e newsletters que estão sendo monitorados"
+      />
 
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="border-l-2 border-l-brand-pink pl-4">
+        <Card className="border-l-2 border-l-brand-primary pl-4">
           <CardHeader className="pb-2 flex flex-row items-center justify-between">
             <CardTitle className="text-sm text-muted-foreground font-medium">
               Total
             </CardTitle>
-            <span className="inline-flex items-center justify-center size-8 rounded-lg bg-brand-pink/10 text-brand-pink">
+            <span className="inline-flex items-center justify-center size-8 rounded-lg bg-brand-primary/10 text-brand-primary">
               <MessageCircle className="size-4" />
             </span>
           </CardHeader>
@@ -116,7 +114,7 @@ export default async function FontesPage() {
               </p>
             </div>
           ) : (
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -130,7 +128,7 @@ export default async function FontesPage() {
                 </TableHeader>
                 <TableBody>
                   {fontes.map((fonte) => (
-                    <TableRow key={fonte.id} className="hover:bg-brand-pink/5 transition-colors cursor-pointer">
+                    <TableRow key={fonte.id} className="hover:bg-muted/50 transition-colors cursor-pointer">
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           <MessageCircle className="size-4 text-muted-foreground shrink-0" />

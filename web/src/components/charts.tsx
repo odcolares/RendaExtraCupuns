@@ -37,12 +37,12 @@ export function OffersLineChart({ data }: { data: ChartDataPoint[] }) {
     <ResponsiveContainer width="100%" height={300}>
       <AreaChart data={data}>
         <defs>
-          <linearGradient id="brandGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="oklch(0.65 0.25 350)" stopOpacity={0.3} />
-            <stop offset="100%" stopColor="oklch(0.65 0.25 350)" stopOpacity={0.0} />
+          <linearGradient id="primaryGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--color-brand-primary)" stopOpacity={0.3} />
+            <stop offset="100%" stopColor="var(--color-brand-accent)" stopOpacity={0.0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="oklch(0 0 0 / 0.06)" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
         <XAxis dataKey="date" className="text-xs text-muted-foreground" />
         <YAxis className="text-xs text-muted-foreground" allowDecimals={false} />
         <Tooltip
@@ -56,11 +56,11 @@ export function OffersLineChart({ data }: { data: ChartDataPoint[] }) {
         <Area
           type="monotone"
           dataKey="ofertas"
-          stroke="var(--color-brand-pink)"
+          stroke="var(--color-brand-primary)"
           strokeWidth={2}
-          fill="url(#brandGradient)"
-          dot={{ r: 3, fill: "var(--color-brand-pink)" }}
-          activeDot={{ r: 6, fill: "var(--color-brand-pink)" }}
+          fill="url(#primaryGradient)"
+          dot={{ r: 3, fill: "var(--color-brand-primary)" }}
+          activeDot={{ r: 6, fill: "var(--color-brand-primary)" }}
         />
       </AreaChart>
     </ResponsiveContainer>
@@ -80,12 +80,12 @@ export function PlatformBarChart({ data }: { data: PlatformDataPoint[] }) {
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>
         <defs>
-          <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="oklch(0.65 0.25 350)" stopOpacity={1} />
-            <stop offset="100%" stopColor="oklch(0.65 0.15 260)" stopOpacity={0.7} />
+          <linearGradient id="barPrimaryGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--color-brand-primary)" stopOpacity={1} />
+            <stop offset="100%" stopColor="var(--color-brand-accent)" stopOpacity={0.7} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="oklch(0 0 0 / 0.06)" />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
         <XAxis dataKey="plataforma" className="text-xs text-muted-foreground" />
         <YAxis className="text-xs text-muted-foreground" allowDecimals={false} />
         <Tooltip
@@ -98,7 +98,7 @@ export function PlatformBarChart({ data }: { data: PlatformDataPoint[] }) {
         />
         <Bar
           dataKey="quantidade"
-          fill="url(#barGradient)"
+          fill="url(#barPrimaryGradient)"
           radius={[4, 4, 0, 0]}
         />
       </BarChart>

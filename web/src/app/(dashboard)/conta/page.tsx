@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Calendar, Lock, Mail, Save, Shield, User } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 
 import { getProfileAction, updateProfileAction, updatePasswordAction } from "@/actions/conta";
 
@@ -75,18 +76,15 @@ export default async function ContaPage(props: {
       )}
 
       {/* Page Header */}
-      <div className="flex items-center gap-4">
-        <Avatar className="size-16">
+      <PageHeader
+        eyebrow="Conta"
+        title="Minha Conta"
+        description={`Gerencie suas informações pessoais · ${user.name} · ${user.email}`}
+      >
+        <Avatar className="size-14">
           <AvatarFallback className="text-lg">{initials}</AvatarFallback>
         </Avatar>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Minha Conta</h1>
-          <p className="mt-1 text-muted-foreground">
-            Gerencie suas informações pessoais
-          </p>
-          <p className="text-sm text-muted-foreground">{user.name} &middot; {user.email}</p>
-        </div>
-      </div>
+      </PageHeader>
 
       {/* Personal Info Card */}
       <Card>

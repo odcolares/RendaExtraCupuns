@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { Users, BarChart3, DollarSign } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 
 const adminNavItems = [
   { href: "/admin", label: "Clientes", icon: Users },
@@ -30,6 +31,11 @@ export default async function AdminLayout({
 
   return (
     <div className="flex flex-col gap-6">
+      <PageHeader
+        eyebrow="Admin"
+        title="Administração"
+        description="Gestão de clientes, ofertas e faturamento"
+      />
       <nav className="flex items-center gap-1">
         {adminNavItems.map(({ href, label, icon: Icon }) => {
           const isActive = href === "/admin"

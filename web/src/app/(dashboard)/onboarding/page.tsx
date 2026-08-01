@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Clock, Smartphone, MessageCircle, Store, CreditCard, ArrowRight, Play, HelpCircle } from "lucide-react";
 import Link from "next/link";
+import { PageHeader } from "@/components/page-header";
 
 interface Step {
   id: string;
@@ -276,12 +277,11 @@ export default function OnboardingPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Painel de Configuração - Onboarding</h1>
-        <p className="text-muted-foreground mt-1">
-          Configure sua máquina SaaS white-label passo a passo
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Onboarding"
+        title="Painel de Configuração"
+        description="Configure sua máquina SaaS white-label passo a passo"
+      />
 
       {/* Progresso */}
       <Card>

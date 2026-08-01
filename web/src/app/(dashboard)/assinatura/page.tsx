@@ -24,6 +24,7 @@ import {
   AlertTriangle,
   Crown,
 } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 
 const planOrder: PlanKey[] = ["free", "starter", "professional"];
 
@@ -56,12 +57,11 @@ export default async function AssinaturaPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Assinatura</h1>
-        <p className="text-muted-foreground mt-1">
-          Gerencie seu plano e pagamentos
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Assinatura"
+        title="Assinatura"
+        description="Gerencie seu plano e pagamentos"
+      />
 
       {/* Current Plan Card */}
       <Card>

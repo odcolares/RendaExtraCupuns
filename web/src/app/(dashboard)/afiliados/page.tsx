@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 import {
   CheckCircle,
   AlertCircle,
@@ -66,14 +67,11 @@ export default async function AffiliatesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Configurações de Afiliados
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          Gerencie seus IDs de afiliado para cada plataforma
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Afiliados"
+        title="Configurações de Afiliados"
+        description="Gerencie seus IDs de afiliado para cada plataforma"
+      />
 
       {/* Current Config Status */}
       <Card>
@@ -91,7 +89,7 @@ export default async function AffiliatesPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2 overflow-x-auto">
             {PLATFORMS.map(({ key, label, icon: Icon }) => {
               const value = config?.[key as keyof typeof config] as string | null | undefined;
               const isConfigured = Boolean(value);

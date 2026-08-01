@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/page-header";
 
 export default async function BillingPage() {
   const session = await auth();
@@ -63,12 +64,11 @@ export default async function BillingPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Faturamento</h1>
-        <p className="text-muted-foreground mt-1">
-          Visão geral de receita e planos
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Admin"
+        title="Faturamento"
+        description="Visão geral de receita e planos"
+      />
 
       {/* Revenue Cards */}
       <div className="grid gap-4 md:grid-cols-4">

@@ -69,7 +69,7 @@ function SignupForm() {
   return (
     <Card className="relative w-full shadow-lg overflow-hidden">
       {/* Brand gradient top border */}
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-pink to-brand-cyan" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-primary to-brand-accent" />
       <CardHeader className="text-center pt-8">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-gradient">
           <UserPlus className="h-6 w-6 text-white" />
@@ -94,7 +94,7 @@ function SignupForm() {
             <Input
               id="name"
               placeholder="Seu nome"
-              className="focus-visible:ring-brand-pink placeholder:text-muted-foreground/50"
+              className="focus-visible:ring-brand-primary placeholder:text-muted-foreground/50"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -106,7 +106,7 @@ function SignupForm() {
               id="email"
               type="email"
               placeholder="seu@email.com"
-              className="focus-visible:ring-brand-pink placeholder:text-muted-foreground/50"
+              className="focus-visible:ring-brand-primary placeholder:text-muted-foreground/50"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -118,7 +118,7 @@ function SignupForm() {
               id="password"
               type="password"
               placeholder="M\u00ednimo 6 caracteres"
-              className="focus-visible:ring-brand-pink placeholder:text-muted-foreground/50"
+              className="focus-visible:ring-brand-primary placeholder:text-muted-foreground/50"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={6}
