@@ -29,7 +29,7 @@ const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "3rem"
+const SIDEBAR_WIDTH_ICON = "5.25rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContextProps = {
@@ -40,6 +40,7 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void
   isMobile: boolean
   toggleSidebar: () => void
+  collapsible?: "offcanvas" | "icon" | "none"
 }
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null)
@@ -57,6 +58,7 @@ function SidebarProvider({
   defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
+  collapsible = "offcanvas",
   className,
   style,
   children,
@@ -65,6 +67,7 @@ function SidebarProvider({
   defaultOpen?: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  collapsible?: "offcanvas" | "icon" | "none"
 }) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
@@ -122,8 +125,9 @@ function SidebarProvider({
       openMobile,
       setOpenMobile,
       toggleSidebar,
+      collapsible,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, collapsible]
   )
 
   return (
@@ -152,7 +156,7 @@ function SidebarProvider({
 function Sidebar({
   side = "left",
   variant = "sidebar",
-  collapsible = "offcanvas",
+  collapsible,
   className,
   children,
   dir,
@@ -162,9 +166,16 @@ function Sidebar({
   variant?: "sidebar" | "floating" | "inset"
   collapsible?: "offcanvas" | "icon" | "none"
 }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const {
+    isMobile,
+    state,
+    openMobile,
+    setOpenMobile,
+    collapsible: contextCollapsible,
+  } = useSidebar()
+  const activeCollapsible = collapsible ?? contextCollapsible ?? "offcanvas"
 
-  if (collapsible === "none") {
+  if (activeCollapsible === "none") {
     return (
       <div
         data-slot="sidebar"
@@ -209,7 +220,7 @@ function Sidebar({
     <div
       className="group peer hidden text-sidebar-foreground md:block"
       data-state={state}
-      data-collapsible={state === "collapsed" ? collapsible : ""}
+      data-collapsible={state === "collapsed" ? activeCollapsible : ""}
       data-variant={variant}
       data-side={side}
       data-slot="sidebar"
