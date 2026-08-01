@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -154,6 +155,7 @@ export default function LandingPage() {
                 </Link>
               </nav>
               <div className="flex items-center gap-3">
+                <ThemeToggle />
                 <Link href="/login">
                   <Button variant="ghost" className="cursor-pointer">
                     Entrar
@@ -179,9 +181,9 @@ export default function LandingPage() {
             <div className="mx-auto max-w-3xl text-center">
               <Badge
                 variant="secondary"
-                className="mb-6 px-4 py-1.5 text-sm gap-1.5 rounded-full bg-gradient-to-r from-brand-pink/15 to-brand-cyan/15 text-brand-pink border-brand-pink/20 cursor-pointer"
+                className="mb-6 px-4 py-1.5 text-sm gap-1.5 rounded-full bg-gradient-to-r from-brand-primary/15 to-brand-accent/15 text-brand-primary border-brand-primary/20 cursor-pointer"
               >
-                <Sparkles className="size-3.5 text-brand-cyan" />
+                <Sparkles className="size-3.5 text-brand-accent" />
                 Agora com painel web
               </Badge>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl leading-tight">
@@ -224,7 +226,7 @@ export default function LandingPage() {
         >
           <div
             aria-hidden="true"
-            className="absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-brand-pink/10 blur-3xl pointer-events-none"
+            className="absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full bg-brand-primary/10 blur-3xl pointer-events-none"
           />
           <div className="container mx-auto px-4 relative">
             <div className="text-center mb-12" data-animate>
@@ -293,7 +295,7 @@ export default function LandingPage() {
                     }`}
                   >
                     {isPopular && (
-                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-brand-pink to-[oklch(0.65_0.15_260)] text-white border-0 cursor-pointer">
+                      <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-brand-primary to-[oklch(0.65_0.15_260)] text-white border-0 cursor-pointer">
                         Mais popular
                       </Badge>
                     )}
@@ -315,7 +317,7 @@ export default function LandingPage() {
                       <ul className="flex flex-col gap-3">
                         {plan.features.map((feature) => (
                           <li key={feature} className="flex items-start gap-2">
-                            <Check className="size-4 text-brand-pink mt-0.5 shrink-0" />
+                            <Check className="size-4 text-brand-primary mt-0.5 shrink-0" />
                             <span className="text-sm text-muted-foreground">
                               {feature}
                             </span>
@@ -408,7 +410,7 @@ export default function LandingPage() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="bg-transparent border-white text-white hover:bg-white hover:text-brand-pink transition-all duration-300 cursor-pointer text-base"
+                  className="bg-transparent border-white text-white hover:bg-white hover:text-brand-primary transition-all duration-300 cursor-pointer text-base"
                 >
                   Começar Grátis
                   <ArrowRight className="size-4 ml-2" />
