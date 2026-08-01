@@ -22,6 +22,7 @@ import {
 import { toggleTenantStatusAction } from "@/actions/admin";
 import { PlanSelect } from "@/components/admin/plan-select";
 import { ConfirmButton } from "@/components/admin/confirm-button";
+import { PageHeader } from "@/components/page-header";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
   active: "default",
@@ -98,22 +99,17 @@ export default async function ClientDetailPage(props: {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/admin"
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              ← Voltar
-            </Link>
-          </div>
-          <h1 className="text-3xl font-bold mt-2">
-            {tenant.users[0]?.name || tenant.name}
-          </h1>
-          <p className="text-muted-foreground">{tenant.users[0]?.email}</p>
-        </div>
-
+      <PageHeader
+        eyebrow="Admin"
+        title={tenant.users[0]?.name || tenant.name}
+        description={tenant.users[0]?.email}
+      >
+        <Link
+          href="/admin"
+          className="text-sm text-muted-foreground hover:text-foreground"
+        >
+          ← Voltar
+        </Link>
         <div className="flex gap-2">
           <form
             action={async () => {
@@ -141,7 +137,7 @@ export default async function ClientDetailPage(props: {
             </ConfirmButton>
           )}
         </div>
-      </div>
+      </PageHeader>
 
       {/* Info Cards */}
       <div className="grid gap-4 md:grid-cols-4">

@@ -14,6 +14,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Mail, MessageCircle, CheckCircle2, HelpCircle } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 
 const faqItems = [
   {
@@ -58,12 +59,11 @@ export default async function SuportePage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Suporte</h1>
-        <p className="text-muted-foreground mt-1">
-          Tire suas dúvidas e entre em contato
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Suporte"
+        title="Suporte"
+        description="Tire suas dúvidas e entre em contato"
+      />
 
       {/* FAQ */}
       <Card>

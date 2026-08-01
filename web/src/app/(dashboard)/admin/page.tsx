@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import { toggleTenantStatusAction } from "@/actions/admin";
 import { PlanSelect } from "@/components/admin/plan-select";
+import { PageHeader } from "@/components/page-header";
 import type { Prisma } from "@/generated/prisma/client";
 
 const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
@@ -33,7 +34,7 @@ const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
 
 const planClass: Record<string, string> = {
   free: "bg-muted text-muted-foreground",
-  starter: "bg-brand-pink/15 text-brand-pink",
+  starter: "bg-brand-primary/15 text-brand-primary",
   professional: "bg-amber-500/15 text-amber-600",
 };
 
@@ -102,19 +103,18 @@ export default async function AdminPage(props: {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold">Admin</h1>
-        <p className="text-muted-foreground mt-1">
-          Gerencie todos os clientes e planos
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Admin"
+        title="Admin"
+        description="Gerencie todos os clientes e planos"
+      />
 
       {/* Stats cards */}
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-lg border border-border bg-card p-4 border-l-2 border-l-brand-pink bg-brand-pink/5">
+        <div className="rounded-lg border border-border bg-card p-4 border-l-2 border-l-brand-primary bg-brand-primary/5">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground font-medium">Total Clientes</p>
-            <Users className="size-5 text-brand-pink" />
+            <Users className="size-5 text-brand-primary" />
           </div>
           <p className="text-2xl font-bold mt-2">{stats.total}</p>
         </div>
@@ -125,10 +125,10 @@ export default async function AdminPage(props: {
           </div>
           <p className="text-2xl font-bold mt-2">{stats.active}</p>
         </div>
-        <div className="rounded-lg border border-border bg-card p-4 border-l-2 border-l-brand-cyan">
+        <div className="rounded-lg border border-border bg-card p-4 border-l-2 border-l-brand-accent">
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground font-medium">Faturamento</p>
-            <DollarSign className="size-5 text-brand-cyan" />
+            <DollarSign className="size-5 text-brand-accent" />
           </div>
           <p className="text-2xl font-bold mt-2">
             {(stats.paying * 97).toLocaleString("pt-BR", {
@@ -213,7 +213,7 @@ export default async function AdminPage(props: {
                 </TableHeader>
                 <TableBody>
                   {tenants.map((tenant) => (
-                    <TableRow key={tenant.id} className="hover:bg-brand-pink/5 transition-colors">
+                    <TableRow key={tenant.id} className="hover:bg-brand-primary/5 transition-colors">
                       <TableCell>
                         <Link
                           href={`/admin/clientes/${tenant.id}`}
@@ -273,7 +273,7 @@ export default async function AdminPage(props: {
                         <div className="flex justify-end gap-2">
                           <Link
                             href={`/admin/clientes/${tenant.id}`}
-                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-brand-pink h-8 px-3"
+                            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-brand-primary h-8 px-3"
                           >
                             Detalhes
                           </Link>
