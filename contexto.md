@@ -164,6 +164,18 @@ Stack: Next.js + Prisma + Turso (SQLite compatível) + Vercel (deploy web)
 - [x] Deploy Vercel production — build limpo, site live
 - [x] URL: https://web-gamma-hazel-30.vercel.app
 
+**Retema UI adminHMD azul ✅ (01/08/2026)**
+- [x] Paleta pink/cyan substituída por azul adminHMD (`brand-primary`/`brand-accent`)
+- [x] Tema claro/escuro com `next-themes` + `ThemeToggle`
+- [x] Sidebar escura nos dois temas com mini-mode de 84px
+- [x] Componentes base: `PageHeader`, `MetricCard`, `ThemeToggle`
+- [x] Re-tematização: dashboard, auth, landing, admin, ofertas, afiliados, fontes, conta, assinatura, suporte, onboarding
+- [x] Gráficos re-tematizados com tokens azuis e IDs SVG ajustados
+- [x] PRs #20, #21, #22 mergeados em `master`
+- [x] CI GitHub Actions verde + deploy Vercel automático
+- [x] QA automatizado Playwright: login e navegação entre rotas protegidas OK
+- [x] Correção de UX: remoção de `loading.tsx` genérico que causava flash no dashboard
+
 **Fase 2 — Super Admin**
 - [ ] Lista de clientes (status, plano, última atividade, ofertas)
 - [ ] Detalhe do cliente (config, ofertas, status worker)
@@ -434,7 +446,7 @@ RendaExtraCupuns/
 ### Variáveis de Ambiente (config/.env)
 ```bash
 # Telegram
-TELEGRAM_BOT_TOKEN=TOKEN_REVOGADO  # @RendaExtraCuponsBot (substituir pelo novo token após revogação)
+TELEGRAM_BOT_TOKEN=TOKEN_REVOGADO  # @RendaExtraCuponsBot
 TELEGRAM_CHANNEL_ID=-1004303411968                                   # @Ofertas_cupons_agora
 
 # WhatsApp
@@ -455,10 +467,10 @@ SHOPEE_AFFILIATE_ID=18387911117
 MERCADOLIVRE_AFFILIATE_ID=88981950
 
 # Mercado Livre OAuth (para busca via API)
-ML_CLIENT_ID=2853473974069251                                       # App ID
-ML_SECRET_KEY=5h2ef6HGy2tx8tRMWPiUqZL39ZwI3Q6o                     # Secret Key
-ML_ACCESS_TOKEN=...                                                  # Gerado pelo setup-ml-oauth.js
-ML_REFRESH_TOKEN=...                                                 # Gerado pelo setup-ml-oauth.js
+ML_CLIENT_ID=seu_app_id_ml # App ID (ver docs/ARQUITETURA.md para fluxo OAuth)
+ML_SECRET_KEY=sua_secret_key_ml # Secret Key
+ML_ACCESS_TOKEN=... # Gerado pelo setup-ml-oauth.js
+ML_REFRESH_TOKEN=... # Gerado pelo setup-ml-oauth.js
 ```
 
 ### Contas Necessárias
