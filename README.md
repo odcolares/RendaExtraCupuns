@@ -4,7 +4,7 @@
 
 Sistema automatizado que monitora ofertas em grupos WhatsApp, gera links de afiliado e publica em canal próprio no **Telegram**, transformando ofertas em fonte de renda extra via marketing de afiliados.
 
-**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | **🌐 Web SaaS Fase 0+1 ✅** | **Turso serverless ✅** | **Deploy Vercel 🟢 Live**
+**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | **🌐 Web SaaS Fase 0+1 ✅** | **Turso serverless ✅** | **Deploy Vercel 🟢 Live** | **Retema UI adminHMD azul ✅** | **Token Telegram rotacionado (30/07/2026) ✅**
 
 ---
 
@@ -423,6 +423,7 @@ npm run lint           # Verificar erros TypeScript
 - **Web SaaS Fase 0+1**: Next.js + Prisma + Auth + Stripe + shadcn/ui ✅
 - **Turso serverless**: Banco libSQL em AWS us-east-1 ✅
 - **Deploy Vercel**: https://web-gamma-hazel-30.vercel.app 🟢 Live
+- **Retema UI adminHMD azul**: paleta azul unificada, sidebar escura, mini-mode, PageHeader, MetricCard, ThemeToggle, loading states e ajustes de navegação ✅
 
 ### 🔴 Próximos passos
 1. 👉 **Fase 2 — Super Admin**: Lista de clientes, controle de planos, visão geral de faturamento
@@ -460,4 +461,6 @@ graphify explain "X"        # Explicar conceito
 
 **Status**: **Alpha** operacional. 4 fontes WhatsApp monitoradas. Amazon + Shopee + Mercado Livre + AliExpress configurados e testados E2E. Código no [GitHub](https://github.com/odcolares/RendaExtraCupuns). 🌐 **Web SaaS (Fase 0+1) live em https://web-gamma-hazel-30.vercel.app** com Turso serverless. 🚀
 
-*Última atualização: 10/07/2026 — Fase 1.5 concluída (Turso serverless + Deploy Vercel production)*
+*Última atualização: 01/08/2026 — Retema UI adminHMD azul concluído e deployado no Vercel*
+
+> ⚠️ **Segurança**: Nunca comite `config/.env` ou qualquer arquivo com tokens reais. O `.gitignore` já protege esses arquivos — se acidentalmente commitado, use `git rm --cached` e gere novos tokens via @BotFather.
