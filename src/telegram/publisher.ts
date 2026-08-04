@@ -39,13 +39,11 @@ async function sendWithPreviewFallback(
   extra: Record<string, any> = {}
 ): Promise<void> {
   try {
-    // Tenta com preview habilitado (padrão)
     await bot.telegram.sendMessage(chatId, message, {
       ...extra,
       link_preview_options: { is_disabled: false, prefer_large_media: true },
     });
   } catch (err: any) {
-    // Se for erro 400 (preview bloqueado pela Amazon, etc), reenvia sem preview
     const isPreviewBlocked =
       err?.code === 400 ||
       err?.response?.error_code === 400 ||
@@ -60,7 +58,37 @@ async function sendWithPreviewFallback(
         link_preview_options: { is_disabled: true },
       });
     } else {
-      // Erro real (não é do preview), propaga
+      throw err;
+    }
+  }
+}
+
+async function sendWithRetry(
+  bot: import("telegraf").Telegraf,
+  chatId: string,
+  message: string,
+  extra: Record<string, any> = {},
+  retries = 2
+): Promise<void> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      await sendWithPreviewFallback(bot, chatId, message, extra);
+      return;
+    } catch (err: any) {
+      const isConnectionReset =
+        typeof err?.message === "string" &&
+        err.message.includes("ECONNRESET");
+
+      if (isConnectionReset && attempt < retries) {
+        log.warn("Falha de conexão com Telegram, tentando novamente", {
+          attempt,
+          retries,
+          error: err.message.substring(0, 120),
+        });
+        await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
+        continue;
+      }
+
       throw err;
     }
   }
