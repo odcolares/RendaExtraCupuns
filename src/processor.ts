@@ -19,6 +19,7 @@ import type { CouponData } from "./coupons/types";
 import {
   insertOffer,
   isDuplicate,
+  isDuplicateByName,
   markAsPublished,
   updateAffiliateLink,
 } from "./database/offers";
@@ -74,6 +75,14 @@ export async function processOffer(
   // ── 1. Verificar duplicata ──
   if (await isDuplicate(url)) {
     log.warn("Oferta duplicada ignorada", { url: url.substring(0, 60) });
+    return { success: false, error: "duplicate" };
+  }
+
+  const extractedForDedup = extractOfferData(messageText, url);
+  if (await isDuplicateByName(extractedForDedup.name)) {
+    log.warn("Oferta duplicada por nome ignorada", {
+      name: extractedForDedup.name.substring(0, 60),
+    });
     return { success: false, error: "duplicate" };
   }
 

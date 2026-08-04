@@ -218,6 +218,40 @@ export async function isDuplicate(url: string): Promise<boolean> {
   return count > 0;
 }
 
+/**
+ * Verifica se uma oferta com o mesmo nome já foi publicada HOJE.
+ *
+ * Ajuda a evitar duplicatas quando a mesma oferta chega com URLs
+ * diferentes, mas nome igual.
+ *
+ * @param name - Nome da oferta
+ * @returns true se já existe uma oferta com esse nome no dia corrente
+ */
+export async function isDuplicateByName(name: string): Promise<boolean> {
+  if (!name || name.trim().length === 0) return false;
+
+  const tenantId = await getTestTenantId();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const count = await prisma.offer.count({
+    where: {
+      tenantId,
+      title: {
+        equals: name,
+      },
+      createdAt: {
+        gte: today,
+        lt: tomorrow,
+      },
+    },
+  });
+
+  return count > 0;
+}
+
 // ==============================================================
 // Stats
 // ==============================================================
