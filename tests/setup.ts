@@ -5,10 +5,14 @@ import path from "path";
 const envPath = path.resolve(__dirname, "../web/.env");
 require("dotenv").config({ path: envPath });
 
-// Verifica se as variáveis essenciais estão definidas
-if (!process.env.DATABASE_URL) {
-  console.warn("⚠️  DATABASE_URL não definido no .env — testes de integração podem falhar");
-}
-if (!process.env.TURSO_AUTH_TOKEN) {
-  console.warn("⚠️  TURSO_AUTH_TOKEN não definido no .env — testes de integração podem falhar");
-}
+// ─────────────────────────────────────────────────────────────
+// Banco LOCAL isolado para testes (em vez do Turso remoto)
+// ─────────────────────────────────────────────────────────────
+// setupFiles roda antes de CADA arquivo de teste, então cada arquivo
+// começa com um banco SQLite local limpo (por worker), sem depender
+// de Turso, token ou rede. A promise fica em globalThis para que os
+// testes aguardem via waitForTestDb() antes de tocar no Prisma.
+import { prepareTestDb } from "./helpers/local-db";
+
+(globalThis as unknown as { __TEST_DB_READY__: Promise<void> }).__TEST_DB_READY__ =
+  prepareTestDb();

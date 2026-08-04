@@ -5,28 +5,20 @@
  *
  * NOTA: Depende de tokens para testar afiliados (AMAZON_AFFILIATE_TAG)
  * e Telegram (TELEGRAM_BOT_TOKEN). Sem tokens, testa até onde possível.
+ *
+ * O banco usado é LOCAL (SQLite via libSQL `file:` URL), preparado por
+ * tests/setup.ts — não depende do Turso remoto.
  */
 
-import fs from "fs";
-import { initDatabase, closeDatabase } from "../../src/database/index";
 import { getRecentOffers, getStats } from "../../src/database/offers";
 import { processOffer } from "../../src/processor";
-
-const TEST_DB = "./data/test-integration.db";
+import { waitForTestDb } from "../helpers/local-db";
 
 // Unique suffix for each test run to avoid duplicates
 const TEST_RUN_ID = Date.now().toString(36);
 
 beforeAll(async () => {
-  // Remove database anterior se existir (garante estado limpo)
-  if (fs.existsSync(TEST_DB)) {
-    fs.unlinkSync(TEST_DB);
-  }
-  await initDatabase(TEST_DB);
-});
-
-afterAll(async () => {
-  await closeDatabase();
+  await waitForTestDb();
 });
 
 describe("Pipeline de Integração", () => {

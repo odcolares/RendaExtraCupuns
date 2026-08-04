@@ -8,8 +8,9 @@ import {
   getStats,
 } from "../../../src/database/offers";
 import type { OfferData } from "../../../src/types";
+import { waitForTestDb } from "../../helpers/local-db";
 
-// Unique suffix for each test run to avoid duplicates in shared Turso DB
+// Unique suffix for each test run to avoid duplicates in the local test DB
 const TEST_RUN_ID = Date.now().toString(36);
 let testCounter = 0;
 
@@ -36,7 +37,11 @@ const mockOffer2: OfferData = {
   originalUrl: uniqueUrl("https://shopee.com.br/product/123/456_UNIT_2"),
 };
 
-describe("Database Offers (Prisma/Turso)", () => {
+beforeAll(async () => {
+  await waitForTestDb();
+});
+
+describe("Database Offers (Prisma/local SQLite)", () => {
   it("insertOffer insere e retorna ID", async () => {
     const id = await insertOffer(mockOffer, "https://amz.com/?tag=teste");
     expect(id).toBeTruthy();
