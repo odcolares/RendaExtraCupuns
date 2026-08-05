@@ -52,10 +52,10 @@ export async function updateOfferAction(
 }
 
 export async function deleteOfferAction(id: string, tenantId: string) {
-  await prisma.offer.delete({
+  const result = await prisma.offer.deleteMany({
     where: { id, tenantId },
   });
 
   revalidatePath("/ofertas");
-  return { success: true };
+  return { success: result.count > 0 };
 }

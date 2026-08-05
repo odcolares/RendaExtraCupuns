@@ -113,6 +113,7 @@ export default function OffersPage() {
   const searchParams = useSearchParams();
 
   const tenantId = session?.user?.tenantId;
+
   const [data, setData] = useState<{
     offers: Array<{
       id: string;
@@ -140,6 +141,7 @@ export default function OffersPage() {
     description: "",
   });
   const [actionLoading, setActionLoading] = useState(false);
+  const [refreshCounter, setRefreshCounter] = useState(0);
 
   const loadOffer = useCallback(async (id: string) => {
     setActionLoading(true);
@@ -148,6 +150,10 @@ export default function OffersPage() {
     setActionLoading(false);
     return offer;
   }, [tenantId]);
+
+  const refreshOffers = useCallback(() => {
+    setRefreshCounter((prev) => prev + 1);
+  }, []);
 
   // Read filters from URL
   const filters = {
@@ -178,7 +184,7 @@ export default function OffersPage() {
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [tenantId, filters.search, filters.platform, filters.status, filters.startDate, filters.endDate, filters.page]);
+  }, [tenantId, filters.search, filters.platform, filters.status, filters.startDate, filters.endDate, filters.page, refreshCounter]);
 
   const updateFilter = useCallback(
     (key: string, value: string) => {
@@ -228,7 +234,7 @@ export default function OffersPage() {
       description: editForm.description || null,
     });
     setEditOfferId(null);
-    router.refresh();
+    refreshOffers();
   };
 
   const handleDeleteConfirm = async () => {
@@ -236,12 +242,16 @@ export default function OffersPage() {
     await deleteOfferAction(deleteOfferId, tenantId || "");
     setDeleteOfferId(null);
     setSelectedOffer(null);
-    router.refresh();
+    refreshOffers();
   };
 
   if (status === "loading") return <div className="p-8 text-muted-foreground">Carregando…</div>;
   if (!session?.user) {
     redirect("/login");
+  }
+
+  if (!tenantId) {
+    return <div className="p-8 text-muted-foreground">Sessão sem tenant. Faça login novamente ou verifique sua conta.</div>;
   }
 
   const hasFilters =
