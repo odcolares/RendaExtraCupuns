@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -146,31 +147,33 @@ export default async function DashboardLayout({
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>
-                      <div className="flex flex-col">
-                        <span>{user.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {user.email}
-                        </span>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <Link href="/dashboard">
-                      <DropdownMenuItem>Dashboard</DropdownMenuItem>
-                    </Link>
-                    {user.role === "admin" && (
-                      <Link href="/admin">
-                        <DropdownMenuItem>Admin</DropdownMenuItem>
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel>
+                        <div className="flex flex-col">
+                          <span>{user.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {user.email}
+                          </span>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <Link href="/dashboard">
+                        <DropdownMenuItem>Dashboard</DropdownMenuItem>
                       </Link>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <form action={handleLogout} className="w-full">
-                        <button type="submit" className="w-full text-left">
-                          Sair
-                        </button>
-                      </form>
-                    </DropdownMenuItem>
+                      {user.role === "admin" && (
+                        <Link href="/admin">
+                          <DropdownMenuItem>Admin</DropdownMenuItem>
+                        </Link>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        <form action={handleLogout} className="w-full">
+                          <button type="submit" className="w-full text-left">
+                            Sair
+                          </button>
+                        </form>
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
