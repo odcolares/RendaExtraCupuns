@@ -41,6 +41,16 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { getPaginatedOffersAction } from "@/actions/affiliates";
+import { getOfferByIdAction, updateOfferAction, deleteOfferAction } from "@/actions/offers";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+  SheetClose,
+} from "@/components/ui/sheet";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -119,6 +129,26 @@ export default function OffersPage() {
   } | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const [viewOfferId, setViewOfferId] = useState<string | null>(null);
+  const [editOfferId, setEditOfferId] = useState<string | null>(null);
+  const [deleteOfferId, setDeleteOfferId] = useState<string | null>(null);
+  const [selectedOffer, setSelectedOffer] = useState<any>(null);
+  const [editForm, setEditForm] = useState({
+    title: "",
+    price: "",
+    status: "pending",
+    description: "",
+  });
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const loadOffer = useCallback(async (id: string) => {
+    setActionLoading(true);
+    const offer = await getOfferByIdAction(id, tenantId || "");
+    setSelectedOffer(offer);
+    setActionLoading(false);
+    return offer;
+  }, [tenantId]);
+
   // Read filters from URL
   const filters = {
     search: searchParams.get("search") || "",
@@ -167,6 +197,47 @@ export default function OffersPage() {
   const clearFilters = useCallback(() => {
     router.push("/ofertas");
   }, [router]);
+
+  const handleView = useCallback(async (id: string) => {
+    await loadOffer(id);
+    setViewOfferId(id);
+  }, [loadOffer]);
+
+  const handleEdit = useCallback(async (id: string) => {
+    const offer = await loadOffer(id);
+    setEditForm({
+      title: offer?.title || "",
+      price: offer?.price != null ? String(offer.price) : "",
+      status: offer?.status || "pending",
+      description: offer?.description || "",
+    });
+    setEditOfferId(id);
+  }, [loadOffer]);
+
+  const handleDelete = useCallback((id: string) => {
+    setDeleteOfferId(id);
+  }, []);
+
+  const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!editOfferId) return;
+    await updateOfferAction(editOfferId, tenantId || "", {
+      title: editForm.title,
+      price: editForm.price ? parseFloat(editForm.price) : null,
+      status: editForm.status as "pending" | "published" | "failed",
+      description: editForm.description || null,
+    });
+    setEditOfferId(null);
+    router.refresh();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteOfferId) return;
+    await deleteOfferAction(deleteOfferId, tenantId || "");
+    setDeleteOfferId(null);
+    setSelectedOffer(null);
+    router.refresh();
+  };
 
   if (status === "loading") return <div className="p-8 text-muted-foreground">Carregando…</div>;
   if (!session?.user) {
@@ -329,13 +400,13 @@ export default function OffersPage() {
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
-                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-primary" title="Visualizar">
+                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-primary" title="Visualizar" onClick={() => handleView(offer.id)}>
                             <Eye className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-primary" title="Editar">
+                          <Button variant="ghost" size="icon" className="size-8 hover:text-brand-primary" title="Editar" onClick={() => handleEdit(offer.id)}>
                             <Edit className="size-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="size-8 text-destructive hover:text-destructive" title="Excluir">
+                          <Button variant="ghost" size="icon" className="size-8 text-destructive hover:text-destructive" title="Excluir" onClick={() => handleDelete(offer.id)}>
                             <Trash2 className="size-4" />
                           </Button>
                         </div>
@@ -389,6 +460,136 @@ export default function OffersPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* View Sheet */}
+      <Sheet open={!!viewOfferId} onOpenChange={(open) => !open && setViewOfferId(null)}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Detalhes da Oferta</SheetTitle>
+            <SheetDescription>Informações completas da oferta selecionada</SheetDescription>
+          </SheetHeader>
+          {actionLoading || !selectedOffer ? (
+            <div className="p-4 text-sm text-muted-foreground">Carregando...</div>
+          ) : (
+            <div className="space-y-4 p-4">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">Título</p>
+                <p className="text-sm font-medium">{selectedOffer.title}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Plataforma</p>
+                  <p className="text-sm capitalize">{selectedOffer.platform}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Status</p>
+                  <p className="text-sm capitalize">{selectedOffer.status}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Preço</p>
+                  <p className="text-sm">{selectedOffer.price != null ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(selectedOffer.price) : "—"}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Preço Original</p>
+                  <p className="text-sm">{selectedOffer.originalPrice != null ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(selectedOffer.originalPrice) : "—"}</p>
+                </div>
+              </div>
+              {selectedOffer.discount != null && (
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Desconto</p>
+                  <p className="text-sm">{selectedOffer.discount}%</p>
+                </div>
+              )}
+              <div>
+                <p className="text-xs font-medium text-muted-foreground">Link</p>
+                <a href={selectedOffer.url} target="_blank" rel="noreferrer" className="text-sm text-brand-primary underline break-all">{selectedOffer.url}</a>
+              </div>
+              {selectedOffer.imageUrl && (
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">Imagem</p>
+                  <img src={selectedOffer.imageUrl} alt={selectedOffer.title} className="mt-1 rounded-md border max-h-48 object-contain" />
+                </div>
+              )}
+              <div className="text-xs text-muted-foreground">
+                Criado em {new Date(selectedOffer.createdAt).toLocaleString("pt-BR")}
+              </div>
+            </div>
+          )}
+          <SheetFooter>
+            <Button variant="outline" onClick={() => setViewOfferId(null)}>Fechar</Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+      {/* Edit Sheet */}
+      <Sheet open={!!editOfferId} onOpenChange={(open) => !open && setEditOfferId(null)}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Editar Oferta</SheetTitle>
+            <SheetDescription>Atualize os dados da oferta</SheetDescription>
+          </SheetHeader>
+          <form onSubmit={handleEditSubmit} className="space-y-4 p-4">
+            <div className="space-y-2">
+              <Label htmlFor="edit-title">Título</Label>
+              <Input id="edit-title" value={editForm.title} onChange={(e) => setEditForm((prev) => ({ ...prev, title: e.target.value }))} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-price">Preço (R$)</Label>
+              <Input id="edit-price" type="number" step="0.01" value={editForm.price} onChange={(e) => setEditForm((prev) => ({ ...prev, price: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-status">Status</Label>
+              <Select value={editForm.status} onValueChange={(value) => setEditForm((prev) => ({ ...prev, status: value || "pending" }))}>
+                <SelectTrigger id="edit-status">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pendente</SelectItem>
+                  <SelectItem value="published">Publicado</SelectItem>
+                  <SelectItem value="failed">Falhou</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit-description">Descrição</Label>
+              <textarea
+                id="edit-description"
+                value={editForm.description}
+                onChange={(e) => setEditForm((prev) => ({ ...prev, description: e.target.value }))}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                placeholder="Descrição da oferta..."
+              />
+            </div>
+            <SheetFooter>
+              <Button type="submit" disabled={actionLoading}>
+                {actionLoading ? "Salvando..." : "Salvar"}
+              </Button>
+              <Button type="button" variant="outline" onClick={() => setEditOfferId(null)}>Cancelar</Button>
+            </SheetFooter>
+          </form>
+        </SheetContent>
+      </Sheet>
+
+      {/* Delete Sheet */}
+      <Sheet open={!!deleteOfferId} onOpenChange={(open) => !open && setDeleteOfferId(null)}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Excluir Oferta</SheetTitle>
+            <SheetDescription>Essa ação não pode ser desfeita.</SheetDescription>
+          </SheetHeader>
+          <div className="p-4">
+            <p className="text-sm text-muted-foreground">Deseja realmente excluir esta oferta? Essa ação remove o registro permanentemente do banco de dados.</p>
+          </div>
+          <SheetFooter>
+            <Button variant="destructive" onClick={handleDeleteConfirm} disabled={actionLoading}>
+              {actionLoading ? "Excluindo..." : "Excluir"}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => setDeleteOfferId(null)}>Cancelar</Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
