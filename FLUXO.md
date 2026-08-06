@@ -183,7 +183,7 @@
 
 **Objetivo:** Colocar o sistema em producao
 
-> ⚠️ **Estratégia atual (Sessão 15, 07/07/2026):** O projeto está migrando de "monólito no VPS" para **SaaS self-service com painel web**. Veja abaixo os dois caminhos.
+> ⚠️ **Estratégia atual (Sessão 20, 05/08/2026):** O deploy é feito via **integração GitHub → Vercel**. Ao abrir PR, o Vercel dispara automaticamente um **preview deploy**. Ao mergear em `master`, dispara o **deploy de produção**. Não é necessário token local do CLI Vercel para este fluxo.
 
 #### Caminho A — Monólito (legado)
 Para deploy do bot monousuário original:
@@ -222,7 +222,7 @@ Para o módulo web + painel do cliente com assinatura:
 | Landing + Planos + Signup | Free / R$29 / R$79 — checkout Stripe/MP |
 | Painel do cliente | Dashboard, config grupos/afiliados/TG, métricas, fontes |
 | Super admin | Lista clientes, ofertas globais, controle de planos |
-| Deploy Vercel | Auto-deploy via GitHub, HTTPS, grátis 🟢 Live |
+| Deploy Vercel | Auto-deploy via GitHub: preview ao abrir PR, produção ao mergear em `master` |
 | Bot local (fonte) | npm run dev mantido — alimenta o DB compartilhado |
 
 **Skills:** Next.js, Prisma, NextAuth, Stripe/Mercado Pago, Turso, Vercel
@@ -230,9 +230,9 @@ Para o módulo web + painel do cliente com assinatura:
 **Checkpoint:**
 - [ ] Landing + Signup + Login funcionando? ✅
 - [ ] Cliente consegue configurar afiliados e Telegram? ✅
-- [ ] Bot + Web compartilham o mesmo DB?
-- [ ] Admin vê todos os clientes?
-- [ ] Deploy no Vercel funcionando? ✅ (Turso serverless AWS us-east-1)
+- [ ] Bot + Web compartilham o mesmo DB? ✅
+- [ ] Admin vê todos os clientes? ✅
+- [ ] Deploy no Vercel funcionando? ✅ (preview automático em PR + produção automático em merge)
 
 ---
 
@@ -539,4 +539,4 @@ FLUXO.md                                -> Este arquivo - fluxo de trabalho
 
 ---
 
-*Última atualização: 10/07/2026 — Fase 7 atualizada (Turso serverless + Deploy Vercel 🟢 Live)*
+*Última atualização: 05/08/2026 — Deploy Vercel automatizado via GitHub (preview + produção), página /ofertas com ações view/edit/delete e refresh automático*
