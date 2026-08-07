@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth.proxy";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 const publicPaths = ["/", "/login", "/signup"];
 const apiAuthPaths = ["/api/auth"];

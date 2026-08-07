@@ -41,7 +41,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { getPaginatedOffersAction } from "@/actions/affiliates";
-import { getOfferByIdAction, updateOfferAction, deleteOfferAction } from "@/actions/offers";
+import { getOfferByIdAction, updateOfferAction, deleteOfferAction, createOfferAction } from "@/actions/offers";
 import {
   Sheet,
   SheetContent,
@@ -51,6 +51,7 @@ import {
   SheetDescription,
   SheetClose,
 } from "@/components/ui/sheet";
+import { Plus } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -133,6 +134,7 @@ export default function OffersPage() {
   const [viewOfferId, setViewOfferId] = useState<string | null>(null);
   const [editOfferId, setEditOfferId] = useState<string | null>(null);
   const [deleteOfferId, setDeleteOfferId] = useState<string | null>(null);
+  const [createOfferId, setCreateOfferId] = useState<string | null>(null);
   const [selectedOffer, setSelectedOffer] = useState<any>(null);
   const [editForm, setEditForm] = useState({
     title: "",
@@ -140,8 +142,21 @@ export default function OffersPage() {
     status: "pending",
     description: "",
   });
+  const [createForm, setCreateForm] = useState({
+    title: "",
+    url: "",
+    platform: "outros",
+    price: "",
+    originalPrice: "",
+    discount: "",
+    imageUrl: "",
+    description: "",
+    status: "pending",
+  });
   const [actionLoading, setActionLoading] = useState(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const loadOffer = useCallback(async (id: string) => {
     setActionLoading(true);
@@ -224,6 +239,47 @@ export default function OffersPage() {
     setDeleteOfferId(id);
   }, []);
 
+  const handleCreateUrlChange = async (url: string) => {
+    setCreateForm((prev) => ({ ...prev, url }));
+    if (!url || !url.startsWith("http")) {
+      return;
+    }
+
+    setCreateLoading(true);
+    setCreateError(null);
+    try {
+      const response = await fetch("/api/fetch-product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!response.ok) {
+        setCreateError("Não foi possível buscar os dados do produto.");
+        return;
+      }
+
+      const { data } = await response.json();
+      if (!data) {
+        setCreateError("Não foi possível extrair os dados do produto. Preencha manualmente.");
+        return;
+      }
+
+      setCreateForm((prev) => ({
+        ...prev,
+        title: data.name || prev.title,
+        platform: data.platform || prev.platform,
+        price: data.price != null ? String(data.price) : prev.price,
+        imageUrl: data.imageUrl || prev.imageUrl,
+        description: data.description || prev.description,
+      }));
+    } catch {
+      setCreateError("Erro ao buscar os dados do produto.");
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
   const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editOfferId) return;
@@ -236,6 +292,52 @@ export default function OffersPage() {
     setEditOfferId(null);
     refreshOffers();
   };
+
+  const handleCreateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!tenantId) return;
+    setActionLoading(true);
+    await createOfferAction(tenantId, {
+      title: createForm.title,
+      url: createForm.url,
+      platform: createForm.platform as "amazon" | "shopee" | "mercadolivre" | "aliexpress" | "outros",
+      price: createForm.price ? parseFloat(createForm.price) : null,
+      originalPrice: createForm.originalPrice ? parseFloat(createForm.originalPrice) : null,
+      discount: createForm.discount ? parseFloat(createForm.discount) : null,
+      imageUrl: createForm.imageUrl || null,
+      description: createForm.description || null,
+      status: createForm.status as "pending" | "published" | "failed",
+    });
+    setCreateForm({
+      title: "",
+      url: "",
+      platform: "outros",
+      price: "",
+      originalPrice: "",
+      discount: "",
+      imageUrl: "",
+      description: "",
+      status: "pending",
+    });
+    setCreateOfferId(null);
+    setActionLoading(false);
+    refreshOffers();
+  };
+
+  const handleCreateReset = useCallback(() => {
+    setCreateForm({
+      title: "",
+      url: "",
+      platform: "outros",
+      price: "",
+      originalPrice: "",
+      discount: "",
+      imageUrl: "",
+      description: "",
+      status: "pending",
+    });
+    setCreateError(null);
+  }, []);
 
   const handleDeleteConfirm = async () => {
     if (!deleteOfferId) return;
@@ -267,7 +369,12 @@ export default function OffersPage() {
         eyebrow="Ofertas"
         title="Histórico de Ofertas"
         description="Visualize, filtre e gerencie todas as ofertas publicadas"
-      />
+      >
+        <Button onClick={() => setCreateOfferId("create")} className="gap-2">
+          <Plus className="size-4" />
+          Nova oferta
+        </Button>
+      </PageHeader>
 
       {/* Filters */}
       <Card>
@@ -598,6 +705,102 @@ export default function OffersPage() {
             </Button>
             <Button type="button" variant="outline" onClick={() => setDeleteOfferId(null)}>Cancelar</Button>
           </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
+      {/* Create Sheet */}
+      <Sheet open={!!createOfferId} onOpenChange={(open) => !open && setCreateOfferId(null)}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Nova Oferta</SheetTitle>
+            <SheetDescription>Adicione uma oferta manualmente</SheetDescription>
+          </SheetHeader>
+          <form onSubmit={handleCreateSubmit} className="space-y-4 p-4">
+            <div className="space-y-2">
+              <Label htmlFor="create-title">Título *</Label>
+              <Input id="create-title" value={createForm.title} onChange={(e) => setCreateForm((prev) => ({ ...prev, title: e.target.value }))} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-url">URL *</Label>
+              <Input
+                id="create-url"
+                type="url"
+                value={createForm.url}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, url: e.target.value }))}
+                onBlur={(e) => handleCreateUrlChange(e.target.value)}
+                required
+              />
+              {createLoading && (
+                <p className="text-xs text-muted-foreground">Buscando dados do produto...</p>
+              )}
+              {createError && (
+                <p className="text-xs text-destructive">{createError}</p>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-platform">Plataforma *</Label>
+              <Select value={createForm.platform} onValueChange={(value) => setCreateForm((prev) => ({ ...prev, platform: value || "outros" }))}>
+                <SelectTrigger id="create-platform">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {platformOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="create-price">Preço (R$)</Label>
+                <Input id="create-price" type="number" step="0.01" value={createForm.price} onChange={(e) => setCreateForm((prev) => ({ ...prev, price: e.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="create-originalPrice">Preço Original (R$)</Label>
+                <Input id="create-originalPrice" type="number" step="0.01" value={createForm.originalPrice} onChange={(e) => setCreateForm((prev) => ({ ...prev, originalPrice: e.target.value }))} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-discount">Desconto (%)</Label>
+              <Input id="create-discount" type="number" step="0.01" value={createForm.discount} onChange={(e) => setCreateForm((prev) => ({ ...prev, discount: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-imageUrl">Imagem URL</Label>
+              <Input id="create-imageUrl" type="url" value={createForm.imageUrl} onChange={(e) => setCreateForm((prev) => ({ ...prev, imageUrl: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-description">Descrição</Label>
+              <textarea
+                id="create-description"
+                value={createForm.description}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, description: e.target.value }))}
+                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                placeholder="Descrição da oferta..."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-status">Status</Label>
+              <Select value={createForm.status} onValueChange={(value) => setCreateForm((prev) => ({ ...prev, status: value || "pending" }))}>
+                <SelectTrigger id="create-status">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending">Pendente</SelectItem>
+                  <SelectItem value="published">Publicado</SelectItem>
+                  <SelectItem value="failed">Falhou</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <SheetFooter>
+              <Button type="submit" disabled={actionLoading}>
+                {actionLoading ? "Criando..." : "Criar oferta"}
+              </Button>
+              <Button type="button" variant="outline" onClick={handleCreateReset}>Limpar</Button>
+              <Button type="button" variant="outline" onClick={() => setCreateOfferId(null)}>Cancelar</Button>
+            </SheetFooter>
+          </form>
         </SheetContent>
       </Sheet>
     </div>

@@ -235,6 +235,21 @@ Esta sessão redirecionou a estratégia do projeto do deploy VPS do monólito pa
 | **Stripe/Mercado Pago na Fase 0** | Pagamento de assinaturas é requisito de lançamento, não pós-lançamento |
 | **Landing page integrada** | Next.js já serve landing + planos + signup + painel — tudo no mesmo projeto |
 
+### Sessão 19 (10/07/2026)
+| Decisão | Justificativa |
+|---------|---------------|
+| **Deploy Vercel + Turso** | Banco serverless libSQL em AWS us-east-1, Prisma adaptado com `@prisma/adapter-libsql`, migrations aplicadas, env vars configuradas no Vercel, site live |
+| **Bot → Turso Integration** | Bot grava ofertas no mesmo banco Turso do web SaaS via Prisma + libSQL adapter; schema compartilhado em `prisma/schema.prisma` |
+
+### Sessão 20 (05/08/2026)
+| Decisão | Justificativa |
+|---------|---------------|
+| **Server Actions em vez de API Routes** | `web/src/actions/offers.ts` com `getOfferByIdAction`, `updateOfferAction`, `deleteOfferAction` — mais simples para formulários e mutações no App Router |
+| **Refresh automático via contador** | Substituído `router.refresh()` por `refreshCounter` em `ofertas/page.tsx` para atualizar a lista após editar/excluir sem recarregar a página |
+| **Guarda de tenant** | Adicionada verificação `if (!tenantId)` em `ofertas/page.tsx` para exibir mensagem clara quando o tenant não está disponível, evitando loading eterno |
+| **Fix DropdownMenuGroup** | Corrigido erro de runtime `MenuGroupContext is missing` em `layout.tsx` envolvendo itens do dropdown do usuário em `<DropdownMenuGroup>` |
+| **Deploy Vercel automatizado** | Integração GitHub → Vercel já estava ativa; PR #25 abriu preview automaticamente e merge em `master` disparou deploy de produção sem necessidade de credenciais CLI locais |
+
 ### Arquitetura
 | Decisão | Justificativa |
 |---------|---------------|
@@ -721,5 +736,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Última atualização: 10/07/2026 — Fase 2 concluída (Super Admin + Bot→Turso→Web integrado) + 114 testes passando*
+*Última atualização: 05/08/2026 — Sessão 20: página /ofertas com ações view/edit/delete, refresh automático, fix dropdown, deploy Vercel automatizado (preview + produção)*
 

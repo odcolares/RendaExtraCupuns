@@ -51,6 +51,39 @@ export async function updateOfferAction(
   return offer;
 }
 
+export async function createOfferAction(
+  tenantId: string,
+  data: {
+    title: string;
+    description?: string | null;
+    url: string;
+    platform: "amazon" | "shopee" | "mercadolivre" | "aliexpress" | "outros";
+    price?: number | null;
+    originalPrice?: number | null;
+    discount?: number | null;
+    imageUrl?: string | null;
+    status?: "pending" | "published" | "failed";
+  }
+) {
+  const offer = await prisma.offer.create({
+    data: {
+      tenantId,
+      title: data.title,
+      description: data.description || null,
+      url: data.url,
+      platform: data.platform,
+      price: data.price ?? null,
+      originalPrice: data.originalPrice ?? null,
+      discount: data.discount ?? null,
+      imageUrl: data.imageUrl || null,
+      status: data.status || "pending",
+    },
+  });
+
+  revalidatePath("/ofertas");
+  return offer;
+}
+
 export async function deleteOfferAction(id: string, tenantId: string) {
   const result = await prisma.offer.deleteMany({
     where: { id, tenantId },
