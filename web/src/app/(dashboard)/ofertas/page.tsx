@@ -155,6 +155,8 @@ export default function OffersPage() {
   });
   const [actionLoading, setActionLoading] = useState(false);
   const [refreshCounter, setRefreshCounter] = useState(0);
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   const loadOffer = useCallback(async (id: string) => {
     setActionLoading(true);
@@ -237,6 +239,47 @@ export default function OffersPage() {
     setDeleteOfferId(id);
   }, []);
 
+  const handleCreateUrlChange = async (url: string) => {
+    setCreateForm((prev) => ({ ...prev, url }));
+    if (!url || !url.startsWith("http")) {
+      return;
+    }
+
+    setCreateLoading(true);
+    setCreateError(null);
+    try {
+      const response = await fetch("/api/fetch-product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url }),
+      });
+
+      if (!response.ok) {
+        setCreateError("Não foi possível buscar os dados do produto.");
+        return;
+      }
+
+      const { data } = await response.json();
+      if (!data) {
+        setCreateError("Não foi possível extrair os dados do produto. Preencha manualmente.");
+        return;
+      }
+
+      setCreateForm((prev) => ({
+        ...prev,
+        title: data.name || prev.title,
+        platform: data.platform || prev.platform,
+        price: data.price != null ? String(data.price) : prev.price,
+        imageUrl: data.imageUrl || prev.imageUrl,
+        description: data.description || prev.description,
+      }));
+    } catch {
+      setCreateError("Erro ao buscar os dados do produto.");
+    } finally {
+      setCreateLoading(false);
+    }
+  };
+
   const handleEditSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!editOfferId) return;
@@ -280,6 +323,21 @@ export default function OffersPage() {
     setActionLoading(false);
     refreshOffers();
   };
+
+  const handleCreateReset = useCallback(() => {
+    setCreateForm({
+      title: "",
+      url: "",
+      platform: "outros",
+      price: "",
+      originalPrice: "",
+      discount: "",
+      imageUrl: "",
+      description: "",
+      status: "pending",
+    });
+    setCreateError(null);
+  }, []);
 
   const handleDeleteConfirm = async () => {
     if (!deleteOfferId) return;
@@ -664,7 +722,20 @@ export default function OffersPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="create-url">URL *</Label>
-              <Input id="create-url" type="url" value={createForm.url} onChange={(e) => setCreateForm((prev) => ({ ...prev, url: e.target.value }))} required />
+              <Input
+                id="create-url"
+                type="url"
+                value={createForm.url}
+                onChange={(e) => setCreateForm((prev) => ({ ...prev, url: e.target.value }))}
+                onBlur={(e) => handleCreateUrlChange(e.target.value)}
+                required
+              />
+              {createLoading && (
+                <p className="text-xs text-muted-foreground">Buscando dados do produto...</p>
+              )}
+              {createError && (
+                <p className="text-xs text-destructive">{createError}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="create-platform">Plataforma *</Label>
@@ -726,6 +797,7 @@ export default function OffersPage() {
               <Button type="submit" disabled={actionLoading}>
                 {actionLoading ? "Criando..." : "Criar oferta"}
               </Button>
+              <Button type="button" variant="outline" onClick={handleCreateReset}>Limpar</Button>
               <Button type="button" variant="outline" onClick={() => setCreateOfferId(null)}>Cancelar</Button>
             </SheetFooter>
           </form>
