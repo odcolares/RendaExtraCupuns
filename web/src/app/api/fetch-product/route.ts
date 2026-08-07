@@ -10,13 +10,51 @@ interface ProductInfo {
   platform: Platform;
 }
 
+const ALLOWED_HOSTS = new Set([
+  "www.amazon.com",
+  "www.amazon.com.br",
+  "amzn.to",
+  "shopee.com.br",
+  "mercadolivre.com.br",
+  "www.mercadolivre.com.br",
+  "meli.la",
+  "aliexpress.com",
+  "s.click.aliexpress.com",
+]);
+
+function isPrivateIp(host: string): boolean {
+  if (/^(10|127|0)\./.test(host)) return true;
+  if (host.startsWith("192.168.")) return true;
+  if (host.startsWith("172.")) {
+    const part = host.split(".")[1];
+    const secondOctet = Number(part);
+    return secondOctet >= 16 && secondOctet <= 31;
+  }
+  if (host === "localhost" || host === "[::1]") return true;
+  return false;
+}
+
+function isAllowedUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+      return false;
+    }
+    if (isPrivateIp(parsed.hostname)) return false;
+    if (ALLOWED_HOSTS.has(parsed.hostname)) return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const url = typeof body?.url === "string" ? body.url.trim() : "";
 
-    if (!url || !/^https?:\/\//i.test(url)) {
-      return NextResponse.json({ error: "URL inválida." }, { status: 400 });
+    if (!url || !/^https?:\/\//i.test(url) || !isAllowedUrl(url)) {
+      return NextResponse.json({ error: "URL inválida ou domínio não permitido." }, { status: 400 });
     }
 
     const product = await fetchProductInfo(url);
@@ -130,10 +168,6 @@ function extractPrice(html: string, platform: string): number | null {
   }
 
   return null;
-}
-
-function parseBRLPrice(value: string): number {
-  return parseFloat(value.replace(/\./g, "").replace(",", "."));
 }
 
 function decodeHtmlEntities(text: string): string {
