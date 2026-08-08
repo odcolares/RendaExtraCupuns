@@ -92,3 +92,26 @@ export async function deleteOfferAction(id: string, tenantId: string) {
   revalidatePath("/ofertas");
   return { success: result.count > 0 };
 }
+
+export async function reprocessOfferAction(id: string, tenantId: string) {
+  const offer = await prisma.offer.findUnique({
+    where: { id, tenantId },
+    select: { id: true, status: true },
+  });
+
+  if (!offer) throw new Error("Oferta não encontrada.");
+  if (offer.status === "published") {
+    throw new Error("Oferta já publicada — não precisa reprocessar.");
+  }
+
+  const updated = await prisma.offer.update({
+    where: { id, tenantId },
+    data: {
+      status: "pending",
+      publishedAt: null,
+    },
+  });
+
+  revalidatePath("/ofertas");
+  return updated;
+}

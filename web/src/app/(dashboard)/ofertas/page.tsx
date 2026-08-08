@@ -36,12 +36,13 @@ import {
   Eye,
   Edit,
   Trash2,
+  RotateCcw,
   Inbox,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { getPaginatedOffersAction } from "@/actions/affiliates";
-import { getOfferByIdAction, updateOfferAction, deleteOfferAction, createOfferAction } from "@/actions/offers";
+import { getOfferByIdAction, updateOfferAction, deleteOfferAction, createOfferAction, reprocessOfferAction } from "@/actions/offers";
 import {
   Sheet,
   SheetContent,
@@ -238,6 +239,17 @@ export default function OffersPage() {
   const handleDelete = useCallback((id: string) => {
     setDeleteOfferId(id);
   }, []);
+
+  const handleReprocess = useCallback(async (id: string, status: string) => {
+    if (status === "published") return;
+    setActionLoading(true);
+    try {
+      await reprocessOfferAction(id, tenantId || "");
+      refreshOffers();
+    } finally {
+      setActionLoading(false);
+    }
+  }, [tenantId, refreshOffers]);
 
   const handleCreateUrlChange = async (url: string) => {
     setCreateForm((prev) => ({ ...prev, url }));
@@ -523,6 +535,18 @@ export default function OffersPage() {
                           <Button variant="ghost" size="icon" className="size-8 hover:text-brand-primary" title="Editar" onClick={() => handleEdit(offer.id)}>
                             <Edit className="size-4" />
                           </Button>
+                          {offer.status !== "published" && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-8 hover:text-brand-primary"
+                              title={offer.status === "failed" ? "Reprocessar (voltar para pendente)" : "Reprocessar"}
+                              onClick={() => handleReprocess(offer.id, offer.status)}
+                              disabled={actionLoading}
+                            >
+                              <RotateCcw className="size-4" />
+                            </Button>
+                          )}
                           <Button variant="ghost" size="icon" className="size-8 text-destructive hover:text-destructive" title="Excluir" onClick={() => handleDelete(offer.id)}>
                             <Trash2 className="size-4" />
                           </Button>
