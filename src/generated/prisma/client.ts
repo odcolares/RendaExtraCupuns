@@ -75,6 +75,11 @@ export type Offer = Prisma.OfferModel
  */
 export type AffiliateConfig = Prisma.AffiliateConfigModel
 /**
+ * Model TenantChannel
+ * 
+ */
+export type TenantChannel = Prisma.TenantChannelModel
+/**
  * Model Fonte
  * 
  */

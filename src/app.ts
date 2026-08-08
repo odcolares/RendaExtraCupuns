@@ -19,6 +19,7 @@ import { initializeWhatsApp, startClient, destroyClient } from "./whatsapp/clien
 import { startMonitoring, stopMonitoring } from "./whatsapp/monitor";
 import { createModuleLogger } from "./utils";
 import { processOffer } from "./processor";
+import { startPublishQueue, stopPublishQueue } from "./telegram/publish-queue";
 
 const log = createModuleLogger("App");
 
@@ -90,6 +91,9 @@ export async function startApp(options?: {
       setupCommands(bot);
       launchBot();
       appState.telegramReady = true;
+
+      // publishOffer usa getBot() — a fila só roda com o bot no ar
+      startPublishQueue();
     } catch (err) {
       log.warn("Telegram bot não iniciado (token pode estar inválido)", {
         error: (err as Error).message,
@@ -172,8 +176,9 @@ export async function stopApp(): Promise<void> {
     appState.whatsappReady = false;
   }
 
-  // 3. Parar bot Telegram
+  // 3. Parar bot Telegram e a fila de publicação manual
   if (appState.telegramReady) {
+    stopPublishQueue();
     await stopBot();
     appState.telegramReady = false;
   }

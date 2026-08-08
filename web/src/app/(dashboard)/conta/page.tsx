@@ -11,6 +11,8 @@ import { Calendar, Lock, Mail, Save, Shield, User } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 
 import { getProfileAction, updateProfileAction, updatePasswordAction } from "@/actions/conta";
+import { ChannelConnect } from "@/components/channel-connect";
+import { MessageCircle } from "lucide-react";
 
 export default async function ContaPage(props: {
   searchParams?: Promise<{ success?: string; error?: string }>;
@@ -212,6 +214,23 @@ export default async function ContaPage(props: {
             </Button>
           </CardFooter>
         </form>
+      </Card>
+
+      {/* Telegram Channel Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageCircle className="size-5" />
+            Canal de Publicação
+          </CardTitle>
+          <CardDescription>
+            Conecte o canal do Telegram onde as ofertas criadas no painel serão
+            publicadas automaticamente
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ChannelConnect />
+        </CardContent>
       </Card>
 
       {/* Account Info Card */}

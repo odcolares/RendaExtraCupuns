@@ -58,6 +58,7 @@ export const ModelName = {
   Tenant: 'Tenant',
   Offer: 'Offer',
   AffiliateConfig: 'AffiliateConfig',
+  TenantChannel: 'TenantChannel',
   Fonte: 'Fonte'
 } as const
 
@@ -170,6 +171,21 @@ export const AffiliateConfigScalarFieldEnum = {
 } as const
 
 export type AffiliateConfigScalarFieldEnum = (typeof AffiliateConfigScalarFieldEnum)[keyof typeof AffiliateConfigScalarFieldEnum]
+
+
+export const TenantChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  platform: 'platform',
+  channelId: 'channelId',
+  label: 'label',
+  isActive: 'isActive',
+  validatedAt: 'validatedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantChannelScalarFieldEnum = (typeof TenantChannelScalarFieldEnum)[keyof typeof TenantChannelScalarFieldEnum]
 
 
 export const FonteScalarFieldEnum = {

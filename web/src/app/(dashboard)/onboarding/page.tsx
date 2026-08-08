@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Clock, Smartphone, MessageCircle, Store, CreditCard, ArrowRight, Play, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
+import { ChannelConnect } from "@/components/channel-connect";
 
 interface Step {
   id: string;
@@ -123,41 +124,21 @@ export default function OnboardingPage() {
       case "telegram":
         return (
           <div className="space-y-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h4 className="font-medium text-green-900 mb-2">Bot Telegram Conectado</h4>
-              <p className="text-sm text-green-800">
-                • Token do bot: @RendaExtraCuponsBot (conectado)
-              </p>
-              <p className="text-sm text-green-800">
-                • Canal: @Ofertas_cupons_agora (ID: -1004303411968)
-              </p>
-              <p className="text-sm text-green-800">
-                • Permissões: publicação apenas
-              </p>
-              <p className="text-sm text-green-800">
-                • Rate limit: 30 mensagens/hora por canal
-              </p>
+            <div className="rounded-lg border bg-muted/40 p-4">
+              <h4 className="mb-2 font-medium">Conecte seu canal</h4>
+              <ChannelConnect />
             </div>
             <div className="bg-gray-50 border rounded-lg p-4">
-              <h4 className="font-medium mb-2">Estatísticas do Canal</h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-muted-foreground">Seguidores</p>
-                  <p className="text-lg font-bold">1.2k</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Mensagens/Publicações</p>
-                  <p className="text-lg font-bold">45</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Média de engajamento</p>
-                  <p className="text-lg font-bold">8.2%</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Conversões hoje</p>
-                  <p className="text-lg font-bold">3</p>
-                </div>
-              </div>
+              <h4 className="font-medium mb-2">Regras de publicação</h4>
+              <p className="text-sm text-muted-foreground">
+                • Ofertas criadas no painel são publicadas automaticamente no canal
+              </p>
+              <p className="text-sm text-muted-foreground">
+                • Rate limit: 30 mensagens/hora por canal
+              </p>
+              <p className="text-sm text-muted-foreground">
+                • Mensagem de teste é enviada ao conectar o canal
+              </p>
             </div>
           </div>
         );

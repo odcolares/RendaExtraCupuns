@@ -38,6 +38,11 @@ enum OfferStatus {
   failed
 }
 
+enum ChannelPlatform {
+  telegram
+  whatsapp
+}
+
 model User {
   id        String   @id @default(cuid())
   name      String
@@ -105,6 +110,7 @@ model Tenant {
   offers         Offer[]
   affiliateConfig AffiliateConfig?
   fontes         Fonte[]
+  channels       TenantChannel[]
 }
 
 model Offer {
@@ -135,6 +141,25 @@ model AffiliateConfig {
 
   tenantId String @unique
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// Canal de publicação por plataforma (Telegram hoje, WhatsApp futuro)
+// 1 tenant → 1 canal por plataforma (@@unique([tenantId, platform]))
+model TenantChannel {
+  id          String          @id @default(cuid())
+  tenantId    String
+  platform    ChannelPlatform @default(telegram)
+  channelId   String          // ID do canal (ex: -1001234567890) ou grupo WhatsApp
+  label       String?         // nome amigável do canal ("Canal de Ofertas")
+  isActive    Boolean         @default(true)
+  validatedAt DateTime?       // quando a conexão foi testada com sucesso
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, platform])
+  @@index([tenantId])
 }
 
 model Fonte {

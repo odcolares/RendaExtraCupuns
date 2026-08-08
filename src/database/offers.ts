@@ -171,6 +171,34 @@ export async function markAsPublished(offerId: string): Promise<void> {
 }
 
 /**
+ * Marca uma oferta como falha na publicação no Telegram.
+ */
+export async function markAsFailed(
+  offerId: string,
+  reason?: string
+): Promise<void> {
+  await prisma.offer.update({
+    where: { id: offerId },
+    data: { status: "failed" },
+  });
+  log.warn("Oferta marcada como falha", { id: offerId, reason });
+}
+
+/**
+ * Resolve o canal do Telegram ativo de um tenant.
+ * Usado pelo daemon de publicação manual (publish-queue).
+ */
+export async function getTenantTelegramChannel(tenantId: string) {
+  return prisma.tenantChannel.findFirst({
+    where: {
+      tenantId,
+      platform: "telegram",
+      isActive: true,
+    },
+  });
+}
+
+/**
  * Atualiza o link de afiliado de uma oferta.
  */
 export async function updateAffiliateLink(offerId: string, link: string): Promise<void> {

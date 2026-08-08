@@ -404,6 +404,7 @@ export const ModelName = {
   Tenant: 'Tenant',
   Offer: 'Offer',
   AffiliateConfig: 'AffiliateConfig',
+  TenantChannel: 'TenantChannel',
   Fonte: 'Fonte'
 } as const
 
@@ -420,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "tenant" | "offer" | "affiliateConfig" | "fonte"
+    modelProps: "user" | "account" | "session" | "verificationToken" | "tenant" | "offer" | "affiliateConfig" | "tenantChannel" | "fonte"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -942,6 +943,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TenantChannel: {
+      payload: Prisma.$TenantChannelPayload<ExtArgs>
+      fields: Prisma.TenantChannelFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TenantChannelFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TenantChannelFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>
+        }
+        findFirst: {
+          args: Prisma.TenantChannelFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TenantChannelFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>
+        }
+        findMany: {
+          args: Prisma.TenantChannelFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>[]
+        }
+        create: {
+          args: Prisma.TenantChannelCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>
+        }
+        createMany: {
+          args: Prisma.TenantChannelCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TenantChannelCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>[]
+        }
+        delete: {
+          args: Prisma.TenantChannelDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>
+        }
+        update: {
+          args: Prisma.TenantChannelUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>
+        }
+        deleteMany: {
+          args: Prisma.TenantChannelDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TenantChannelUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TenantChannelUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>[]
+        }
+        upsert: {
+          args: Prisma.TenantChannelUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TenantChannelPayload>
+        }
+        aggregate: {
+          args: Prisma.TenantChannelAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTenantChannel>
+        }
+        groupBy: {
+          args: Prisma.TenantChannelGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TenantChannelGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TenantChannelCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TenantChannelCountAggregateOutputType> | number
+        }
+      }
+    }
     Fonte: {
       payload: Prisma.$FontePayload<ExtArgs>
       fields: Prisma.FonteFieldRefs
@@ -1150,6 +1225,21 @@ export const AffiliateConfigScalarFieldEnum = {
 export type AffiliateConfigScalarFieldEnum = (typeof AffiliateConfigScalarFieldEnum)[keyof typeof AffiliateConfigScalarFieldEnum]
 
 
+export const TenantChannelScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  platform: 'platform',
+  channelId: 'channelId',
+  label: 'label',
+  isActive: 'isActive',
+  validatedAt: 'validatedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TenantChannelScalarFieldEnum = (typeof TenantChannelScalarFieldEnum)[keyof typeof TenantChannelScalarFieldEnum]
+
+
 export const FonteScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1248,6 +1338,13 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'OfferStatus'
  */
 export type EnumOfferStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OfferStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ChannelPlatform'
+ */
+export type EnumChannelPlatformFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ChannelPlatform'>
     
 
 
@@ -1415,6 +1512,7 @@ export type GlobalOmitConfig = {
   tenant?: Prisma.TenantOmit
   offer?: Prisma.OfferOmit
   affiliateConfig?: Prisma.AffiliateConfigOmit
+  tenantChannel?: Prisma.TenantChannelOmit
   fonte?: Prisma.FonteOmit
 }
 
