@@ -62,8 +62,8 @@ export function extractCouponData(
   const text = messageText.trim();
   if (!text) return null;
 
-  // ── Pré-filtro: só processar se tiver palavra "cupom" ou "cupons" ──
-  if (!/\bcupons?\b/i.test(text)) {
+  // ── Pré-filtro: só processar se tiver palavra "cupom", "cupon" ou "cupons" ──
+  if (!/\bcupom\b|\bcupons?\b/i.test(text)) {
     return null;
   }
 
