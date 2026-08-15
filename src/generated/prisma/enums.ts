@@ -53,3 +53,11 @@ export const OfferStatus = {
 } as const
 
 export type OfferStatus = (typeof OfferStatus)[keyof typeof OfferStatus]
+
+
+export const ChannelPlatform = {
+  telegram: 'telegram',
+  whatsapp: 'whatsapp'
+} as const
+
+export type ChannelPlatform = (typeof ChannelPlatform)[keyof typeof ChannelPlatform]

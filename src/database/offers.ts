@@ -20,7 +20,7 @@ const log = createModuleLogger("DatabaseOffers");
  */
 let cachedTestTenantId: string | null = null;
 
-async function getTestTenantId(): Promise<string> {
+export async function getTestTenantId(): Promise<string> {
   if (cachedTestTenantId) return cachedTestTenantId;
 
   const user = await prisma.user.findUnique({
@@ -168,6 +168,34 @@ export async function markAsPublished(offerId: string): Promise<void> {
     },
   });
   log.info("Oferta marcada como publicada", { id: offerId });
+}
+
+/**
+ * Marca uma oferta como falha na publicação no Telegram.
+ */
+export async function markAsFailed(
+  offerId: string,
+  reason?: string
+): Promise<void> {
+  await prisma.offer.update({
+    where: { id: offerId },
+    data: { status: "failed" },
+  });
+  log.warn("Oferta marcada como falha", { id: offerId, reason });
+}
+
+/**
+ * Resolve o canal do Telegram ativo de um tenant.
+ * Usado pelo daemon de publicação manual (publish-queue).
+ */
+export async function getTenantTelegramChannel(tenantId: string) {
+  return prisma.tenantChannel.findFirst({
+    where: {
+      tenantId,
+      platform: "telegram",
+      isActive: true,
+    },
+  });
 }
 
 /**

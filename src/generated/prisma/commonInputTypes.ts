@@ -270,9 +270,34 @@ export type EnumOfferStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumOfferStatusFilter<$PrismaModel>
 }
 
+export type EnumChannelPlatformFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChannelPlatform | Prisma.EnumChannelPlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.ChannelPlatform[]
+  notIn?: $Enums.ChannelPlatform[]
+  not?: Prisma.NestedEnumChannelPlatformFilter<$PrismaModel> | $Enums.ChannelPlatform
+}
+
 export type BoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type EnumChannelPlatformWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChannelPlatform | Prisma.EnumChannelPlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.ChannelPlatform[]
+  notIn?: $Enums.ChannelPlatform[]
+  not?: Prisma.NestedEnumChannelPlatformWithAggregatesFilter<$PrismaModel> | $Enums.ChannelPlatform
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumChannelPlatformFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumChannelPlatformFilter<$PrismaModel>
+}
+
+export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedBoolFilter<$PrismaModel>
+  _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
 export type IntFilter<$PrismaModel = never> = {
@@ -284,14 +309,6 @@ export type IntFilter<$PrismaModel = never> = {
   gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
   gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
   not?: Prisma.NestedIntFilter<$PrismaModel> | number
-}
-
-export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedBoolFilter<$PrismaModel>
-  _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
 export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -572,9 +589,26 @@ export type NestedEnumOfferStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumOfferStatusFilter<$PrismaModel>
 }
 
+export type NestedEnumChannelPlatformFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChannelPlatform | Prisma.EnumChannelPlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.ChannelPlatform[]
+  notIn?: $Enums.ChannelPlatform[]
+  not?: Prisma.NestedEnumChannelPlatformFilter<$PrismaModel> | $Enums.ChannelPlatform
+}
+
 export type NestedBoolFilter<$PrismaModel = never> = {
   equals?: boolean | Prisma.BooleanFieldRefInput<$PrismaModel>
   not?: Prisma.NestedBoolFilter<$PrismaModel> | boolean
+}
+
+export type NestedEnumChannelPlatformWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ChannelPlatform | Prisma.EnumChannelPlatformFieldRefInput<$PrismaModel>
+  in?: $Enums.ChannelPlatform[]
+  notIn?: $Enums.ChannelPlatform[]
+  not?: Prisma.NestedEnumChannelPlatformWithAggregatesFilter<$PrismaModel> | $Enums.ChannelPlatform
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumChannelPlatformFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumChannelPlatformFilter<$PrismaModel>
 }
 
 export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {

@@ -519,10 +519,6 @@ export type FonteUncheckedUpdateManyWithoutTenantNestedInput = {
   deleteMany?: Prisma.FonteScalarWhereInput | Prisma.FonteScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number

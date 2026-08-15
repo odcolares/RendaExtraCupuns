@@ -14,7 +14,11 @@ const ALLOWED_HOSTS = new Set([
   "www.amazon.com",
   "www.amazon.com.br",
   "amzn.to",
+  "link.amazon",
   "shopee.com.br",
+  "s.shopee.com.br",
+  "shp.ee",
+  "www.shopee.com.br",
   "mercadolivre.com.br",
   "www.mercadolivre.com.br",
   "meli.la",
@@ -86,8 +90,11 @@ async function fetchProductInfo(url: string): Promise<ProductInfo | null> {
       return null;
     }
 
+    const finalUrl = response.url || url;
+    if (!isAllowedUrl(finalUrl)) return null;
+
     const html = await response.text();
-    return parseProductInfo(html, url);
+    return parseProductInfo(html, finalUrl);
   } catch {
     return null;
   }
@@ -120,7 +127,7 @@ function parseProductInfo(html: string, url: string): ProductInfo {
   const price = extractPrice(html, platform);
 
   return {
-    name: titleMeta,
+    name: (platform === "shopee" && /^Shopee Brasil/i.test(titleMeta ?? "")) ? null : titleMeta,
     description,
     imageUrl,
     price,
