@@ -19,6 +19,7 @@ import {
 } from "./parser";
 import { createModuleLogger } from "../utils";
 import { processOffer as pipelineProcessOffer } from "../processor";
+import { touchFonte, incrementFonteFound } from "../database/fontes";
 import { loadConfig } from "../config";
 import type { ProcessResult } from "./types";
 
@@ -201,7 +202,9 @@ async function handleMessage(message: Message): Promise<void> {
         platform,
         link: effectiveLink.substring(0, 50),
       });
-      await processOffer(message.body, effectiveLink);
+      await processOffer(message.body, effectiveLink, sourceId);
+      touchFonte(sourceId);
+      incrementFonteFound(sourceId);
     }
   } catch (error) {
     log.error("Erro ao processar mensagem do WhatsApp", {
@@ -221,9 +224,10 @@ async function handleMessage(message: Message): Promise<void> {
  */
 export async function processOffer(
   messageText: string,
-  link: string
+  link: string,
+  sourceId?: string
 ): Promise<ProcessResult> {
-  return pipelineProcessOffer(messageText, link);
+  return pipelineProcessOffer(messageText, link, undefined, sourceId);
 }
 
 /**
