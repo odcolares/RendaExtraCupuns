@@ -7,6 +7,7 @@
 
 import { Client, LocalAuth } from "whatsapp-web.js";
 import qrcode from "qrcode-terminal";
+import QRCode from "qrcode";
 import { createModuleLogger } from "../utils";
 
 const log = createModuleLogger("WhatsAppClient");
@@ -31,6 +32,12 @@ export function initializeWhatsApp(
     authStrategy: new LocalAuth({
       dataPath: sessionPath || "./.wwebjs_auth",
     }),
+    webVersion: "2.3000.1041831138-alpha",
+    webVersionCache: {
+      type: "local",
+      path: "./.wwebjs_cache",
+      strict: true,
+    },
     puppeteer: {
       headless: true,
       args: [
@@ -49,6 +56,9 @@ export function initializeWhatsApp(
   client.on("qr", (qr: string) => {
     log.info("QR code recebido — escaneie com o WhatsApp");
     qrcode.generate(qr, { small: true });
+    QRCode.toFile("whatsapp-qr.png", qr, { type: "png", width: 400, margin: 2 })
+      .then(() => log.info("QR salvo em whatsapp-qr.png"))
+      .catch((err) => log.warn("Falha ao salvar QR PNG", { error: (err as Error).message }));
   });
 
   // ── Autenticado ──
@@ -72,19 +82,27 @@ export function initializeWhatsApp(
     log.warn("WhatsApp desconectado", { reason, attempt: reconnectAttempts + 1 });
 
     if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
-      log.error("Número máximo de tentativas de reconexão atingido");
+      log.error("Número máximo de tentativas de reconexão atingido — encerrando para reinício via PM2");
+      await safeDestroy();
       client = null;
+      process.exit(1);
       return;
     }
 
     reconnectAttempts++;
     const delayMs = INITIAL_RECONNECT_DELAY_MS * Math.pow(2, reconnectAttempts - 1);
-    log.info("Tentando reconectar...", { attempt: reconnectAttempts, delayMs });
+    log.info("Tentando reconectar...", { attempt: reconnectAttempts, delayMs: delayMs });
 
     await new Promise((resolve) => setTimeout(resolve, delayMs));
 
     try {
-      await client?.initialize();
+      // A página puppeteer pode ter navegado/destroyed (causa do erro
+      // "Execution context was destroyed" durante o inject). Destruímos a
+      // instância atual e criamos um cliente novo e limpo para reconectar.
+      await safeDestroy();
+      client = null;
+      const fresh = initializeWhatsApp();
+      await fresh.initialize();
     } catch (err) {
       log.error("Falha na reconexão", { error: (err as Error).message });
     }
@@ -98,6 +116,22 @@ export function initializeWhatsApp(
  */
 export function getClient(): Client | null {
   return client;
+}
+
+/**
+ * Destrói o cliente puppeteer de forma segura, ignorando erros quando a
+ * página já foi fechada ou o contexto foi destruído por uma navegação.
+ */
+async function safeDestroy(): Promise<void> {
+  try {
+    if (client) {
+      await client.destroy();
+    }
+  } catch (err) {
+    log.warn("Erro ao destruir cliente (ignorado)", {
+      error: (err as Error)?.message,
+    });
+  }
 }
 
 /**

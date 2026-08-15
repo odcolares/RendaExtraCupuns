@@ -21,6 +21,12 @@ const client = new Client({
   authStrategy: new LocalAuth({
     dataPath: "./.wwebjs_auth",
   }),
+  webVersion: "2.3000.1041831138-alpha",
+  webVersionCache: {
+    type: "local",
+    path: "./.wwebjs_cache",
+    strict: true,
+  },
   puppeteer: {
     headless: true,
     args: [

@@ -94,6 +94,8 @@ async function handleMessage(message: Message): Promise<void> {
   try {
     const sourceId = message.from;
 
+
+
     // ── Filtro 1: Ignorar status/stories ──
     if (sourceId === "status@broadcast") {
       return;
