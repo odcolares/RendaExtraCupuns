@@ -23,6 +23,7 @@ import {
   markAsPublished,
   updateAffiliateLink,
 } from "./database/offers";
+import { incrementFontePublished } from "./database/fontes";
 import { createModuleLogger } from "./utils";
 import { isGenericProductName } from "./utils/helpers";
 import { fetchProductInfo } from "./utils/product-fetcher";
@@ -68,7 +69,8 @@ const log = createModuleLogger("Processor");
 export async function processOffer(
   messageText: string,
   url: string,
-  imageUrl?: string
+  imageUrl?: string,
+  sourceId?: string
 ): Promise<ProcessResult> {
   log.info("Iniciando pipeline", { url: url.substring(0, 60) });
 
@@ -295,6 +297,7 @@ export async function processOffer(
     const dbId = await insertOffer(couponOffer, undefined);
     if (dbId && published) {
       await markAsPublished(dbId);
+      if (sourceId) await incrementFontePublished(sourceId);
     }
 
     log.info("Pipeline de cupom concluído", {
@@ -324,6 +327,7 @@ export async function processOffer(
 
   if (dbId && published) {
     await markAsPublished(dbId);
+    if (sourceId) await incrementFontePublished(sourceId);
   }
 
   if (dbId && affiliateLink) {
