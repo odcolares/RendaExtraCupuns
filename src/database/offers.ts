@@ -20,7 +20,7 @@ const log = createModuleLogger("DatabaseOffers");
  */
 let cachedTestTenantId: string | null = null;
 
-async function getTestTenantId(): Promise<string> {
+export async function getTestTenantId(): Promise<string> {
   if (cachedTestTenantId) return cachedTestTenantId;
 
   const user = await prisma.user.findUnique({
