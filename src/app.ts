@@ -17,6 +17,7 @@ import { initializeBot, launchBot, stopBot, getBot } from "./telegram/bot";
 import { setupCommands } from "./telegram/commands";
 import { initializeWhatsApp, startClient, destroyClient } from "./whatsapp/client";
 import { startMonitoring, stopMonitoring } from "./whatsapp/monitor";
+import { syncFontesFromConfig } from "./database/fontes";
 import { createModuleLogger } from "./utils";
 import { processOffer } from "./processor";
 import { startPublishQueue, stopPublishQueue } from "./telegram/publish-queue";
@@ -79,6 +80,16 @@ export async function startApp(options?: {
     appState.databaseReady = true;
   } catch (err) {
     log.error("Falha ao inicializar database", {
+      error: (err as Error).message,
+    });
+  }
+
+  // ── 2.5. Sincronizar fontes do WhatsApp no banco (idempotente) ──
+  try {
+    await syncFontesFromConfig();
+    log.info("Fontes do WhatsApp sincronizadas");
+  } catch (err) {
+    log.warn("Falha ao sincronizar fontes do WhatsApp (continuando)", {
       error: (err as Error).message,
     });
   }
