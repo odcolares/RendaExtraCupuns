@@ -24,6 +24,11 @@ interface PlatformDataPoint {
   quantidade: number;
 }
 
+interface ClicksDataPoint {
+  date: string;
+  count: number;
+}
+
 export function OffersLineChart({ data }: { data: ChartDataPoint[] }) {
   if (data.length === 0) {
     return (
@@ -102,6 +107,42 @@ export function PlatformBarChart({ data }: { data: PlatformDataPoint[] }) {
           radius={[4, 4, 0, 0]}
         />
       </BarChart>
+    </ResponsiveContainer>
+  );
+}
+
+export function ClicksLineChart({ data }: { data: ClicksDataPoint[] }) {
+  if (data.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-[300px] text-sm text-muted-foreground">
+        Nenhum dado disponível
+      </div>
+    );
+  }
+
+  return (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+        <XAxis dataKey="date" className="text-xs text-muted-foreground" />
+        <YAxis className="text-xs text-muted-foreground" allowDecimals={false} />
+        <Tooltip
+          contentStyle={{
+            borderRadius: "var(--radius)",
+            border: "1px solid var(--border)",
+            background: "var(--card)",
+          }}
+          labelStyle={{ fontWeight: 600 }}
+        />
+        <Line
+          type="monotone"
+          dataKey="count"
+          stroke="var(--color-brand-primary)"
+          strokeWidth={2}
+          dot={{ r: 3, fill: "var(--color-brand-primary)" }}
+          activeDot={{ r: 6, fill: "var(--color-brand-primary)" }}
+        />
+      </LineChart>
     </ResponsiveContainer>
   );
 }
