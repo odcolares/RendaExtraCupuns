@@ -12,6 +12,10 @@ export default auth((req) => {
   const userRole = req.auth?.user?.role;
 
   // Always allow public pages and auth API
+  if (pathname.startsWith("/r/")) {
+    return NextResponse.next();
+  }
+
   if (publicPaths.some((p) => pathname === p)) {
     return NextResponse.next();
   }
