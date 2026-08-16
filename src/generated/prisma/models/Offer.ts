@@ -297,6 +297,7 @@ export type OfferWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Offer"> | Date | string
   tenantId?: Prisma.StringFilter<"Offer"> | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  clicks?: Prisma.ClickListRelationFilter
 }
 
 export type OfferOrderByWithRelationInput = {
@@ -315,6 +316,7 @@ export type OfferOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
+  clicks?: Prisma.ClickOrderByRelationAggregateInput
 }
 
 export type OfferWhereUniqueInput = Prisma.AtLeast<{
@@ -336,6 +338,7 @@ export type OfferWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Offer"> | Date | string
   tenantId?: Prisma.StringFilter<"Offer"> | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  clicks?: Prisma.ClickListRelationFilter
 }, "id">
 
 export type OfferOrderByWithAggregationInput = {
@@ -395,6 +398,7 @@ export type OfferCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutOffersInput
+  clicks?: Prisma.ClickCreateNestedManyWithoutOfferInput
 }
 
 export type OfferUncheckedCreateInput = {
@@ -412,6 +416,7 @@ export type OfferUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenantId: string
+  clicks?: Prisma.ClickUncheckedCreateNestedManyWithoutOfferInput
 }
 
 export type OfferUpdateInput = {
@@ -429,6 +434,7 @@ export type OfferUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutOffersNestedInput
+  clicks?: Prisma.ClickUpdateManyWithoutOfferNestedInput
 }
 
 export type OfferUncheckedUpdateInput = {
@@ -446,6 +452,7 @@ export type OfferUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  clicks?: Prisma.ClickUncheckedUpdateManyWithoutOfferNestedInput
 }
 
 export type OfferCreateManyInput = {
@@ -571,6 +578,11 @@ export type OfferSumOrderByAggregateInput = {
   discount?: Prisma.SortOrder
 }
 
+export type OfferScalarRelationFilter = {
+  is?: Prisma.OfferWhereInput
+  isNot?: Prisma.OfferWhereInput
+}
+
 export type OfferCreateNestedManyWithoutTenantInput = {
   create?: Prisma.XOR<Prisma.OfferCreateWithoutTenantInput, Prisma.OfferUncheckedCreateWithoutTenantInput> | Prisma.OfferCreateWithoutTenantInput[] | Prisma.OfferUncheckedCreateWithoutTenantInput[]
   connectOrCreate?: Prisma.OfferCreateOrConnectWithoutTenantInput | Prisma.OfferCreateOrConnectWithoutTenantInput[]
@@ -629,6 +641,20 @@ export type EnumOfferStatusFieldUpdateOperationsInput = {
   set?: $Enums.OfferStatus
 }
 
+export type OfferCreateNestedOneWithoutClicksInput = {
+  create?: Prisma.XOR<Prisma.OfferCreateWithoutClicksInput, Prisma.OfferUncheckedCreateWithoutClicksInput>
+  connectOrCreate?: Prisma.OfferCreateOrConnectWithoutClicksInput
+  connect?: Prisma.OfferWhereUniqueInput
+}
+
+export type OfferUpdateOneRequiredWithoutClicksNestedInput = {
+  create?: Prisma.XOR<Prisma.OfferCreateWithoutClicksInput, Prisma.OfferUncheckedCreateWithoutClicksInput>
+  connectOrCreate?: Prisma.OfferCreateOrConnectWithoutClicksInput
+  upsert?: Prisma.OfferUpsertWithoutClicksInput
+  connect?: Prisma.OfferWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OfferUpdateToOneWithWhereWithoutClicksInput, Prisma.OfferUpdateWithoutClicksInput>, Prisma.OfferUncheckedUpdateWithoutClicksInput>
+}
+
 export type OfferCreateWithoutTenantInput = {
   id?: string
   title: string
@@ -643,6 +669,7 @@ export type OfferCreateWithoutTenantInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  clicks?: Prisma.ClickCreateNestedManyWithoutOfferInput
 }
 
 export type OfferUncheckedCreateWithoutTenantInput = {
@@ -659,6 +686,7 @@ export type OfferUncheckedCreateWithoutTenantInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  clicks?: Prisma.ClickUncheckedCreateNestedManyWithoutOfferInput
 }
 
 export type OfferCreateOrConnectWithoutTenantInput = {
@@ -706,6 +734,90 @@ export type OfferScalarWhereInput = {
   tenantId?: Prisma.StringFilter<"Offer"> | string
 }
 
+export type OfferCreateWithoutClicksInput = {
+  id?: string
+  title: string
+  description?: string | null
+  url: string
+  platform?: $Enums.OfferPlatform
+  price?: number | null
+  originalPrice?: number | null
+  discount?: number | null
+  imageUrl?: string | null
+  status?: $Enums.OfferStatus
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutOffersInput
+}
+
+export type OfferUncheckedCreateWithoutClicksInput = {
+  id?: string
+  title: string
+  description?: string | null
+  url: string
+  platform?: $Enums.OfferPlatform
+  price?: number | null
+  originalPrice?: number | null
+  discount?: number | null
+  imageUrl?: string | null
+  status?: $Enums.OfferStatus
+  publishedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+}
+
+export type OfferCreateOrConnectWithoutClicksInput = {
+  where: Prisma.OfferWhereUniqueInput
+  create: Prisma.XOR<Prisma.OfferCreateWithoutClicksInput, Prisma.OfferUncheckedCreateWithoutClicksInput>
+}
+
+export type OfferUpsertWithoutClicksInput = {
+  update: Prisma.XOR<Prisma.OfferUpdateWithoutClicksInput, Prisma.OfferUncheckedUpdateWithoutClicksInput>
+  create: Prisma.XOR<Prisma.OfferCreateWithoutClicksInput, Prisma.OfferUncheckedCreateWithoutClicksInput>
+  where?: Prisma.OfferWhereInput
+}
+
+export type OfferUpdateToOneWithWhereWithoutClicksInput = {
+  where?: Prisma.OfferWhereInput
+  data: Prisma.XOR<Prisma.OfferUpdateWithoutClicksInput, Prisma.OfferUncheckedUpdateWithoutClicksInput>
+}
+
+export type OfferUpdateWithoutClicksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  platform?: Prisma.EnumOfferPlatformFieldUpdateOperationsInput | $Enums.OfferPlatform
+  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOfferStatusFieldUpdateOperationsInput | $Enums.OfferStatus
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutOffersNestedInput
+}
+
+export type OfferUncheckedUpdateWithoutClicksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.StringFieldUpdateOperationsInput | string
+  platform?: Prisma.EnumOfferPlatformFieldUpdateOperationsInput | $Enums.OfferPlatform
+  price?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  originalPrice?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  discount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumOfferStatusFieldUpdateOperationsInput | $Enums.OfferStatus
+  publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
 export type OfferCreateManyTenantInput = {
   id?: string
   title: string
@@ -736,6 +848,7 @@ export type OfferUpdateWithoutTenantInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clicks?: Prisma.ClickUpdateManyWithoutOfferNestedInput
 }
 
 export type OfferUncheckedUpdateWithoutTenantInput = {
@@ -752,6 +865,7 @@ export type OfferUncheckedUpdateWithoutTenantInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  clicks?: Prisma.ClickUncheckedUpdateManyWithoutOfferNestedInput
 }
 
 export type OfferUncheckedUpdateManyWithoutTenantInput = {
@@ -771,6 +885,35 @@ export type OfferUncheckedUpdateManyWithoutTenantInput = {
 }
 
 
+/**
+ * Count Type OfferCountOutputType
+ */
+
+export type OfferCountOutputType = {
+  clicks: number
+}
+
+export type OfferCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  clicks?: boolean | OfferCountOutputTypeCountClicksArgs
+}
+
+/**
+ * OfferCountOutputType without action
+ */
+export type OfferCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OfferCountOutputType
+   */
+  select?: Prisma.OfferCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * OfferCountOutputType without action
+ */
+export type OfferCountOutputTypeCountClicksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ClickWhereInput
+}
+
 
 export type OfferSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -788,6 +931,8 @@ export type OfferSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   updatedAt?: boolean
   tenantId?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  clicks?: boolean | Prisma.Offer$clicksArgs<ExtArgs>
+  _count?: boolean | Prisma.OfferCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["offer"]>
 
 export type OfferSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -846,6 +991,8 @@ export type OfferSelectScalar = {
 export type OfferOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "url" | "platform" | "price" | "originalPrice" | "discount" | "imageUrl" | "status" | "publishedAt" | "createdAt" | "updatedAt" | "tenantId", ExtArgs["result"]["offer"]>
 export type OfferInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  clicks?: boolean | Prisma.Offer$clicksArgs<ExtArgs>
+  _count?: boolean | Prisma.OfferCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OfferIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
@@ -858,6 +1005,7 @@ export type $OfferPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Offer"
   objects: {
     tenant: Prisma.$TenantPayload<ExtArgs>
+    clicks: Prisma.$ClickPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1269,6 +1417,7 @@ readonly fields: OfferFieldRefs;
 export interface Prisma__OfferClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  clicks<T extends Prisma.Offer$clicksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Offer$clicksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ClickPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1708,6 +1857,30 @@ export type OfferDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Offers to delete.
    */
   limit?: number
+}
+
+/**
+ * Offer.clicks
+ */
+export type Offer$clicksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Click
+   */
+  select?: Prisma.ClickSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Click
+   */
+  omit?: Prisma.ClickOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ClickInclude<ExtArgs> | null
+  where?: Prisma.ClickWhereInput
+  orderBy?: Prisma.ClickOrderByWithRelationInput | Prisma.ClickOrderByWithRelationInput[]
+  cursor?: Prisma.ClickWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ClickScalarFieldEnum | Prisma.ClickScalarFieldEnum[]
 }
 
 /**
