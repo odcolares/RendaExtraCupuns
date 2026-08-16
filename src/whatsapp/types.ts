@@ -13,5 +13,7 @@ export interface WhatsAppOfferData extends OfferData {
 export interface ProcessResult {
   success: boolean;
   offer?: WhatsAppOfferData;
+  /** ID da oferta no banco (usado para montar o link de rastreio /r/<id>) */
+  dbId?: string;
   error?: string;
 }

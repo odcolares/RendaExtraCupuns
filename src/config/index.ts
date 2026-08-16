@@ -35,7 +35,10 @@ export interface AppConfig {
   telegram: TelegramConfig;
   whatsapp: WhatsAppConfig;
   affiliates: AffiliatesConfig;
+  webUrl: string;
 }
+
+export const DEFAULT_WEB_URL = "https://web-gamma-hazel-30.vercel.app";
 
 // ==============================================================
 // Helpers
@@ -47,6 +50,14 @@ function requireEnv(key: string): string {
     throw new Error(`Variável de ambiente obrigatória não definida: ${key}`);
   }
   return value;
+}
+
+/**
+ * URL base da aplicação web (origem dos links de rastreamento /r/<offerId>).
+ * Lê WEB_URL do ambiente; usa o default quando vazio/ausente.
+ */
+export function getWebUrl(): string {
+  return process.env.WEB_URL || DEFAULT_WEB_URL;
 }
 
 // ==============================================================
@@ -90,6 +101,7 @@ export function loadConfig(): AppConfig {
       telegram: loadTelegramConfig(),
       whatsapp: loadWhatsAppConfig(),
       affiliates: loadAffiliatesConfig(),
+      webUrl: getWebUrl(),
     };
   }
   return _config;

@@ -321,11 +321,13 @@ export async function publishToMultipleChannels(
  *
  * @param coupon - Dados do cupom
  * @param channelId - ID do canal (opcional, usa TELEGRAM_CHANNEL_ID por padrão)
+ * @param trackingUrl - Link de rastreio /r/<id> (opcional, usa coupon.sourceUrl por padrão)
  * @returns true se publicado com sucesso
  */
 export async function publishCoupon(
   coupon: CouponData,
-  channelId?: string
+  channelId?: string,
+  trackingUrl?: string
 ): Promise<boolean> {
   const bot = getBot();
   if (!bot) {
@@ -344,7 +346,7 @@ export async function publishCoupon(
   }
 
   try {
-    const message = formatCouponMessage(coupon);
+    const message = formatCouponMessage(coupon, trackingUrl);
 
     await sendWithPreviewFallback(bot, targetChannel, message, {
       parse_mode: "Markdown" as const,

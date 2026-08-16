@@ -73,12 +73,15 @@ export default async function DashboardLayout({
               <SidebarMenuItem>
                 <SidebarMenuButton className={`transition-all duration-200 ${isActive("/afiliados") ? "bg-brand-primary/15 text-brand-primary border-l-2 border-l-brand-primary rounded-none" : ""}`} render={<Link href="/afiliados"><Store className="mr-2 h-4 w-4" />Afiliados</Link>} />
               </SidebarMenuItem>
+<SidebarMenuItem>
+                  <SidebarMenuButton className={`transition-all duration-200 ${isActive("/fontes") ? "bg-brand-primary/15 text-brand-primary border-l-2 border-l-brand-primary rounded-none" : ""}`} render={<Link href="/fontes"><Store className="mr-2 h-4 w-4" />Fontes</Link>} />
+                </SidebarMenuItem>
                <SidebarMenuItem>
-                 <SidebarMenuButton className={`transition-all duration-200 ${isActive("/fontes") ? "bg-brand-primary/15 text-brand-primary border-l-2 border-l-brand-primary rounded-none" : ""}`} render={<Link href="/fontes"><Store className="mr-2 h-4 w-4" />Fontes</Link>} />
+                 <SidebarMenuButton className={`transition-all duration-200 ${isActive("/onboarding") ? "bg-brand-primary/15 text-brand-primary border-l-2 border-l-brand-primary rounded-none" : ""}`} render={<Link href="/onboarding"><Clock className="mr-2 h-4 w-4" />Onboarding</Link>} />
                </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton className={`transition-all duration-200 ${isActive("/onboarding") ? "bg-brand-primary/15 text-brand-primary border-l-2 border-l-brand-primary rounded-none" : ""}`} render={<Link href="/onboarding"><Clock className="mr-2 h-4 w-4" />Onboarding</Link>} />
-              </SidebarMenuItem>
+               <SidebarMenuItem>
+                 <SidebarMenuButton className={`transition-all duration-200 ${isActive("/analytics") ? "bg-brand-primary/15 text-brand-primary border-l-2 border-l-brand-primary rounded-none" : ""}`} render={<Link href="/analytics"><BarChart3 className="mr-2 h-4 w-4" />Analytics</Link>} />
+               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton className={`transition-all duration-200 ${isActive("/assinatura") ? "bg-brand-primary/15 text-brand-primary border-l-2 border-l-brand-primary rounded-none" : ""}`} render={<Link href="/assinatura"><CreditCard className="mr-2 h-4 w-4" />Assinatura</Link>} />
               </SidebarMenuItem>

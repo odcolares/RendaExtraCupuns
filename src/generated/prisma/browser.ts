@@ -48,6 +48,11 @@ export type Tenant = Prisma.TenantModel
  */
 export type Offer = Prisma.OfferModel
 /**
+ * Model Click
+ * 
+ */
+export type Click = Prisma.ClickModel
+/**
  * Model AffiliateConfig
  * 
  */

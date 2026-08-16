@@ -57,6 +57,7 @@ export const ModelName = {
   VerificationToken: 'VerificationToken',
   Tenant: 'Tenant',
   Offer: 'Offer',
+  Click: 'Click',
   AffiliateConfig: 'AffiliateConfig',
   TenantChannel: 'TenantChannel',
   Fonte: 'Fonte'
@@ -159,6 +160,17 @@ export const OfferScalarFieldEnum = {
 } as const
 
 export type OfferScalarFieldEnum = (typeof OfferScalarFieldEnum)[keyof typeof OfferScalarFieldEnum]
+
+
+export const ClickScalarFieldEnum = {
+  id: 'id',
+  offerId: 'offerId',
+  tenantId: 'tenantId',
+  sessionKey: 'sessionKey',
+  createdAt: 'createdAt'
+} as const
+
+export type ClickScalarFieldEnum = (typeof ClickScalarFieldEnum)[keyof typeof ClickScalarFieldEnum]
 
 
 export const AffiliateConfigScalarFieldEnum = {
