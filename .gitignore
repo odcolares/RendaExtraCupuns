@@ -17,6 +17,10 @@ web/.env.local
 whatsapp-session/
 .wwebjs_auth/
 .wwebjs_cache/
+whatsapp-qr.png
+
+# Scripts locais de desenvolvimento (não versionados)
+scripts/*.ps1
 
 # Banco de dados (dados reais de ofertas)
 data/*
