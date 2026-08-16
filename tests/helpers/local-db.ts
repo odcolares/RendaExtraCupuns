@@ -58,7 +58,18 @@ export async function prepareTestDb(): Promise<void> {
   const dbPath = resolveDbPath();
   fs.mkdirSync(DATA_DIR, { recursive: true });
   if (fs.existsSync(dbPath)) {
-    fs.unlinkSync(dbPath);
+    // O arquivo pode estar momentaneamente travado pela conexão Prisma do
+    // arquivo de teste anterior no mesmo worker (Windows não apaga arquivo
+    // aberto). Tenta de novo com backoff antes de desistir.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        fs.unlinkSync(dbPath);
+        break;
+      } catch (err) {
+        if (attempt >= 5) throw err;
+        await new Promise((r) => setTimeout(r, 200 * attempt));
+      }
+    }
   }
 
   // Aponta o Prisma (src/lib/prisma.ts) para o banco local em vez do Turso

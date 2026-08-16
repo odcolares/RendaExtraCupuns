@@ -17,6 +17,7 @@
 
 import { prisma } from "../lib/prisma";
 import { publishOffer } from "./publisher";
+import { buildTrackingUrl } from "./tracking";
 import {
   markAsFailed,
   markAsPublished,
@@ -174,8 +175,12 @@ async function processPendingOffer(offer: {
     }
   }
 
-  // 3. Publicar
-  const published = await publishOffer(offerData, affiliateLink, channelId);
+  // 3. Publicar (link de rastreio /r/<id>)
+  const published = await publishOffer(
+    offerData,
+    buildTrackingUrl(offer.id),
+    channelId
+  );
 
   if (published) {
     await markAsPublished(offer.id);

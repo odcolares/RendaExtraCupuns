@@ -41,13 +41,17 @@ https://www.amazon.com.br/dp/B0BJLXMVMV_${TEST_RUN_ID}`;
   }, 15000);
 
   it("rejeita oferta duplicada", async () => {
-    const msg = `Duplicata https://www.amazon.com.br/dp/B0BJLXMVMV_${TEST_RUN_ID}`;
+    // URL de plataforma desconhecida → sem link de afiliado → o campo url
+    // do banco preserva a URL original, permitindo o dedup por URL.
+    const url = `https://example.com/produto/123_${TEST_RUN_ID}`;
+    const msg = `Produto Duplicata ${TEST_RUN_ID}
+De R$ 100 por R$ 50
+${url}`;
 
-    const result = await processOffer(
-      msg,
-      `https://www.amazon.com.br/dp/B0BJLXMVMV_${TEST_RUN_ID}`
-    );
+    const first = await processOffer(msg, url);
+    expect(first.success).toBe(true);
 
+    const result = await processOffer(msg, url);
     expect(result.success).toBe(false);
     expect(result.error).toBe("duplicate");
   }, 15000);

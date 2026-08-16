@@ -14,6 +14,7 @@ import { detectPlatform } from "./affiliates";
 import { generateAffiliateLink } from "./affiliates";
 import { searchMercadoLivreProduct } from "./affiliates/mercadolivre-search";
 import { publishOffer, publishFlashSale, publishCoupon } from "./telegram/publisher";
+import { buildTrackingUrl } from "./telegram/tracking";
 import { extractCouponData } from "./coupons/detector";
 import type { CouponData } from "./coupons/types";
 import {
@@ -243,11 +244,49 @@ export async function processOffer(
     }
   }
 
-  // ── 5. Publicar no Telegram ──
+  // ── 5. Salvar no banco (antes de publicar — o link de rastreio usa o id) ──
+  let dbId: string | null = null;
+  let couponOffer: OfferData | null = null;
+
+  if (couponData) {
+    // Salvar cupom no banco com dados específicos
+    couponOffer = {
+      name: `CUPOM ${couponData.discount} — ${couponData.code}`,
+      originalPrice: null,
+      currentPrice: null,
+      discount: couponData.discountValue,
+      platform: `cupom:${couponData.platformKey}`,
+      originalUrl: couponData.sourceUrl,
+      description: `Cupom ${couponData.discount} | Código: ${couponData.code}${
+        couponData.limit !== null ? ` | Limite: R$ ${couponData.limit}` : ""
+      }`,
+    };
+
+    dbId = await insertOffer(couponOffer, undefined);
+  } else {
+    // Oferta normal (produto)
+    const offerForDb: OfferData = {
+      name: offerData.name,
+      originalPrice: offerData.originalPrice,
+      currentPrice: offerData.currentPrice,
+      discount: offerData.discount,
+      platform: offerData.platform,
+      originalUrl: url,
+      imageUrl: offerData.imageUrl,
+    };
+
+    dbId = await insertOffer(offerForDb, affiliateLink || undefined);
+
+    if (dbId && affiliateLink) {
+      await updateAffiliateLink(dbId, affiliateLink);
+    }
+  }
+
+  // ── 6. Publicar no Telegram (link de rastreio /r/<id>) ──
   let published = false;
-  if (affiliateLink) {
+  if (dbId && affiliateLink) {
     try {
-      published = await publishOffer(offerData, affiliateLink);
+      published = await publishOffer(offerData, buildTrackingUrl(dbId));
       if (published) {
         log.info("Oferta publicada no Telegram");
       } else {
@@ -258,10 +297,14 @@ export async function processOffer(
         error: (err as Error).message,
       });
     }
-  } else if (couponData) {
+  } else if (dbId && couponData) {
     // Tentar publicar como cupom
     try {
-      published = await publishCoupon(couponData);
+      published = await publishCoupon(
+        couponData,
+        undefined,
+        buildTrackingUrl(dbId)
+      );
       if (published) {
         log.info("Cupom publicado no Telegram", {
           code: couponData.code,
@@ -279,27 +322,12 @@ export async function processOffer(
     log.warn("Pular publicação: sem link de afiliado nem cupom detectado");
   }
 
-  // ── 6. Salvar no banco ──
+  if (dbId && published) {
+    await markAsPublished(dbId);
+    if (sourceId) await incrementFontePublished(sourceId);
+  }
+
   if (couponData) {
-    // Salvar cupom no banco com dados específicos
-    const couponOffer: OfferData = {
-      name: `CUPOM ${couponData.discount} — ${couponData.code}`,
-      originalPrice: null,
-      currentPrice: null,
-      discount: couponData.discountValue,
-      platform: `cupom:${couponData.platformKey}`,
-      originalUrl: couponData.sourceUrl,
-      description: `Cupom ${couponData.discount} | Código: ${couponData.code}${
-        couponData.limit !== null ? ` | Limite: R$ ${couponData.limit}` : ""
-      }`,
-    };
-
-    const dbId = await insertOffer(couponOffer, undefined);
-    if (dbId && published) {
-      await markAsPublished(dbId);
-      if (sourceId) await incrementFontePublished(sourceId);
-    }
-
     log.info("Pipeline de cupom concluído", {
       code: couponData.code,
       publicado: published,
@@ -308,30 +336,9 @@ export async function processOffer(
 
     return {
       success: true,
-      offer: { ...couponOffer, rawMessage: messageText },
+      offer: { ...couponOffer!, rawMessage: messageText },
+      dbId: dbId ?? undefined,
     };
-  }
-
-  // Oferta normal (produto)
-  const offerForDb: OfferData = {
-    name: offerData.name,
-    originalPrice: offerData.originalPrice,
-    currentPrice: offerData.currentPrice,
-    discount: offerData.discount,
-    platform: offerData.platform,
-    originalUrl: url,
-    imageUrl: offerData.imageUrl,
-  };
-
-  const dbId = await insertOffer(offerForDb, affiliateLink || undefined);
-
-  if (dbId && published) {
-    await markAsPublished(dbId);
-    if (sourceId) await incrementFontePublished(sourceId);
-  }
-
-  if (dbId && affiliateLink) {
-    await updateAffiliateLink(dbId, affiliateLink);
   }
 
   log.info("Pipeline concluído", {
@@ -343,6 +350,7 @@ export async function processOffer(
   return {
     success: true,
     offer: offerData,
+    dbId: dbId ?? undefined,
   };
 }
 
@@ -356,12 +364,16 @@ export async function processFlashSale(
 ): Promise<ProcessResult> {
   const result = await processOffer(messageText, url);
 
-  if (result.success && result.offer) {
+  if (result.success && result.offer && result.dbId) {
     const platform = detectPlatform(url);
     if (platform) {
       const linkResult = await generateAffiliateLink(url, platform);
       if (linkResult) {
-        await publishFlashSale(result.offer, linkResult.affiliate, endTime);
+        await publishFlashSale(
+          result.offer,
+          buildTrackingUrl(result.dbId),
+          endTime
+        );
       }
     }
   }

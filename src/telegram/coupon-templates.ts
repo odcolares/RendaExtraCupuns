@@ -40,9 +40,13 @@ function escapeMarkdown(text: string): string {
  * Formata uma mensagem de cupom para publicação no Telegram.
  *
  * @param coupon - Dados do cupom extraídos
+ * @param trackingUrl - Link de rastreio /r/<id> (opcional, usa coupon.sourceUrl por padrão)
  * @returns Mensagem formatada em Markdown do Telegram
  */
-export function formatCouponMessage(coupon: CouponData): string {
+export function formatCouponMessage(
+  coupon: CouponData,
+  trackingUrl?: string
+): string {
   let message = `🎟️ *CUPOM ENCONTRADO*\n\n`;
 
   // Desconto
@@ -56,7 +60,7 @@ export function formatCouponMessage(coupon: CouponData): string {
   message += `📌 Código: \`${coupon.code}\`\n\n`;
 
   // Link
-  message += `🛒 [Ativar cupom →](${coupon.sourceUrl})\n\n`;
+  message += `🛒 [Ativar cupom →](${trackingUrl ?? coupon.sourceUrl})\n\n`;
 
   // Rodapé
   message += `📍 *${escapeMarkdown(coupon.platform)}*\n`;
@@ -68,13 +72,16 @@ export function formatCouponMessage(coupon: CouponData): string {
 /**
  * Formata um cupom de forma compacta (para múltiplos cupons no mesmo post).
  */
-export function formatCouponInline(coupon: CouponData): string {
+export function formatCouponInline(
+  coupon: CouponData,
+  trackingUrl?: string
+): string {
   const limitStr =
     coupon.limit !== null
       ? ` (limite ${coupon.limitCurrency} ${formatValue(coupon.limit)})`
       : "";
 
-  return `🎟️ *${escapeMarkdown(coupon.discount)}*${limitStr}\n   Código: \`${coupon.code}\` — [Ativar →](${coupon.sourceUrl})`;
+  return `🎟️ *${escapeMarkdown(coupon.discount)}*${limitStr}\n   Código: \`${coupon.code}\` — [Ativar →](${trackingUrl ?? coupon.sourceUrl})`;
 }
 
 function formatValue(value: number): string {
