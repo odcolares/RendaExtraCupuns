@@ -55,10 +55,10 @@ GRUPOS WHATSAPP  →  ROBÔ AUTOMATIZADO  →  CANAL TELEGRAM
 
 | Métrica | Número |
 |---------|--------|
-| Ofertas no banco | 150+ |
-| Publicadas no Telegram | 50+ |
+| Ofertas processadas | **500** |
+| Publicadas no Telegram | **220** |
 | Fontes monitoradas | **4** (2 grupos + 1 broadcast + 1 newsletter) |
-| Testes automatizados | **114** passando |
+| Testes automatizados | **135** passando (**17** suites) |
 
 ### Exemplos de ofertas que o robô já publicou sozinho:
 
@@ -73,6 +73,9 @@ GRUPOS WHATSAPP  →  ROBÔ AUTOMATIZADO  →  CANAL TELEGRAM
 
 🔥 PlayStation 5 Pro
    Shopee → link afiliado → Telegram ✅
+
+🥣 Cereal Matinal Negresco 200g — Amazon → link afiliado → Telegram ✅
+🥣 Loção NIVEA Hidratante Milk Pele Seca a Extrasseca 400ml - 2 unidades — Amazon → link afiliado → Telegram ✅
 ```
 
 ### Tempo real de execução:
@@ -114,6 +117,18 @@ Toda mensagem publicada inclui:
 
 Conformidade com a **Lei 14.448/2022**.
 
+### 🖱️ Rastreamento de Cliques
+Cada link publicado passa por `/r/[ofertaId]`, que redireciona para o link de afiliado e registra o clique com cookie de deduplicação.
+
+### 📊 Analytics
+Painel com total de cliques, cliques únicos, cliques de hoje, top 10 ofertas e filtro por período (7/30/90 dias).
+
+### ⚡ Banco Serverless (Turso)
+Dados na nuvem (AWS us-east-1), sem servidor para manter.
+
+### 🌐 Painel Web SaaS
+Dashboard, página de ofertas com view/edit/delete, onboarding guiado e deploy live no Vercel.
+
 ---
 
 ## Como Funciona na Prática
@@ -153,7 +168,14 @@ VOCÊ                              ROBÔ
 ## Modelos de Contratação
 
 ### 🚀 Modelo A — SaaS Self-Service (Recomendado)
-- **Assinatura mensal** com planos Free / Pro / Enterprise
+- **Assinatura mensal** com planos reais:
+
+| Plano | Preço | Recursos |
+|-------|-------|----------|
+| **Free** | R$0 | Até 10 ofertas/dia, 1 canal Telegram, suporte básico |
+| **Starter** | R$29/mês | Até 50 ofertas/dia, 3 canais Telegram, suporte prioritário, todas as plataformas |
+| **Professional** | R$79/mês | Ofertas ilimitadas, canais ilimitados, suporte 24/7, white-label, múltiplos usuários |
+
 - Painel web completo: dashboard, configuração de afiliados, histórico de ofertas
 - **Você configura tudo no painel** — sem precisar de servidor ou instalação
 - Gestão de fontes WhatsApp integrada
@@ -186,7 +208,7 @@ Sim, o robô precisa de um número WhatsApp secundário (chip barato). A sessão
 whatsapp-web.js usa a mesma interface do WhatsApp Web. Com um número secundário e bom senso, o risco é mínimo.
 
 ### "Funciona 24h?"
-Sim. O robô roda em servidor VPS (recomendado 2GB RAM). Com PM2, ele reinicia automaticamente se cair.
+Sim. Na modalidade SaaS o painel fica no ar 24h (Vercel) e o robô roda no seu computador ou VPS com PM2 — reinicia automaticamente se cair.
 
 ### "Quantas ofertas consigo publicar por dia?"
 Dezenas. O rate limit é de **30 mensagens/hora** no Telegram por canal.
@@ -210,5 +232,5 @@ Dezenas. O rate limit é de **30 mensagens/hora** no Telegram por canal.
 
 ---
 
-*Documento atualizado em: 10/07/2026*
-*Sistema: RendaExtraCupuns — v1.0 (Alpha)* | *Web SaaS: Fase 1 concluída*
+*Documento atualizado em: 16/08/2026*
+*Sistema: RendaExtraCupuns — v1.0 (Alpha)* | *Web SaaS: Fase 0+1 + click tracking concluídas*
