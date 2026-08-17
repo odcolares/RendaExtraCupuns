@@ -1,0 +1,96 @@
+{
+  "collectedAt": "2026-08-17T00:46:19.091Z",
+  "offers": {
+    "total": 500,
+    "byStatus": {
+      "published": 220,
+      "pending": 0,
+      "failed": 280
+    },
+    "byPlatform": {
+      "amazon": 200,
+      "shopee": 99,
+      "mercadolivre": 150,
+      "aliexpress": 2,
+      "outros": 49
+    }
+  },
+  "fontes": [
+    {
+      "name": "Grupo 12036340...",
+      "isActive": true,
+      "totalOffersFound": 6,
+      "totalOffersPublished": 3
+    },
+    {
+      "name": "Grupo 12036340...",
+      "isActive": true,
+      "totalOffersFound": 0,
+      "totalOffersPublished": 0
+    },
+    {
+      "name": "Kotas #51 (Broadcast)",
+      "isActive": true,
+      "totalOffersFound": 0,
+      "totalOffersPublished": 0
+    },
+    {
+      "name": "Newsletter Ofertas",
+      "isActive": true,
+      "totalOffersFound": 0,
+      "totalOffersPublished": 0
+    }
+  ],
+  "recentPublished": [
+    {
+      "title": "QA F3 Produto 1786917919274",
+      "platform": "amazon",
+      "price": 99,
+      "originalPrice": 200,
+      "publishedAt": "2026-08-16T22:18:08.225Z"
+    },
+    {
+      "title": "Cereal Matinal Negresco 200g",
+      "platform": "amazon",
+      "price": null,
+      "originalPrice": null,
+      "publishedAt": "2026-08-15T20:08:30.748Z"
+    },
+    {
+      "title": "De R$ 159 por R$ 79",
+      "platform": "mercadolivre",
+      "price": 79,
+      "originalPrice": 159,
+      "publishedAt": "2026-08-15T20:03:17.485Z"
+    },
+    {
+      "title": "👕 Camiseta Oversized Anime Clássico Naruto Uzumaki",
+      "platform": "mercadolivre",
+      "price": null,
+      "originalPrice": null,
+      "publishedAt": "2026-08-15T19:57:17.041Z"
+    },
+    {
+      "title": "🧴 Loção NIVEA Hidratante Milk Pele Seca a Extrasseca 400ml - 2 unidades",
+      "platform": "amazon",
+      "price": null,
+      "originalPrice": 9.84,
+      "publishedAt": "2026-08-15T19:53:00.771Z"
+    }
+  ],
+  "jest": {
+    "command": "npm test",
+    "testSuites": {
+      "passed": 17,
+      "total": 17
+    },
+    "tests": {
+      "passed": 135,
+      "total": 135
+    },
+    "summaryLines": [
+      "Test Suites: 17 passed, 17 total",
+      "Tests:       135 passed, 135 total"
+    ]
+  }
+}

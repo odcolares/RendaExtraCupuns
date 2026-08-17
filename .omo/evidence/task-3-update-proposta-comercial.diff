@@ -1,0 +1,34 @@
+diff --git a/PROPOSTA_COMERCIAL.md b/PROPOSTA_COMERCIAL.md
+index 1cf9f40..070788b 100644
+--- a/PROPOSTA_COMERCIAL.md
++++ b/PROPOSTA_COMERCIAL.md
+@@ -55,10 +55,10 @@ GRUPOS WHATSAPP  →  ROBÔ AUTOMATIZADO  →  CANAL TELEGRAM
+ 
+ | Métrica | Número |
+ |---------|--------|
+-| Ofertas no banco | 150+ |
+-| Publicadas no Telegram | 50+ |
++| Ofertas processadas | **500** |
++| Publicadas no Telegram | **220** |
+ | Fontes monitoradas | **4** (2 grupos + 1 broadcast + 1 newsletter) |
+-| Testes automatizados | **114** passando |
++| Testes automatizados | **135** passando (**17** suites) |
+ 
+ ### Exemplos de ofertas que o robô já publicou sozinho:
+ 
+@@ -153,7 +153,14 @@ VOCÊ                              ROBÔ
+ ## Modelos de Contratação
+ 
+ ### 🚀 Modelo A — SaaS Self-Service (Recomendado)
+-- **Assinatura mensal** com planos Free / Pro / Enterprise
++- **Assinatura mensal** com planos reais:
++
++| Plano | Preço | Recursos |
++|-------|-------|----------|
++| **Free** | R$0 | Até 10 ofertas/dia, 1 canal Telegram, suporte básico |
++| **Starter** | R$29/mês | Até 50 ofertas/dia, 3 canais Telegram, suporte prioritário, todas as plataformas |
++| **Professional** | R$79/mês | Ofertas ilimitadas, canais ilimitados, suporte 24/7, white-label, múltiplos usuários |
++
+ - Painel web completo: dashboard, configuração de afiliados, histórico de ofertas
+ - **Você configura tudo no painel** — sem precisar de servidor ou instalação
+ - Gestão de fontes WhatsApp integrada

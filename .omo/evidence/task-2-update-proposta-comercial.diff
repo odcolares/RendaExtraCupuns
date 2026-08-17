@@ -1,0 +1,18 @@
+diff --git a/PROPOSTA_COMERCIAL.md b/PROPOSTA_COMERCIAL.md
+index 1cf9f40..61ec4ae 100644
+--- a/PROPOSTA_COMERCIAL.md
++++ b/PROPOSTA_COMERCIAL.md
+@@ -55,10 +55,10 @@ GRUPOS WHATSAPP  →  ROBÔ AUTOMATIZADO  →  CANAL TELEGRAM
+ 
+ | Métrica | Número |
+ |---------|--------|
+-| Ofertas no banco | 150+ |
+-| Publicadas no Telegram | 50+ |
++| Ofertas processadas | **500** |
++| Publicadas no Telegram | **220** |
+ | Fontes monitoradas | **4** (2 grupos + 1 broadcast + 1 newsletter) |
+-| Testes automatizados | **114** passando |
++| Testes automatizados | **135** passando (**17** suites) |
+ 
+ ### Exemplos de ofertas que o robô já publicou sozinho:
+ 
