@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2, AlertCircle, LogIn, ArrowRight } from "lucide-react";
+import { Loader2, AlertCircle, LogIn, ArrowRight, MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+// Mesma string de web/src/lib/auth.config.ts (EMAIL_NOT_VERIFIED_MESSAGE) —
+// chega aqui via `result.code` do signIn (subclasse de CredentialsSignin).
+const EMAIL_NOT_VERIFIED_MESSAGE =
+  "Verifique seu email antes de entrar. Enviamos um link para o seu email.";
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -25,11 +30,15 @@ function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [needsVerification, setNeedsVerification] = useState(false);
+  const [resendMessage, setResendMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    setResendMessage("");
+    setNeedsVerification(false);
     setLoading(true);
 
     try {
@@ -40,7 +49,12 @@ function LoginForm() {
       });
 
       if (result?.error) {
-        setError("Email ou senha inválidos.");
+        if (result.code === EMAIL_NOT_VERIFIED_MESSAGE) {
+          setError(result.code);
+          setNeedsVerification(true);
+        } else {
+          setError("Email ou senha inválidos.");
+        }
         setLoading(false);
         return;
       }
@@ -50,6 +64,25 @@ function LoginForm() {
     } catch {
       setError("Erro ao fazer login. Tente novamente.");
       setLoading(false);
+    }
+  }
+
+  async function handleResendVerification() {
+    setResendMessage("");
+    try {
+      const res = await fetch("/api/auth/resend-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        setResendMessage("Se o email existir, enviaremos um novo link.");
+      } else {
+        setError("Erro ao reenviar o link. Tente novamente.");
+      }
+    } catch {
+      setError("Erro ao reenviar o link. Tente novamente.");
     }
   }
 
@@ -70,6 +103,22 @@ function LoginForm() {
             <div className="flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <span>{error}</span>
+            </div>
+          )}
+          {needsVerification && (
+            <div className="flex flex-col gap-2 rounded-md bg-brand-primary/10 p-3 text-sm">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full cursor-pointer"
+                onClick={handleResendVerification}
+              >
+                <MailCheck className="mr-2 h-4 w-4" />
+                Reenviar e-mail de verificação
+              </Button>
+              {resendMessage && (
+                <p className="text-center text-muted-foreground">{resendMessage}</p>
+              )}
             </div>
           )}
           <div className="flex flex-col gap-2">

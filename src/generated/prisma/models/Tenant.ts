@@ -462,10 +462,6 @@ export type EnumTenantStatusFieldUpdateOperationsInput = {
   set?: $Enums.TenantStatus
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type TenantCreateNestedOneWithoutOffersInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutOffersInput, Prisma.TenantUncheckedCreateWithoutOffersInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutOffersInput

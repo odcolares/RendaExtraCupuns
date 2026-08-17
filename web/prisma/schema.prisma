@@ -51,6 +51,8 @@ model User {
   email     String   @unique
   password  String
   role      UserRole @default(client)
+  emailVerified DateTime?
+  consentAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
