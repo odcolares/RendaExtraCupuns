@@ -1,15 +1,30 @@
 import { auth } from "@/lib/auth.proxy";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { applyRateLimit } from "@/lib/proxy-rate-limit";
 
 const publicPaths = ["/", "/login", "/signup"];
 const apiAuthPaths = ["/api/auth"];
 const adminPrefix = "/admin";
 const dashboardPrefix = "/dashboard";
 
-export default auth((req) => {
+/**
+ * Handler do proxy (exportado para uso direto; rate limit em `@/lib/proxy-rate-limit`).
+ * Runtime: proxy roda em nodejs no Next.js 16 — o rate limit é 100% em memória.
+ * LIMITAÇÃO: na Vercel serverless o limite é por-instância (aceitável p/ beta;
+ * upgrade Upstash/Redis = TODO futuro, fora do escopo).
+ */
+export function proxyHandler(
+  req: NextRequest & { auth?: { user?: { role?: string } | null } | null }
+) {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
   const userRole = req.auth?.user?.role;
+
+  const rateLimitResponse = applyRateLimit(req);
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
 
   // Always allow public pages and auth API
   if (pathname.startsWith("/r/")) {
@@ -42,7 +57,9 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+}
+
+export default auth(proxyHandler);
 
 export const config = {
   matcher: [
