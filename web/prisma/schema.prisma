@@ -129,6 +129,10 @@ model Offer {
   publishedAt DateTime?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
+  errorMessage String?
+  retryCount   Int      @default(0)
+  lastAttemptAt DateTime?
+  source       String?
 
   tenantId String
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)

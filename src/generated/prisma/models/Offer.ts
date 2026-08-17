@@ -30,12 +30,14 @@ export type OfferAvgAggregateOutputType = {
   price: number | null
   originalPrice: number | null
   discount: number | null
+  retryCount: number | null
 }
 
 export type OfferSumAggregateOutputType = {
   price: number | null
   originalPrice: number | null
   discount: number | null
+  retryCount: number | null
 }
 
 export type OfferMinAggregateOutputType = {
@@ -52,6 +54,10 @@ export type OfferMinAggregateOutputType = {
   publishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  errorMessage: string | null
+  retryCount: number | null
+  lastAttemptAt: Date | null
+  source: string | null
   tenantId: string | null
 }
 
@@ -69,6 +75,10 @@ export type OfferMaxAggregateOutputType = {
   publishedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  errorMessage: string | null
+  retryCount: number | null
+  lastAttemptAt: Date | null
+  source: string | null
   tenantId: string | null
 }
 
@@ -86,6 +96,10 @@ export type OfferCountAggregateOutputType = {
   publishedAt: number
   createdAt: number
   updatedAt: number
+  errorMessage: number
+  retryCount: number
+  lastAttemptAt: number
+  source: number
   tenantId: number
   _all: number
 }
@@ -95,12 +109,14 @@ export type OfferAvgAggregateInputType = {
   price?: true
   originalPrice?: true
   discount?: true
+  retryCount?: true
 }
 
 export type OfferSumAggregateInputType = {
   price?: true
   originalPrice?: true
   discount?: true
+  retryCount?: true
 }
 
 export type OfferMinAggregateInputType = {
@@ -117,6 +133,10 @@ export type OfferMinAggregateInputType = {
   publishedAt?: true
   createdAt?: true
   updatedAt?: true
+  errorMessage?: true
+  retryCount?: true
+  lastAttemptAt?: true
+  source?: true
   tenantId?: true
 }
 
@@ -134,6 +154,10 @@ export type OfferMaxAggregateInputType = {
   publishedAt?: true
   createdAt?: true
   updatedAt?: true
+  errorMessage?: true
+  retryCount?: true
+  lastAttemptAt?: true
+  source?: true
   tenantId?: true
 }
 
@@ -151,6 +175,10 @@ export type OfferCountAggregateInputType = {
   publishedAt?: true
   createdAt?: true
   updatedAt?: true
+  errorMessage?: true
+  retryCount?: true
+  lastAttemptAt?: true
+  source?: true
   tenantId?: true
   _all?: true
 }
@@ -255,6 +283,10 @@ export type OfferGroupByOutputType = {
   publishedAt: Date | null
   createdAt: Date
   updatedAt: Date
+  errorMessage: string | null
+  retryCount: number
+  lastAttemptAt: Date | null
+  source: string | null
   tenantId: string
   _count: OfferCountAggregateOutputType | null
   _avg: OfferAvgAggregateOutputType | null
@@ -295,6 +327,10 @@ export type OfferWhereInput = {
   publishedAt?: Prisma.DateTimeNullableFilter<"Offer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Offer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Offer"> | Date | string
+  errorMessage?: Prisma.StringNullableFilter<"Offer"> | string | null
+  retryCount?: Prisma.IntFilter<"Offer"> | number
+  lastAttemptAt?: Prisma.DateTimeNullableFilter<"Offer"> | Date | string | null
+  source?: Prisma.StringNullableFilter<"Offer"> | string | null
   tenantId?: Prisma.StringFilter<"Offer"> | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   clicks?: Prisma.ClickListRelationFilter
@@ -314,6 +350,10 @@ export type OfferOrderByWithRelationInput = {
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  source?: Prisma.SortOrderInput | Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
   clicks?: Prisma.ClickOrderByRelationAggregateInput
@@ -336,6 +376,10 @@ export type OfferWhereUniqueInput = Prisma.AtLeast<{
   publishedAt?: Prisma.DateTimeNullableFilter<"Offer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Offer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Offer"> | Date | string
+  errorMessage?: Prisma.StringNullableFilter<"Offer"> | string | null
+  retryCount?: Prisma.IntFilter<"Offer"> | number
+  lastAttemptAt?: Prisma.DateTimeNullableFilter<"Offer"> | Date | string | null
+  source?: Prisma.StringNullableFilter<"Offer"> | string | null
   tenantId?: Prisma.StringFilter<"Offer"> | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   clicks?: Prisma.ClickListRelationFilter
@@ -355,6 +399,10 @@ export type OfferOrderByWithAggregationInput = {
   publishedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  source?: Prisma.SortOrderInput | Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   _count?: Prisma.OfferCountOrderByAggregateInput
   _avg?: Prisma.OfferAvgOrderByAggregateInput
@@ -380,6 +428,10 @@ export type OfferScalarWhereWithAggregatesInput = {
   publishedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Offer"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Offer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Offer"> | Date | string
+  errorMessage?: Prisma.StringNullableWithAggregatesFilter<"Offer"> | string | null
+  retryCount?: Prisma.IntWithAggregatesFilter<"Offer"> | number
+  lastAttemptAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Offer"> | Date | string | null
+  source?: Prisma.StringNullableWithAggregatesFilter<"Offer"> | string | null
   tenantId?: Prisma.StringWithAggregatesFilter<"Offer"> | string
 }
 
@@ -397,6 +449,10 @@ export type OfferCreateInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  errorMessage?: string | null
+  retryCount?: number
+  lastAttemptAt?: Date | string | null
+  source?: string | null
   tenant: Prisma.TenantCreateNestedOneWithoutOffersInput
   clicks?: Prisma.ClickCreateNestedManyWithoutOfferInput
 }
@@ -415,6 +471,10 @@ export type OfferUncheckedCreateInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  errorMessage?: string | null
+  retryCount?: number
+  lastAttemptAt?: Date | string | null
+  source?: string | null
   tenantId: string
   clicks?: Prisma.ClickUncheckedCreateNestedManyWithoutOfferInput
 }
@@ -433,6 +493,10 @@ export type OfferUpdateInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutOffersNestedInput
   clicks?: Prisma.ClickUpdateManyWithoutOfferNestedInput
 }
@@ -451,6 +515,10 @@ export type OfferUncheckedUpdateInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   clicks?: Prisma.ClickUncheckedUpdateManyWithoutOfferNestedInput
 }
@@ -469,6 +537,10 @@ export type OfferCreateManyInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  errorMessage?: string | null
+  retryCount?: number
+  lastAttemptAt?: Date | string | null
+  source?: string | null
   tenantId: string
 }
 
@@ -486,6 +558,10 @@ export type OfferUpdateManyMutationInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type OfferUncheckedUpdateManyInput = {
@@ -502,6 +578,10 @@ export type OfferUncheckedUpdateManyInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -529,6 +609,10 @@ export type OfferCountOrderByAggregateInput = {
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrder
+  source?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
 }
 
@@ -536,6 +620,7 @@ export type OfferAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
   originalPrice?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
 }
 
 export type OfferMaxOrderByAggregateInput = {
@@ -552,6 +637,10 @@ export type OfferMaxOrderByAggregateInput = {
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrder
+  source?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
 }
 
@@ -569,6 +658,10 @@ export type OfferMinOrderByAggregateInput = {
   publishedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  errorMessage?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrder
+  source?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
 }
 
@@ -576,6 +669,7 @@ export type OfferSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
   originalPrice?: Prisma.SortOrder
   discount?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
 }
 
 export type OfferScalarRelationFilter = {
@@ -641,6 +735,14 @@ export type EnumOfferStatusFieldUpdateOperationsInput = {
   set?: $Enums.OfferStatus
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type OfferCreateNestedOneWithoutClicksInput = {
   create?: Prisma.XOR<Prisma.OfferCreateWithoutClicksInput, Prisma.OfferUncheckedCreateWithoutClicksInput>
   connectOrCreate?: Prisma.OfferCreateOrConnectWithoutClicksInput
@@ -669,6 +771,10 @@ export type OfferCreateWithoutTenantInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  errorMessage?: string | null
+  retryCount?: number
+  lastAttemptAt?: Date | string | null
+  source?: string | null
   clicks?: Prisma.ClickCreateNestedManyWithoutOfferInput
 }
 
@@ -686,6 +792,10 @@ export type OfferUncheckedCreateWithoutTenantInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  errorMessage?: string | null
+  retryCount?: number
+  lastAttemptAt?: Date | string | null
+  source?: string | null
   clicks?: Prisma.ClickUncheckedCreateNestedManyWithoutOfferInput
 }
 
@@ -731,6 +841,10 @@ export type OfferScalarWhereInput = {
   publishedAt?: Prisma.DateTimeNullableFilter<"Offer"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Offer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Offer"> | Date | string
+  errorMessage?: Prisma.StringNullableFilter<"Offer"> | string | null
+  retryCount?: Prisma.IntFilter<"Offer"> | number
+  lastAttemptAt?: Prisma.DateTimeNullableFilter<"Offer"> | Date | string | null
+  source?: Prisma.StringNullableFilter<"Offer"> | string | null
   tenantId?: Prisma.StringFilter<"Offer"> | string
 }
 
@@ -748,6 +862,10 @@ export type OfferCreateWithoutClicksInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  errorMessage?: string | null
+  retryCount?: number
+  lastAttemptAt?: Date | string | null
+  source?: string | null
   tenant: Prisma.TenantCreateNestedOneWithoutOffersInput
 }
 
@@ -765,6 +883,10 @@ export type OfferUncheckedCreateWithoutClicksInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  errorMessage?: string | null
+  retryCount?: number
+  lastAttemptAt?: Date | string | null
+  source?: string | null
   tenantId: string
 }
 
@@ -798,6 +920,10 @@ export type OfferUpdateWithoutClicksInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutOffersNestedInput
 }
 
@@ -815,6 +941,10 @@ export type OfferUncheckedUpdateWithoutClicksInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -832,6 +962,10 @@ export type OfferCreateManyTenantInput = {
   publishedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  errorMessage?: string | null
+  retryCount?: number
+  lastAttemptAt?: Date | string | null
+  source?: string | null
 }
 
 export type OfferUpdateWithoutTenantInput = {
@@ -848,6 +982,10 @@ export type OfferUpdateWithoutTenantInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clicks?: Prisma.ClickUpdateManyWithoutOfferNestedInput
 }
 
@@ -865,6 +1003,10 @@ export type OfferUncheckedUpdateWithoutTenantInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   clicks?: Prisma.ClickUncheckedUpdateManyWithoutOfferNestedInput
 }
 
@@ -882,6 +1024,10 @@ export type OfferUncheckedUpdateManyWithoutTenantInput = {
   publishedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  source?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -929,6 +1075,10 @@ export type OfferSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  errorMessage?: boolean
+  retryCount?: boolean
+  lastAttemptAt?: boolean
+  source?: boolean
   tenantId?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   clicks?: boolean | Prisma.Offer$clicksArgs<ExtArgs>
@@ -949,6 +1099,10 @@ export type OfferSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  errorMessage?: boolean
+  retryCount?: boolean
+  lastAttemptAt?: boolean
+  source?: boolean
   tenantId?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["offer"]>
@@ -967,6 +1121,10 @@ export type OfferSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  errorMessage?: boolean
+  retryCount?: boolean
+  lastAttemptAt?: boolean
+  source?: boolean
   tenantId?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["offer"]>
@@ -985,10 +1143,14 @@ export type OfferSelectScalar = {
   publishedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  errorMessage?: boolean
+  retryCount?: boolean
+  lastAttemptAt?: boolean
+  source?: boolean
   tenantId?: boolean
 }
 
-export type OfferOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "url" | "platform" | "price" | "originalPrice" | "discount" | "imageUrl" | "status" | "publishedAt" | "createdAt" | "updatedAt" | "tenantId", ExtArgs["result"]["offer"]>
+export type OfferOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "url" | "platform" | "price" | "originalPrice" | "discount" | "imageUrl" | "status" | "publishedAt" | "createdAt" | "updatedAt" | "errorMessage" | "retryCount" | "lastAttemptAt" | "source" | "tenantId", ExtArgs["result"]["offer"]>
 export type OfferInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   clicks?: boolean | Prisma.Offer$clicksArgs<ExtArgs>
@@ -1021,6 +1183,10 @@ export type $OfferPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     publishedAt: Date | null
     createdAt: Date
     updatedAt: Date
+    errorMessage: string | null
+    retryCount: number
+    lastAttemptAt: Date | null
+    source: string | null
     tenantId: string
   }, ExtArgs["result"]["offer"]>
   composites: {}
@@ -1460,6 +1626,10 @@ export interface OfferFieldRefs {
   readonly publishedAt: Prisma.FieldRef<"Offer", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Offer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Offer", 'DateTime'>
+  readonly errorMessage: Prisma.FieldRef<"Offer", 'String'>
+  readonly retryCount: Prisma.FieldRef<"Offer", 'Int'>
+  readonly lastAttemptAt: Prisma.FieldRef<"Offer", 'DateTime'>
+  readonly source: Prisma.FieldRef<"Offer", 'String'>
   readonly tenantId: Prisma.FieldRef<"Offer", 'String'>
 }
     

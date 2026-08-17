@@ -247,6 +247,7 @@ export async function processOffer(
   // ── 5. Salvar no banco (antes de publicar — o link de rastreio usa o id) ──
   let dbId: string | null = null;
   let couponOffer: OfferData | null = null;
+  const source = sourceId ? "whatsapp" : "cli";
 
   if (couponData) {
     // Salvar cupom no banco com dados específicos
@@ -260,6 +261,7 @@ export async function processOffer(
       description: `Cupom ${couponData.discount} | Código: ${couponData.code}${
         couponData.limit !== null ? ` | Limite: R$ ${couponData.limit}` : ""
       }`,
+      source,
     };
 
     dbId = await insertOffer(couponOffer, undefined);
@@ -273,6 +275,7 @@ export async function processOffer(
       platform: offerData.platform,
       originalUrl: url,
       imageUrl: offerData.imageUrl,
+      source,
     };
 
     dbId = await insertOffer(offerForDb, affiliateLink || undefined);
@@ -286,11 +289,14 @@ export async function processOffer(
   let published = false;
   if (dbId && affiliateLink) {
     try {
-      published = await publishOffer(offerData, buildTrackingUrl(dbId));
+      const publishResult = await publishOffer(offerData, buildTrackingUrl(dbId));
+      published = publishResult.success;
       if (published) {
         log.info("Oferta publicada no Telegram");
       } else {
-        log.warn("Falha ao publicar no Telegram (bot pode não estar configurado)");
+        log.warn("Falha ao publicar no Telegram (bot pode não estar configurado)", {
+          reason: publishResult.reason,
+        });
       }
     } catch (err) {
       log.error("Erro ao publicar no Telegram", {

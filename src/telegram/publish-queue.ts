@@ -176,13 +176,13 @@ async function processPendingOffer(offer: {
   }
 
   // 3. Publicar (link de rastreio /r/<id>)
-  const published = await publishOffer(
+  const publishResult = await publishOffer(
     offerData,
     buildTrackingUrl(offer.id),
     channelId
   );
 
-  if (published) {
+  if (publishResult.success) {
     await markAsPublished(offer.id);
     attempts.delete(offer.id);
     return;
@@ -195,12 +195,13 @@ async function processPendingOffer(offer: {
   attempts.set(offer.id, entry);
 
   if (entry.count >= MAX_RETRIES) {
-    await markAsFailed(offer.id, "Falha ao publicar no Telegram após retries");
+    await markAsFailed(offer.id, publishResult.reason);
     attempts.delete(offer.id);
   } else {
     log.warn("Publicação falhou (tentativa #{}) — será re-tentado", {
       offerId: offer.id,
       attempt: entry.count,
+      reason: publishResult.reason,
     });
   }
 }
