@@ -1,7 +1,20 @@
 import Credentials from "next-auth/providers/credentials";
+import { CredentialsSignin } from "@auth/core/errors";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
 import type { NextAuthConfig } from "next-auth";
+
+// Mensagem distinta de bloqueio por e-mail não verificado (C3). Com
+// `throw new Error(...)` o NextAuth v5 (beta.31) mascararia a mensagem como
+// `error=Configuration` no cliente; por isso o bloqueio usa uma subclasse de
+// CredentialsSignin com `code` próprio — a UI de login recebe a mensagem exata
+// em `result.code` e exibe o botão de reenvio.
+export const EMAIL_NOT_VERIFIED_MESSAGE =
+  "Verifique seu email antes de entrar. Enviamos um link para o seu email.";
+
+class EmailNotVerifiedError extends CredentialsSignin {
+  code = EMAIL_NOT_VERIFIED_MESSAGE;
+}
 
 export const authConfig: NextAuthConfig = {
   pages: {
@@ -35,6 +48,12 @@ export const authConfig: NextAuthConfig = {
 
         if (!isValid) {
           throw new Error("Credenciais inválidas.");
+        }
+
+        // C3 — e-mail não verificado bloqueia o login (mensagem distinta para
+        // a UI mostrar o reenvio de verificação).
+        if (user.emailVerified === null) {
+          throw new EmailNotVerifiedError(EMAIL_NOT_VERIFIED_MESSAGE);
         }
 
         return {
