@@ -489,14 +489,20 @@ export default function LandingPage() {
                 <h3 className="font-semibold text-sm mb-4">Legal</h3>
                 <ul className="space-y-2.5 text-sm text-muted-foreground">
                   <li>
-                    <span className="hover:text-foreground transition-colors duration-200 cursor-pointer">
+                    <Link
+                      href="/privacidade"
+                      className="hover:text-foreground transition-colors duration-200 cursor-pointer"
+                    >
                       Privacidade
-                    </span>
+                    </Link>
                   </li>
                   <li>
-                    <span className="hover:text-foreground transition-colors duration-200 cursor-pointer">
+                    <Link
+                      href="/termos"
+                      className="hover:text-foreground transition-colors duration-200 cursor-pointer"
+                    >
                       Termos de uso
-                    </span>
+                    </Link>
                   </li>
                 </ul>
               </div>

@@ -25,19 +25,28 @@ function SignupForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [consent, setConsent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+
+    if (!consent) {
+      setError(
+        "Você precisa aceitar os Termos de Uso e a Política de Privacidade para criar uma conta."
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, consent }),
       });
 
       if (!res.ok) {
@@ -124,6 +133,37 @@ function SignupForm() {
               minLength={6}
               required
             />
+          </div>
+          <div className="flex items-start gap-2">
+            <input
+              id="consent"
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              required
+              className="mt-1 h-4 w-4 shrink-0 cursor-pointer rounded border-border accent-brand-primary"
+            />
+            <Label
+              htmlFor="consent"
+              className="text-sm font-normal leading-relaxed text-muted-foreground cursor-pointer"
+            >
+              Li e aceito os{" "}
+              <Link
+                href="/termos"
+                target="_blank"
+                className="text-primary underline underline-offset-2 hover:text-brand-primary cursor-pointer"
+              >
+                Termos de Uso
+              </Link>{" "}
+              e a{" "}
+              <Link
+                href="/privacidade"
+                target="_blank"
+                className="text-primary underline underline-offset-2 hover:text-brand-primary cursor-pointer"
+              >
+                Política de Privacidade
+              </Link>
+            </Label>
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
