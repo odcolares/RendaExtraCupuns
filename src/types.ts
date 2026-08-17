@@ -17,6 +17,8 @@ export interface OfferData {
   description?: string;
   affiliateLink?: string;
   timestamp?: Date;
+  /** Origem da oferta: 'whatsapp' | 'cli' | 'web' */
+  source?: string;
 }
 
 export interface PublishResult {

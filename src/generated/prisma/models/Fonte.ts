@@ -519,14 +519,6 @@ export type FonteUncheckedUpdateManyWithoutTenantNestedInput = {
   deleteMany?: Prisma.FonteScalarWhereInput | Prisma.FonteScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type FonteCreateWithoutTenantInput = {
   id?: string
   name: string

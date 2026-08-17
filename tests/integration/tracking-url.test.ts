@@ -31,7 +31,7 @@ beforeAll(async () => {
 
 describe("Link de rastreio /r/<id> nas publicações", () => {
   it("publica oferta de produto com link de rastreio /r/<id>", async () => {
-    mockPublishOffer.mockResolvedValue(true);
+    mockPublishOffer.mockResolvedValue({ success: true, reason: "ok" });
 
     const url = `https://shopee.com.br/product/111/222?t=${TEST_RUN_ID}`;
     const msg = `Fone Track ${TEST_RUN_ID}

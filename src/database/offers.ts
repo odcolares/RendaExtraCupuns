@@ -87,6 +87,7 @@ export async function insertOffer(
       discount: offer.discount ?? null,
       imageUrl: offer.imageUrl ?? null,
       status: "pending",
+      source: offer.source ?? null,
       tenantId,
     },
   });
@@ -179,7 +180,12 @@ export async function markAsFailed(
 ): Promise<void> {
   await prisma.offer.update({
     where: { id: offerId },
-    data: { status: "failed" },
+    data: {
+      status: "failed",
+      errorMessage: reason ?? null,
+      retryCount: { increment: 1 },
+      lastAttemptAt: new Date(),
+    },
   });
   log.warn("Oferta marcada como falha", { id: offerId, reason });
 }

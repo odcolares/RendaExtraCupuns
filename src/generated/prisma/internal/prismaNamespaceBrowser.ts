@@ -156,6 +156,10 @@ export const OfferScalarFieldEnum = {
   publishedAt: 'publishedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  errorMessage: 'errorMessage',
+  retryCount: 'retryCount',
+  lastAttemptAt: 'lastAttemptAt',
+  source: 'source',
   tenantId: 'tenantId'
 } as const
 

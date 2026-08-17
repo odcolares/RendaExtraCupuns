@@ -136,7 +136,7 @@ function checkRateLimit(channelId: string): boolean {
 
 /**
  * Publica uma oferta padrão em um canal.
- * Retorna true se bem-sucedido.
+ * Retorna { success, reason } — reason indica o motivo em caso de falha.
  */
 export async function publishOffer(
   offer: OfferData,
@@ -146,22 +146,22 @@ export async function publishOffer(
     useButtons?: boolean;
     disableNotification?: boolean;
   } = {}
-): Promise<boolean> {
+): Promise<{ success: boolean; reason: string }> {
   const bot = getBot();
   if (!bot) {
     log.error("Bot não inicializado ao tentar publicar");
-    return false;
+    return { success: false, reason: "bot não inicializado" };
   }
 
   const targetChannel = channelId || process.env.TELEGRAM_CHANNEL_ID;
   if (!targetChannel) {
     log.error("TELEGRAM_CHANNEL_ID não definido");
-    return false;
+    return { success: false, reason: "canal não configurado" };
   }
 
   // Rate limiting
   if (!checkRateLimit(targetChannel)) {
-    return false;
+    return { success: false, reason: "rate limit atingido" };
   }
 
   try {
@@ -205,13 +205,16 @@ export async function publishOffer(
       produto: offer.name,
       canal: targetChannel,
     });
-    return true;
+    return { success: true, reason: "ok" };
   } catch (error) {
     log.error("Erro ao publicar oferta", {
       error: (error as Error).message,
       produto: offer.name,
     });
-    return false;
+    return {
+      success: false,
+      reason: `erro de envio: ${(error as Error).message}`,
+    };
   }
 }
 
@@ -293,8 +296,8 @@ export async function publishToMultipleChannels(
   const results = new Map<string, boolean>();
 
   for (const channelId of channelIds) {
-    const success = await publishOffer(offer, affiliateLink, channelId);
-    results.set(channelId, success);
+    const result = await publishOffer(offer, affiliateLink, channelId);
+    results.set(channelId, result.success);
 
     // Delay de 1s entre envios para evitar flood
     await delay(1000);
