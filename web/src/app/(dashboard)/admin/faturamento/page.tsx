@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { PLAN_PRICES } from "@/lib/billing";
 import {
   Card,
   CardContent,
@@ -50,11 +51,11 @@ export default async function BillingPage() {
   };
 
   const estimatedMRR =
-    planBreakdown.starter * 29 + planBreakdown.professional * 79;
+    planBreakdown.starter * PLAN_PRICES.starter + planBreakdown.professional * PLAN_PRICES.professional;
 
   const mrrBreakdown = {
-    starter: planBreakdown.starter * 29,
-    professional: planBreakdown.professional * 79,
+    starter: planBreakdown.starter * PLAN_PRICES.starter,
+    professional: planBreakdown.professional * PLAN_PRICES.professional,
   };
 
   const totalOffers = await prisma.offer.count();
@@ -155,13 +156,13 @@ export default async function BillingPage() {
               {
                 plan: "Starter",
                 count: planBreakdown.starter,
-                price: 29,
+                price: PLAN_PRICES.starter,
                 color: "text-blue-600",
               },
               {
                 plan: "Professional",
                 count: planBreakdown.professional,
-                price: 79,
+                price: PLAN_PRICES.professional,
                 color: "text-purple-600",
               },
             ].map(({ plan, count, price, color }) => (
@@ -274,13 +275,13 @@ export default async function BillingPage() {
               </TableRow>
               <TableRow>
                 <TableCell>Starter</TableCell>
-                <TableCell>R$ 29,00</TableCell>
+                <TableCell>R$ {PLAN_PRICES.starter.toFixed(2)}</TableCell>
                 <TableCell>{planBreakdown.starter}</TableCell>
                 <TableCell>R$ {mrrBreakdown.starter.toFixed(2)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Professional</TableCell>
-                <TableCell>R$ 79,00</TableCell>
+                <TableCell>R$ {PLAN_PRICES.professional.toFixed(2)}</TableCell>
                 <TableCell>{planBreakdown.professional}</TableCell>
                 <TableCell>R$ {mrrBreakdown.professional.toFixed(2)}</TableCell>
               </TableRow>

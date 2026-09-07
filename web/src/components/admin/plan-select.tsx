@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { changePlanAction } from "@/actions/admin";
 
@@ -15,18 +15,24 @@ export function PlanSelect({
 }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+  const [value, setValue] = useState(defaultValue);
 
   return (
     <select
       name="plan"
-      defaultValue={defaultValue}
+      value={value}
       disabled={isPending}
       onChange={(e) => {
-        const value = e.target.value;
+        const newValue = e.target.value;
+        if (!confirm(`Alterar plano para "${newValue}"?`)) {
+          setValue(value);
+          return;
+        }
+        setValue(newValue);
         startTransition(async () => {
           await changePlanAction(
             tenantId,
-            value as "free" | "starter" | "professional"
+            newValue as "free" | "starter" | "professional"
           );
           router.refresh();
         });
