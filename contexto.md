@@ -176,11 +176,15 @@ Stack: Next.js + Prisma + Turso (SQLite compatível) + Vercel (deploy web)
 - [x] QA automatizado Playwright: login e navegação entre rotas protegidas OK
 - [x] Correção de UX: remoção de `loading.tsx` genérico que causava flash no dashboard
 
-**Fase 2 — Super Admin**
-- [ ] Lista de clientes (status, plano, última atividade, ofertas)
-- [ ] Detalhe do cliente (config, ofertas, status worker)
-- [ ] Controle de planos (ativar/suspender/mudar)
-- [ ] Visão geral: clientes ativos, ofertas globais, faturamento estimado
+**Fase 2 — Super Admin ✅ (PR #34 — 07/09/2026)**
+- [x] Lista de clientes com busca/filtro/paginação
+- [x] Detalhe do cliente (info, ofertas, fontes, afiliados, bot status)
+- [x] Controle de planos inline (PlanSelect com confirmação nativa)
+- [x] Suspender/reativar/cancelar cliente
+- [x] Ofertas globais (todos os clientes)
+- [x] Faturamento: MRR estimado, breakdown por plano, status dos clientes
+- [x] Bot lifecycle (provision/start/stop/restart/QR)
+- [x] Gaps fechados: confirmação PlanSelect, constants PLAN_PRICES, CRUD fontes WhatsApp, save TenantChannel após teste Telegram
 
 **Fase 3 — Multi-Tenant Workers (VPS)**
 - [ ] Migrar WhatsApp de whatsapp-web.js para Baileys (sem Chromium)
@@ -632,6 +636,7 @@ npm run test:coverage      # Testes com cobertura
 | 17 | **09/07/2026** | **Fase 1 — Final fixes (PR #11): Sidebar completa, calendário, popover, select, tooltip, hook use-mobile, métricas reais no dashboard. (49078a2)** | **Concluída** |
 | 18 | **09/07/2026** | **Fase 1 — Gestão de fontes WhatsApp (PR #12): Modelo Fonte, CRUD de fontes, página /dashboard/fontes, métricas de fontes ativas. (7ff5f24)** | **Concluída** |
 | 19 | **10/07/2026** | **Deploy Vercel + Turso: Turso serverless (libSQL, AWS us-east-1), Prisma adapter, migrations aplicadas, env vars Vercel configuradas, build + deploy production, site live** | **Concluída** |
+| 20 | **07/09/2026** | **Fechamento gaps Super Admin (PR #34): PlanSelect confirmação nativa, PLAN_PRICES constants extraídas, CRUD fontes WhatsApp habilitado, save TenantChannel após teste Telegram. CI verde, build Vercel ok.** | **Concluída** |
 
 ---
 
@@ -652,11 +657,14 @@ npm run test:coverage      # Testes com cobertura
    - Gestão de afiliados e ofertas no painel
    - CRUD de fontes WhatsApp (/dashboard/fontes)
    - Sidebar de navegação com todas as páginas
-4. ✅ **Fase 2 — Super Admin — CONCLUÍDO (PR #14)**
-    - Lista de clientes com detalhes (status, plano, última atividade)
-    - Controle de planos (ativar/suspender/mudar)
-    - Visão geral: clientes ativos, ofertas globais, faturamento estimado
-5. ✅ **Deploy Vercel + Turso — CONCLUÍDO (10/07/2026)**
+ 4. ✅ **Fase 2 — Super Admin — CONCLUÍDO (PR #34, 07/09/2026)**
+     - Lista de clientes com busca/filtro/paginação, detalhe do cliente
+     - Controle de planos inline com confirmação nativa
+     - Suspender/reativar/cancelar cliente
+     - Ofertas globais e faturamento (MRR, breakdown por plano, status)
+     - Bot lifecycle (provision/start/stop/restart/QR)
+     - Gaps fechados: PlanSelect confirm, PLAN_PRICES, CRUD fontes, save Telegram channel
+ 5. ✅ **Deploy Vercel + Turso — CONCLUÍDO (10/07/2026)**
     - Banco Turso serverless em AWS us-east-1
     - Prisma adaptado com libSQL adapter
     - Migrations aplicadas ao Turso
@@ -736,5 +744,5 @@ npm run test:coverage      # Testes com cobertura
 
 ---
 
-*Última atualização: 05/08/2026 — Sessão 20: página /ofertas com ações view/edit/delete, refresh automático, fix dropdown, deploy Vercel automatizado (preview + produção)*
+*Última atualização: 07/09/2026 — Sessão 21: fechamento de gaps do Super Admin (PR #34). PlanSelect com confirmação, constants PLAN_PRICES, CRUD de fontes WhatsApp e save de TenantChannel após teste Telegram.*
 

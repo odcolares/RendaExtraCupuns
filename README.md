@@ -4,7 +4,7 @@
 
 Sistema automatizado que monitora ofertas em grupos WhatsApp, gera links de afiliado e publica em canal próprio no **Telegram**, transformando ofertas em fonte de renda extra via marketing de afiliados.
 
-**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons (plural ✅) | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | **🌐 Web SaaS Fase 0+1 ✅** | **Turso serverless ✅** | **Deploy Vercel 🟢 Live** | **Retema UI adminHMD azul ✅** | **Página /ofertas com ações view/edit/delete + refresh automático ✅** | **Token Telegram rotacionado (30/07/2026) ✅** | **Preenchimento automático de oferta via /api/fetch-product ✅** | **Botão Limpar no formulário de nova oferta ✅**
+**Status**: **Alpha** ✅ | WhatsApp (4 fontes) ✅ | CLI mode ✅ | Bot Telegram ✅ | Canal ✅ | Amazon Afiliados ✅ | **Mercado Livre (OAuth + API Search) ✅** | **AliExpress Afiliados (ID: RendaExtraCupuns) ✅** | **Shopee Afiliados ID 18387911117 ✅** | Detector de Cupons ✅ | Resolução URLs desconhecidas ✅ | PM2 config ✅ | [GitHub](https://github.com/odcolares/RendaExtraCupuns) ✅ | **🌐 Web SaaS Fase 0+1+2 ✅** | **Turso serverless ✅** | **Deploy Vercel 🟢 Live** | **Admin UI azul unificada ✅** | **Super Admin: lista clientes, planos, faturamento, bot lifecycle ✅** | **Gaps fechados: PlanSelect confirmação, PLAN_PRICES constants, CRUD fontes, save Telegram channel ✅**
 
 ---
 
@@ -430,9 +430,10 @@ npm run lint           # Verificar erros TypeScript
 - **Botão Limpar**: formulário de nova oferta em `/dashboard/ofertas` ganha ação para limpar campos sem recarregar a página ✅
 
 ### 🔴 Próximos passos
-1. 👉 **Fase 2 — Super Admin**: Lista de clientes, controle de planos, visão geral de faturamento
-2. **Domínio próprio**: Configurar domínio personalizado no Vercel (ex: rendaextra.app)
-3. **VPS** → necessário apenas na Fase 3 (multi-tenant workers), quando houver clientes pagando
+1. 👉 **Fase 3 — Multi-Tenant Workers (VPS)**: migrar WhatsApp para Baileys, session manager por cliente, deploy workers em VPS (Hetzner ~€8/mês)
+2. 👉 **Domínio próprio**: Configurar domínio personalizado no Vercel (ex: rendaextra.app)
+3. **Stripe real**: substituir preços hardcoded por preços do Stripe quando subscriptions estiverem ativas
+4. **White-label**: branding por tenant nos templates Telegram
 
 ---
 
@@ -465,6 +466,6 @@ graphify explain "X"        # Explicar conceito
 
 **Status**: **Alpha** operacional. 4 fontes WhatsApp monitoradas. Amazon + Shopee + Mercado Livre + AliExpress configurados e testados E2E. Código no [GitHub](https://github.com/odcolares/RendaExtraCupuns). 🌐 **Web SaaS (Fase 0+1) live em https://web-gamma-hazel-30.vercel.app** com Turso serverless. 🚀
 
-*Última atualização: 07/08/2026 — Preenchimento automático de oferta via `/api/fetch-product`, botão Limpar no formulário de nova oferta, mitigação de SSRF e revisão de segurança no PR #26*
+*Última atualização: 07/09/2026 — Fechamento de gaps do Super Admin (PlanSelect confirmação, PLAN_PRICES constants, CRUD de fontes WhatsApp, save TenantChannel após teste Telegram). PR #34 mergeado.*
 
 > ⚠️ **Segurança**: Nunca comite `config/.env` ou qualquer arquivo com tokens reais. O `.gitignore` já protege esses arquivos — se acidentalmente commitado, use `git rm --cached` e gere novos tokens via @BotFather.
