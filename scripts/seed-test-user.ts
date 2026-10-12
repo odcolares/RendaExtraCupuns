@@ -1,5 +1,5 @@
 /**
- * Seed — Cria usuário de teste (cliente@teste.com) + tenant no Turso.
+ * Seed — Cria usuário de teste (teste@rendaextra.com) + tenant no Turso.
  *
  * Idempotente: pode rodar múltiplas vezes sem efeito colateral.
  * Usado pelo CI para garantir que os testes de database tenham um tenant.
@@ -13,6 +13,23 @@ import path from "path";
 
 // Tenta carregar dotenv do web/ (onde o .env com Turso costuma estar)
 require("dotenv").config({ path: path.resolve(__dirname, "../web/.env") });
+
+// bcryptjs está em web/node_modules — precisamos importar de lá explicitamente
+// pois o script roda da raiz do monorepo onde bcryptjs não está instalado.
+// Como fallback, usa um hash pré-computado via Python (bcrypt.hashpw) se o import falhar.
+const BCRYPT_HASH_SENHA123 = "$2b$10$ehemqhDBgBKWAodQAXJnd.xjQ.4ixauYBqbd.fOrJLqBM55hJpmj.";
+async function hashPassword(password: string): Promise<string> {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const bcrypt = require("../web/node_modules/bcryptjs");
+    return await bcrypt.hash(password, 10);
+  } catch {
+    // bcryptjs não disponível no ambiente — usar hash pré-computado
+    // Este hash foi gerado via Python: bcrypt.hashpw("senha123", bcrypt.gensalt(10))
+    if (password === "senha123") return BCRYPT_HASH_SENHA123;
+    throw new Error("bcryptjs não disponível e hash pré-computado não existe para esta senha");
+  }
+}
 
 async function main() {
   if (!process.env.DATABASE_URL) {
@@ -51,24 +68,38 @@ async function main() {
       console.log(`ℹ️  Tenant já existe: ${tenant.id} (${tenant.name})`);
     }
 
-    // Cria usuário de teste se não existir
-    const testEmail = "cliente@teste.com";
-    let user = await prisma.user.findUnique({ where: { email: testEmail } });
+    // Credenciais de teste — senha hashada com bcrypt (compatível com auth.config.ts)
+    const testEmail = "teste@rendaextra.com";
+    const testPassword = "senha123";
 
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          name: "Cliente Teste",
-          email: testEmail,
-          password: "seed-ci-placeholder", // não usado em testes
-          role: "client",
-          tenantId: tenant.id,
-        },
-      });
-      console.log(`✅ Usuário criado: ${user.id} (${user.email})`);
-    } else {
-      console.log(`ℹ️  Usuário já existe: ${user.id} (${user.email})`);
-    }
+    // Upsert: cria ou atualiza o usuário com senha hashada
+    const hashedPassword = await hashPassword(testPassword);
+
+    const user = await prisma.user.upsert({
+      where: { email: testEmail },
+      create: {
+        name: "Usuário Teste",
+        email: testEmail,
+        password: hashedPassword,
+        role: "admin",
+        emailVerified: new Date(),
+        consentAt: new Date(),
+        tenantId: tenant.id,
+      },
+      update: {
+        name: "Usuário Teste",
+        password: hashedPassword,
+        role: "admin",
+        emailVerified: new Date(),
+        consentAt: new Date(),
+        tenantId: tenant.id,
+      },
+    });
+
+    console.log(`✅ Usuário criado/atualizado: ${user.id} (${user.email})`);
+    console.log("📝 Credenciais de teste:");
+    console.log(`   Email: ${testEmail}`);
+    console.log(`   Senha: ${testPassword}`);
 
     console.log("✅ Seed concluído com sucesso.");
   } finally {
