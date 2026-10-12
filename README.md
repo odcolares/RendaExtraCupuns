@@ -284,6 +284,26 @@ npm start
 npm run start:pm2
 ```
 
+### 5. Credenciais de Teste (Web SaaS)
+
+Credenciais de teste para acessar o painel web (role: `admin`):
+
+| Campo | Valor |
+|-------|-------|
+| **Email** | `teste@rendaextra.com` |
+| **Senha** | `senha123` |
+
+**Como gerar/atualizar:**
+
+```bash
+# Cria ou atualiza o usuário de teste no banco Turso (idempotente)
+npx ts-node scripts/seed-test-user.ts
+```
+
+O script usa bcrypt (10 rounds) para hash de senha, compatível com o NextAuth Credentials provider em `web/src/lib/auth.config.ts`.
+
+**Login:** Acesse `https://rendaextracupuns.onrender.com/login` com as credenciais acima.
+
 ---
 
 ## Testes
