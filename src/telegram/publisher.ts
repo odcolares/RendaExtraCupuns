@@ -8,6 +8,7 @@
  * - Logging estruturado
  */
 
+import { Telegraf } from "telegraf";
 import { getBot } from "./bot";
 import {
   formatOfferMessage,
@@ -32,7 +33,7 @@ const log = createModuleLogger("TelegramPublisher");
  * Tenta enviar mensagem com preview do link habilitado.
  * Se a plataforma bloquear o preview (erro 400), reenvia sem preview.
  */
-async function sendWithPreviewFallback(
+export async function sendWithPreviewFallback(
   bot: import("telegraf").Telegraf,
   chatId: string,
   message: string,
@@ -368,5 +369,140 @@ export async function publishCoupon(
       code: coupon.code,
     });
     return false;
+  }
+}
+
+// ==============================================================
+// TelegramPublisher — Classe wrapper para multi-tenant
+// ==============================================================
+
+export interface TelegramPublishResult {
+  success: boolean;
+  messageId?: number;
+  error?: string;
+}
+
+export class TelegramPublisher {
+  private botToken: string;
+  private channelId: string;
+  private bot: import("telegraf").Telegraf | null = null;
+  private readonly maxPostsPerHour = 30;
+  private readonly rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+
+  constructor(botToken: string, channelId: string) {
+    this.botToken = botToken;
+    this.channelId = channelId;
+  }
+
+  private getBot(): Telegraf {
+    if (!this.bot) {
+      this.bot = new Telegraf(this.botToken);
+    }
+    return this.bot;
+  }
+
+  async testConnection(): Promise<{ success: boolean; error?: string }> {
+    try {
+      const bot = this.getBot();
+      await bot.telegram.getMe();
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: (error as Error).message,
+      };
+    }
+  }
+
+  private checkRateLimit(channelId: string): boolean {
+    const now = Date.now();
+    const entry = this.rateLimitStore.get(channelId);
+    const windowMs = 60 * 60 * 1000;
+
+    if (!entry || now > entry.resetAt) {
+      this.rateLimitStore.set(channelId, { count: 1, resetAt: now + windowMs });
+      return true;
+    }
+
+    if (entry.count >= this.maxPostsPerHour) {
+      return false;
+    }
+
+    entry.count++;
+    return true;
+  }
+
+  async publish(
+    offer: OfferData,
+    trackingUrl: string
+  ): Promise<TelegramPublishResult> {
+    if (!this.checkRateLimit(this.channelId)) {
+      return { success: false, error: "rate limit atingido" };
+    }
+
+    try {
+      const bot = this.getBot();
+      const message = formatOfferMessage(offer, trackingUrl);
+      const replyMarkup = createOfferButtons(trackingUrl, offer.originalUrl);
+
+      if (offer.imageUrl) {
+        try {
+          await bot.telegram.sendPhoto(this.channelId, offer.imageUrl, {
+            caption: message,
+            parse_mode: "Markdown" as const,
+            reply_markup: replyMarkup,
+          });
+        } catch {
+          await sendWithPreviewFallback(bot, this.channelId, message, {
+            parse_mode: "Markdown" as const,
+            reply_markup: replyMarkup,
+          });
+        }
+      } else {
+        await sendWithPreviewFallback(bot, this.channelId, message, {
+          parse_mode: "Markdown" as const,
+          reply_markup: replyMarkup,
+        });
+      }
+
+      return { success: true };
+    } catch (error) {
+      log.error("Erro ao publicar no Telegram (TenantBot)", {
+        error: (error as Error).message,
+        produto: offer.name,
+      });
+      return { success: false, error: (error as Error).message };
+    }
+  }
+
+  async publishCoupon(
+    coupon: CouponData,
+    trackingUrl: string
+  ): Promise<boolean> {
+    if (!this.checkRateLimit(this.channelId)) {
+      return false;
+    }
+
+    try {
+      const bot = this.getBot();
+      const message = formatCouponMessage(coupon, trackingUrl);
+      await sendWithPreviewFallback(bot, this.channelId, message, {
+        parse_mode: "Markdown" as const,
+      });
+      return true;
+    } catch (error) {
+      log.error("Erro ao publicar cupom (TenantBot)", {
+        error: (error as Error).message,
+        code: coupon.code,
+      });
+      return false;
+    }
+  }
+
+  async disconnect(): Promise<void> {
+    if (this.bot) {
+      await this.bot.stop();
+      this.bot = null;
+    }
   }
 }

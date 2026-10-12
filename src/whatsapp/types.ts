@@ -12,8 +12,14 @@ export interface WhatsAppOfferData extends OfferData {
 /** Resultado do processamento de uma oferta */
 export interface ProcessResult {
   success: boolean;
-  offer?: WhatsAppOfferData;
+  offer?: OfferData;
   /** ID da oferta no banco (usado para montar o link de rastreio /r/<id>) */
   dbId?: string;
   error?: string;
+}
+
+/** Mensagem do WhatsApp (simplificada — apenas campos usados pelo pipeline) */
+export interface WhatsAppMessage {
+  body: string;
+  from: string;
 }

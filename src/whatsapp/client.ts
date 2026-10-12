@@ -5,10 +5,11 @@
  * Usa whatsapp-web.js com LocalAuth para persistência de sessão.
  */
 
-import { Client, LocalAuth } from "whatsapp-web.js";
+import { Client, LocalAuth, Message } from "whatsapp-web.js";
 import qrcode from "qrcode-terminal";
 import QRCode from "qrcode";
 import { createModuleLogger } from "../utils";
+import type { WhatsAppMessage } from "./types";
 
 const log = createModuleLogger("WhatsAppClient");
 
@@ -154,7 +155,7 @@ export async function startClient(): Promise<void> {
 }
 
 /**
- * Destroi o cliente e limpa a instância.
+ * Destrói o cliente e limpa a instância.
  */
 export async function destroyClient(): Promise<void> {
   if (client) {
@@ -162,5 +163,136 @@ export async function destroyClient(): Promise<void> {
     client = null;
     reconnectAttempts = 0;
     log.info("Cliente WhatsApp destruído");
+  }
+}
+
+// ==============================================================
+// WhatsAppClient — Wrapper classe para multi-tenant (um cliente por tenant)
+// ==============================================================
+
+export interface WhatsAppClientEvents {
+  qr: (qrBase64: string) => void;
+  ready: () => void;
+  message: (message: WhatsAppMessage) => void;
+  disconnected: (reason: string) => void;
+}
+
+export class WhatsAppClient {
+  private client: Client | null = null;
+  private readonly tenantId: string;
+  private readonly sessionPath: string;
+  private handlers: Partial<WhatsAppClientEvents> = {};
+
+  constructor(tenantId: string, sessionPath: string) {
+    this.tenantId = tenantId;
+    this.sessionPath = sessionPath;
+  }
+
+  onQr(handler: (qrBase64: string) => void): this {
+    this.handlers.qr = handler;
+    return this;
+  }
+
+  onReady(handler: () => void): this {
+    this.handlers.ready = handler;
+    return this;
+  }
+
+  onMessage(handler: (message: WhatsAppMessage) => void): this {
+    this.handlers.message = handler;
+    return this;
+  }
+
+  onDisconnected(handler: (reason: string) => void): this {
+    this.handlers.disconnected = handler;
+    return this;
+  }
+
+  async initialize(): Promise<void> {
+    if (this.client) {
+      log.debug("WhatsAppClient já inicializado", { tenantId: this.tenantId });
+      return;
+    }
+
+    this.client = new Client({
+      authStrategy: new LocalAuth({
+        clientId: this.tenantId,
+        dataPath: this.sessionPath,
+      }),
+      webVersion: "2.3000.1041831138-alpha",
+      webVersionCache: {
+        type: "local",
+        path: "./.wwebjs_cache",
+        strict: true,
+      },
+      puppeteer: {
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+        ],
+      },
+      qrMaxRetries: 3,
+      takeoverOnConflict: true,
+      takeoverTimeoutMs: 60000,
+    });
+
+    if (this.handlers.qr) {
+      this.client.on("qr", (qr: string) => {
+        QRCode.toDataURL(qr, { width: 400 })
+          .then((dataUrl: string) => this.handlers.qr!(dataUrl))
+          .catch(() => this.handlers.qr!(qr));
+      });
+    }
+
+    if (this.handlers.ready) {
+      this.client.on("ready", () => this.handlers.ready!());
+    }
+
+    if (this.handlers.message) {
+      this.client.on("message", (msg: Message) => {
+        this.handlers.message!({
+          body: msg.body,
+          from: msg.from,
+        });
+      });
+    }
+
+    if (this.handlers.disconnected) {
+      this.client.on("disconnected", (reason: string) => {
+        this.handlers.disconnected!(reason);
+      });
+    }
+  }
+
+  async connect(): Promise<void> {
+    if (!this.client) {
+      throw new Error("Client não inicializado. Chame initialize() primeiro.");
+    }
+    await this.client.initialize();
+  }
+
+  async disconnect(): Promise<void> {
+    if (this.client) {
+      await this.client.destroy();
+    }
+  }
+
+  async destroy(): Promise<void> {
+    if (this.client) {
+      await this.client.destroy();
+      this.client = null;
+    }
+    this.handlers = {};
+  }
+
+  getSessionPath(): string {
+    return this.sessionPath;
+  }
+
+  isReady(): boolean {
+    return this.client !== null;
   }
 }
