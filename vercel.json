@@ -1,3 +1,11 @@
 {
-  "rootDirectory": "web"
+  "framework": "nextjs",
+  "installCommand": "npm ci --prefix web",
+  "buildCommand": "cd web && npx prisma generate && npm run build",
+  "outputDirectory": "web/.next",
+  "git": {
+    "deploymentEnabled": {
+      "master": true
+    }
+  }
 }
