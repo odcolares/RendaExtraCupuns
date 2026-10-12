@@ -3,6 +3,12 @@ node_modules/
 
 # Build
 dist/
+*.tsbuildinfo
+src/generated/
+
+# Prisma
+/prisma/dev.db
+/prisma/*.db
 
 # Config sensível (tokens, senhas, IDs de afiliado)
 config/.env
@@ -10,8 +16,6 @@ config/.env
 .env.local
 .env.*.local
 *.local
-web/.env
-web/.env.local
 
 # Sessão WhatsApp (dados de autenticação)
 whatsapp-session/

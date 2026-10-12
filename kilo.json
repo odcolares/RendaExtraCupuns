@@ -1,0 +1,24 @@
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "permission": {
+    "bash": {
+      "npm *": "allow",
+      "npx *": "allow",
+      "node *": "allow",
+      "git *": "allow",
+      "npm run dev *": "allow",
+      "npm run build *": "allow",
+      "npm test *": "allow",
+      "npm run lint *": "allow",
+      "tsc *": "allow",
+      "pytest *": "allow",
+      "cd web && npm *": "allow"
+    },
+    "read": {
+      "*": "allow"
+    },
+    "edit": {
+      "*": "allow"
+    }
+  }
+}
