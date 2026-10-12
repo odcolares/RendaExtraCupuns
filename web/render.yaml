@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: rendaextra-cupuns
+    region: oma
+    plan: starter
+    env: node
+    rootDir: .
+    buildCommand: npm ci && npx prisma generate && npm run build
+    startCommand: npx next start -p $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+    autoDeploy: true
+    autoDeployPattern: ^master$
