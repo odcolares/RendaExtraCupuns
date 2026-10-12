@@ -25,8 +25,13 @@ const log = createModuleLogger("AffiliateShopee");
  * Se o affiliate ID não estiver configurado, retorna o link direto
  * do produto (sem afiliação) para não travar o pipeline.
  */
+export interface ShopeeAffiliateConfig {
+  affiliateId?: string;
+}
+
 export async function generateShopeeLink(
-  productUrl: string
+  productUrl: string,
+  config?: ShopeeAffiliateConfig
 ): Promise<AffiliateLink | null> {
   try {
     // ── Resolver URL encurtada (ex: s.shopee.com.br) ──
@@ -42,7 +47,7 @@ export async function generateShopeeLink(
       return null;
     }
 
-    const affiliateId = process.env.SHOPEE_AFFILIATE_ID;
+    const affiliateId = config?.affiliateId || process.env.SHOPEE_AFFILIATE_ID;
 
     let affiliateUrl: string;
     if (affiliateId) {

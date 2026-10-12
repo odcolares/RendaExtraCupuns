@@ -2,8 +2,8 @@
  * Tipos do módulo Bot Multi-Tenant
  */
 
-import type { OfferData, ProcessResult } from "../types";
-import type { WhatsAppMessage } from "../whatsapp/types";
+import type { OfferData } from "../types";
+import type { WhatsAppMessage, ProcessResult } from "../whatsapp/types";
 import { Prisma } from "@/generated/prisma/client";
 
 // ==============================================================

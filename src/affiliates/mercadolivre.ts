@@ -20,8 +20,14 @@ const log = createModuleLogger("AffiliateMercadoLivre");
  * Para URLs encurtadas (meli.la, meu.ml.uv), resolve o redirect
  * automaticamente para extrair o product ID.
  */
+export interface MercadoLivreAffiliateConfig {
+  affiliateId?: string;
+  accessToken?: string;
+}
+
 export async function generateMercadoLivreLink(
-  productUrl: string
+  productUrl: string,
+  config?: MercadoLivreAffiliateConfig
 ): Promise<AffiliateLink | null> {
   try {
     // Se for URL encurtada, resolve o redirect primeiro
@@ -48,7 +54,7 @@ export async function generateMercadoLivreLink(
       return null;
     }
 
-    const affiliateId = process.env.MERCADOLIVRE_AFFILIATE_ID;
+    const affiliateId = config?.affiliateId || process.env.MERCADOLIVRE_AFFILIATE_ID;
 
     if (!affiliateId) {
       log.error("MERCADOLIVRE_AFFILIATE_ID não definido no .env");

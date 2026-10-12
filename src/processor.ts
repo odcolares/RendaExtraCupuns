@@ -342,7 +342,7 @@ export async function processOffer(
 
     return {
       success: true,
-      offer: { ...couponOffer!, rawMessage: messageText },
+      offer: { ...couponOffer!, rawMessage: messageText } as WhatsAppOfferData,
       dbId: dbId ?? undefined,
     };
   }

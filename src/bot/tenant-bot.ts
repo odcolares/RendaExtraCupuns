@@ -399,7 +399,7 @@ export class TenantBot {
       if (result.success && result.offer) {
         // Publica no Telegram se tiver link de afiliado
         if (result.offer.affiliateLink) {
-          await this.publishToTelegram(result.offer as ProcessedOffer);
+          await this.publishToTelegram(result.offer as unknown as ProcessedOffer);
         }
       }
 
@@ -424,7 +424,7 @@ export class TenantBot {
       const result = await this.processor.processManual(offerData);
 
       if (result.success && result.offer && result.offer.affiliateLink) {
-        await this.publishToTelegram(result.offer as ProcessedOffer);
+        await this.publishToTelegram(result.offer as unknown as ProcessedOffer);
       }
 
       return result;

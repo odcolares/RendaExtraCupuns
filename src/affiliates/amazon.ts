@@ -135,8 +135,14 @@ async function validateAffiliateLink(url: string): Promise<boolean> {
  * - Extrai o ASIN da URL real
  * - Valida se o produto existe (rejeita 404)
  */
+export interface AmazonAffiliateConfig {
+  tag?: string;
+  marketplace?: string;
+}
+
 export async function generateAmazonLink(
-  productUrl: string
+  productUrl: string,
+  config?: AmazonAffiliateConfig
 ): Promise<AffiliateLink | null> {
   try {
     // 1. Resolver encurtadores (amzn.to, link.amazon)
@@ -150,8 +156,8 @@ export async function generateAmazonLink(
       return null;
     }
 
-    const tag = process.env.AMAZON_AFFILIATE_TAG;
-    const marketplace = process.env.AMAZON_MARKETPLACE || "www.amazon.com.br";
+    const tag = config?.tag || process.env.AMAZON_AFFILIATE_TAG;
+    const marketplace = config?.marketplace || process.env.AMAZON_MARKETPLACE || "www.amazon.com.br";
 
     if (!tag) {
       log.error("AMAZON_AFFILIATE_TAG não definido no .env");

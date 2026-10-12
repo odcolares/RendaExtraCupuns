@@ -22,8 +22,13 @@ const log = createModuleLogger("AffiliateAliExpress");
  * Se o affiliate ID não estiver configurado, retorna o link direto
  * do produto (sem afiliação) para não travar o pipeline.
  */
+export interface AliExpressAffiliateConfig {
+  affiliateId?: string;
+}
+
 export async function generateAliExpressLink(
-  productUrl: string
+  productUrl: string,
+  config?: AliExpressAffiliateConfig
 ): Promise<AffiliateLink | null> {
   try {
     // ── Resolver URL encurtada (ex: s.click.aliexpress.com/e/_XXXXX) ──
@@ -39,7 +44,7 @@ export async function generateAliExpressLink(
       return null;
     }
 
-    const affiliateId = process.env.ALIEXPRESS_AFFILIATE_ID;
+    const affiliateId = config?.affiliateId || process.env.ALIEXPRESS_AFFILIATE_ID;
 
     let affiliateUrl: string;
     if (affiliateId) {
