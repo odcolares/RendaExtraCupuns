@@ -7,6 +7,7 @@
 import { prisma } from "../lib/prisma";
 import { createModuleLogger } from "../utils";
 import type { OfferData } from "../types";
+import type { Offer } from "@/generated/prisma/client";
 
 const log = createModuleLogger("DatabaseOffers");
 
@@ -34,7 +35,7 @@ export async function getTestTenantId(): Promise<string> {
 
   cachedTestTenantId = user.tenantId;
   log.debug("Tenant de teste resolvido", { tenantId: cachedTestTenantId });
-  return cachedTestTenantId;
+  return user.tenantId;
 }
 
 /**
@@ -126,7 +127,7 @@ export async function getOfferById(id: string): Promise<{
 /**
  * Retorna as N ofertas mais recentes do tenant de teste.
  */
-export async function getRecentOffers(limit: number = 10) {
+export async function getRecentOffers(limit: number = 10): Promise<Offer[]> {
   const tenantId = await getTestTenantId();
   return prisma.offer.findMany({
     where: { tenantId },
@@ -141,7 +142,7 @@ export async function getRecentOffers(limit: number = 10) {
 export async function getOffersByPlatform(
   platform: string,
   limit: number = 20
-) {
+): Promise<Offer[]> {
   const tenantId = await getTestTenantId();
   return prisma.offer.findMany({
     where: {
