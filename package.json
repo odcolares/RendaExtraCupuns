@@ -3,15 +3,19 @@
   "version": "1.0.0",
   "description": "Bot automatizado que monitora ofertas no WhatsApp e publica no Telegram com links de afiliado",
   "private": true,
+  "workspaces": [
+    "web"
+  ],
   "engines": {
     "node": ">=20.19.0"
   },
   "scripts": {
-    "dev": "ts-node src/index.ts",
+    "dev": "npm --prefix web run dev",
+    "dev:bot": "ts-node src/index.ts",
     "dev:core": "ts-node src/index.ts",
     "dev:telegram": "ts-node src/telegram/test-bot.ts",
-    "build": "tsc",
-    "postbuild": "node -e \"const fs=require('fs'); const src = 'config/.env'; const dst = 'dist/config/.env'; fs.cpSync('config/.env.example', dst, {force:true}); if (fs.existsSync(src)) { fs.cpSync(src, dst, {force:true}); } fs.mkdirSync('dist/data', {recursive:true}); fs.mkdirSync('dist/logs', {recursive:true}); console.log('✅ Build copiado para dist/');\"",
+    "build": "prisma generate && node -e \"const fs=require('fs'); fs.cpSync('src/generated', 'web/src/generated', {recursive:true, force:true});\" && tsc",
+    "postbuild": "node -e \"const fs=require('fs'); const src = 'config/.env'; const dst = 'dist/config/.env'; fs.mkdirSync('dist/config', {recursive:true}); const ex = fs.existsSync('config/.env.example') ? 'config/.env.example' : (fs.existsSync('.env.example') ? '.env.example' : null); if (ex) fs.cpSync(ex, dst, {force:true}); if (fs.existsSync(src)) { fs.cpSync(src, dst, {force:true}); } fs.mkdirSync('dist/data', {recursive:true}); fs.mkdirSync('dist/logs', {recursive:true}); console.log('✅ Build copiado para dist/');\"",
     "start": "node dist/index.js",
     "start:pm2": "pm2 start ecosystem.config.cjs",
     "lint": "tsc --noEmit",

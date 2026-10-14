@@ -1,0 +1,8 @@
+{
+  "name": "RendaExtraCupuns",
+  "description": "Automação de ofertas para afiliados com monitoramento e publicação de cupons.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
