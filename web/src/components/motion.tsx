@@ -1,6 +1,7 @@
+"use client";
+
 import { motion, type MotionProps } from "framer-motion";
 import { forwardRef } from "react";
-import { cn } from "@/lib/utils";
 
 export const FadeIn = forwardRef<HTMLDivElement, MotionProps & { className?: string }>(
   ({ className, ...props }, ref) => (

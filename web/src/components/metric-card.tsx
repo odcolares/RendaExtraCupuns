@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react"
 
 import { Card, CardContent } from "@/components/ui/card"
@@ -43,33 +42,31 @@ export function MetricCard({
   const accentClasses = ACCENT_CLASSES[accent]
 
   return (
-    <motion.div
-      whileHover={{ y: -2 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
+    <Card
+      className={cn(
+        "border-l-4 transition-transform duration-200 ease-out hover:-translate-y-0.5",
+        accentClasses.card
+      )}
     >
-      <Card className={cn("border-l-4", accentClasses.card)}>
-        <CardContent className="flex items-center gap-4">
-          <motion.div
-            className={cn(
-              "flex size-12 shrink-0 items-center justify-center rounded-xl",
-              accentClasses.chip
-            )}
-            whileHover={{ scale: 1.1 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Icon className="size-6" />
-          </motion.div>
-          <div className="min-w-0 space-y-0.5">
-            <p className="text-sm text-muted-foreground">{label}</p>
-            <p className="font-heading text-2xl font-semibold tracking-tight">
-              {value}
-            </p>
-            {hint ? (
-              <p className="text-xs text-muted-foreground">{hint}</p>
-            ) : null}
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
+      <CardContent className="flex items-center gap-4">
+        <div
+          className={cn(
+            "flex size-12 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 ease-out hover:scale-110",
+            accentClasses.chip
+          )}
+        >
+          <Icon className="size-6" />
+        </div>
+        <div className="min-w-0 space-y-0.5">
+          <p className="text-sm text-muted-foreground">{label}</p>
+          <p className="font-heading text-2xl font-semibold tracking-tight">
+            {value}
+          </p>
+          {hint ? (
+            <p className="text-xs text-muted-foreground">{hint}</p>
+          ) : null}
+        </div>
+      </CardContent>
+    </Card>
   )
 }

@@ -5,10 +5,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, Smartphone, MessageCircle, Store, CreditCard, ArrowRight, Play, HelpCircle, Smartphone as SmartphoneIcon } from "lucide-react";
+import { CheckCircle, Clock, Smartphone, MessageCircle, Store, CreditCard, Play, HelpCircle, Smartphone as SmartphoneIcon } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { ChannelConnect } from "@/components/channel-connect";
-import { PlatformBadge } from "@/components/platform-badge";
+import { OnboardingStepNav } from "@/components/onboarding-step-nav";
 import { getOnboardingStatusAction, getWhatsAppGroupsAction, getAffiliateDetailsAction, getStripeDetailsAction } from "@/actions/onboarding";
 
 interface Step {
@@ -284,35 +284,7 @@ async function OnboardingContent() {
         <CardContent>
           {renderStepContent()}
 
-          <div className="flex justify-between mt-6">
-            <Button
-              variant="outline"
-              onClick={() => {
-                const currentIndex = steps.findIndex((s) => s.id === currentStep.id);
-                if (currentIndex > 0) {
-                  // Navigate to previous step via URL or state
-                  window.history.back();
-                }
-              }}
-              disabled={currentStep.id === "whatsapp"}
-            >
-              Anterior
-            </Button>
-            <Button
-              onClick={() => {
-                const currentIndex = steps.findIndex((s) => s.id === currentStep.id);
-                if (currentIndex < steps.length - 1) {
-                  const nextStep = steps[currentIndex + 1];
-                  // Could use router.push or state management
-                  window.location.href = `#${nextStep.id}`;
-                }
-              }}
-              disabled={currentStep.id === "ready"}
-            >
-              Próximo
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+          <OnboardingStepNav steps={steps} currentStepId={currentStep.id} />
         </CardContent>
       </Card>
 
