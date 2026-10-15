@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Alert } from "@/components/alert";
+import { StatusBadge } from "@/components/status-badge";
 import { Calendar, Lock, Mail, Save, Shield, User } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 
@@ -51,15 +52,8 @@ export default async function ContaPage(props: {
       : user.tenant?.plan === "starter"
         ? "Starter"
         : user.tenant?.plan === "professional"
-          ? "Professional"
-          : "—";
-
-  const statusLabel =
-    user.tenant?.status === "active"
-      ? "Ativo"
-      : user.tenant?.status === "suspended"
-        ? "Suspenso"
-        : "Cancelado";
+           ? "Professional"
+           : "—";
 
   const roleLabel = user.role === "admin" ? "Administrador" : "Cliente";
 
@@ -67,14 +61,14 @@ export default async function ContaPage(props: {
     <div className="space-y-6">
       {/* Feedback Messages */}
       {searchParams?.success && (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/20 dark:text-emerald-400">
+        <Alert variant="success">
           {searchParams.success}
-        </div>
+        </Alert>
       )}
       {searchParams?.error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/20 dark:text-red-400">
+        <Alert variant="error">
           {searchParams.error}
-        </div>
+        </Alert>
       )}
 
       {/* Page Header */}
@@ -252,13 +246,7 @@ export default async function ContaPage(props: {
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Status</p>
-              <Badge
-                variant={
-                  user.tenant?.status === "active" ? "default" : "secondary"
-                }
-              >
-                {statusLabel}
-              </Badge>
+              <StatusBadge status={user.tenant?.status || "cancelled"} type="tenant" />
             </div>
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Data de Cadastro</p>

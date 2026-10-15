@@ -12,7 +12,11 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
+  Cell,
+  LabelList,
 } from "recharts";
+import { EmptyState } from "@/components/empty-state";
+import { BarChart3 } from "lucide-react";
 
 interface ChartDataPoint {
   date: string;
@@ -32,9 +36,11 @@ interface ClicksDataPoint {
 export function OffersLineChart({ data }: { data: ChartDataPoint[] }) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[300px] text-sm text-muted-foreground">
-        Nenhum dado disponível
-      </div>
+      <EmptyState
+        title="Sem dados"
+        description="Nenhuma oferta capturada no período selecionado."
+        icon={<BarChart3 className="size-8" />}
+      />
     );
   }
 
@@ -57,6 +63,7 @@ export function OffersLineChart({ data }: { data: ChartDataPoint[] }) {
             background: "var(--card)",
           }}
           labelStyle={{ fontWeight: 600 }}
+          formatter={(value: number) => [`${value} ofertas`, "Ofertas"]}
         />
         <Area
           type="monotone"
@@ -75,21 +82,30 @@ export function OffersLineChart({ data }: { data: ChartDataPoint[] }) {
 export function PlatformBarChart({ data }: { data: PlatformDataPoint[] }) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[300px] text-sm text-muted-foreground">
-        Nenhum dado disponível
-      </div>
+      <EmptyState
+        title="Sem dados"
+        description="Nenhuma oferta capturada no período selecionado."
+        icon={<BarChart3 className="size-8" />}
+      />
     );
   }
+
+  const platformColors: Record<string, string> = {
+    Amazon: "#FF9900",
+    Shopee: "#EE4D2D",
+    Mercado_Livre: "#FFE600",
+    AliExpress: "#FF4747",
+    Outros: "#64748b",
+  };
+
+  const getBarColor = (platform: string) =>
+    platformColors[platform] || "var(--color-brand-primary)";
+
+  const formatTooltip = (value: number) => `${value} ofertas`;
 
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={data}>
-        <defs>
-          <linearGradient id="barPrimaryGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--color-brand-primary)" stopOpacity={1} />
-            <stop offset="100%" stopColor="var(--color-brand-accent)" stopOpacity={0.7} />
-          </linearGradient>
-        </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
         <XAxis dataKey="plataforma" className="text-xs text-muted-foreground" />
         <YAxis className="text-xs text-muted-foreground" allowDecimals={false} />
@@ -100,12 +116,25 @@ export function PlatformBarChart({ data }: { data: PlatformDataPoint[] }) {
             background: "var(--card)",
           }}
           labelStyle={{ fontWeight: 600 }}
+          formatter={formatTooltip}
         />
         <Bar
           dataKey="quantidade"
-          fill="url(#barPrimaryGradient)"
           radius={[4, 4, 0, 0]}
-        />
+          fill="var(--color-brand-primary)"
+          isAnimationActive
+        >
+          {data.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={getBarColor(entry.plataforma)}
+            />
+          ))}
+          <LabelList
+            position="top"
+            className="text-xs text-muted-foreground"
+          />
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );
@@ -114,9 +143,11 @@ export function PlatformBarChart({ data }: { data: PlatformDataPoint[] }) {
 export function ClicksLineChart({ data }: { data: ClicksDataPoint[] }) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[300px] text-sm text-muted-foreground">
-        Nenhum dado disponível
-      </div>
+      <EmptyState
+        title="Sem dados"
+        description="Nenhum clique registrado no período selecionado."
+        icon={<BarChart3 className="size-8" />}
+      />
     );
   }
 
@@ -133,6 +164,7 @@ export function ClicksLineChart({ data }: { data: ClicksDataPoint[] }) {
             background: "var(--card)",
           }}
           labelStyle={{ fontWeight: 600 }}
+          formatter={(value: number) => [`${value} cliques`, "Cliques"]}
         />
         <Line
           type="monotone"

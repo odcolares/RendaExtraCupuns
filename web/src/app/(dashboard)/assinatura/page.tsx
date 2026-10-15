@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PLANS, type PlanKey } from "@/lib/stripe";
+import { StatusBadge } from "@/components/status-badge";
 import {
   getSubscriptionAction,
   createCheckoutAction,
@@ -27,21 +28,6 @@ import {
 import { PageHeader } from "@/components/page-header";
 
 const planOrder: PlanKey[] = ["free", "starter", "professional"];
-
-const statusLabels: Record<string, string> = {
-  active: "Ativo",
-  suspended: "Suspenso",
-  cancelled: "Cancelado",
-};
-
-const statusVariants: Record<
-  string,
-  "default" | "secondary" | "destructive" | "outline"
-> = {
-  active: "default",
-  suspended: "destructive",
-  cancelled: "secondary",
-};
 
 export default async function AssinaturaPage() {
   const session = await auth();
@@ -83,12 +69,7 @@ export default async function AssinaturaPage() {
                   : `R$ ${PLANS[currentPlan].price}/mês`}
               </p>
             </div>
-            <Badge
-              variant={statusVariants[tenantStatus] || "outline"}
-              className="text-sm"
-            >
-              {statusLabels[tenantStatus] || tenantStatus}
-            </Badge>
+            <StatusBadge status={tenantStatus} type="tenant" className="text-sm" />
           </div>
           <ul className="space-y-2">
             {PLANS[currentPlan].features.map((feature, i) => (

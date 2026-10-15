@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { motion } from "framer-motion";
 
 export default function AuthLayout({
   children,
@@ -26,13 +27,22 @@ export default function AuthLayout({
       <main className="relative flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-sm space-y-8">
           <div className="text-center space-y-3">
-            <h1 className="text-3xl font-bold tracking-tight">
+            <motion.h1
+              className="text-3xl font-bold tracking-tight"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
               <span className="text-gradient">RendaExtra</span>
               <span className="text-muted-foreground">Cupuns</span>
-            </h1>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            </motion.h1>
+            <motion.p
+              className="text-sm text-muted-foreground leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+            >
               Monitore ofertas e maximize seus ganhos com links de afiliado
-            </p>
+            </motion.p>
           </div>
           {children}
         </div>

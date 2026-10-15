@@ -14,6 +14,16 @@ import { CheckCircle, DollarSign, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { StatusBadge } from "@/components/status-badge";
+import { EmptyState } from "@/components/empty-state";
+import { PaginationControls } from "@/components/pagination-controls";
+import {
   Table,
   TableBody,
   TableCell,
@@ -26,22 +36,10 @@ import { PlanSelect } from "@/components/admin/plan-select";
 import { PageHeader } from "@/components/page-header";
 import type { Prisma } from "@/generated/prisma/client";
 
-const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
-  active: "default",
-  suspended: "destructive",
-  cancelled: "secondary",
-};
-
 const planClass: Record<string, string> = {
   free: "bg-muted text-muted-foreground",
   starter: "bg-brand-primary/15 text-brand-primary",
   professional: "bg-amber-500/15 text-amber-600",
-};
-
-const statusClass: Record<string, string> = {
-  active: "bg-emerald-500/15 text-emerald-600",
-  suspended: "bg-red-500/15 text-red-600",
-  cancelled: "bg-muted text-muted-foreground",
 };
 
 export default async function AdminPage(props: {
@@ -160,26 +158,28 @@ export default async function AdminPage(props: {
               defaultValue={search}
               className="max-w-xs"
             />
-            <select
-              name="plan"
-              defaultValue={planFilter}
-              className="flex h-10 w-[140px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <option value="">Todos planos</option>
-              <option value="free">Free</option>
-              <option value="starter">Starter</option>
-              <option value="professional">Professional</option>
-            </select>
-            <select
-              name="status"
-              defaultValue={statusFilter}
-              className="flex h-10 w-[140px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            >
-              <option value="">Todos status</option>
-              <option value="active">Ativo</option>
-              <option value="suspended">Suspenso</option>
-              <option value="cancelled">Cancelado</option>
-            </select>
+            <Select name="plan" defaultValue={planFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Todos planos" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Todos planos</SelectItem>
+                <SelectItem value="free">Free</SelectItem>
+                <SelectItem value="starter">Starter</SelectItem>
+                <SelectItem value="professional">Professional</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select name="status" defaultValue={statusFilter}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="Todos status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Todos status</SelectItem>
+                <SelectItem value="active">Ativo</SelectItem>
+                <SelectItem value="suspended">Suspenso</SelectItem>
+                <SelectItem value="cancelled">Cancelado</SelectItem>
+              </SelectContent>
+            </Select>
             <Button type="submit" variant="secondary">
               Filtrar
             </Button>
@@ -194,9 +194,10 @@ export default async function AdminPage(props: {
           </form>
 
           {tenants.length === 0 ? (
-            <p className="text-muted-foreground text-sm py-4">
-              Nenhum cliente encontrado com esses filtros.
-            </p>
+            <EmptyState
+              title="Nenhum cliente encontrado"
+              description="Não foram encontrados clientes com esses filtros."
+            />
           ) : (
             <>
               <Table>
@@ -251,16 +252,7 @@ export default async function AdminPage(props: {
                           }}
                         >
                           <button type="submit" className="cursor-pointer">
-                              <Badge
-                                variant={statusVariant[tenant.status]}
-                                className={`${statusClass[tenant.status]} hover:opacity-80 border-0`}
-                              >
-                              {tenant.status === "active"
-                                ? "Ativo"
-                                : tenant.status === "suspended"
-                                ? "Suspenso"
-                                : "Cancelado"}
-                            </Badge>
+                            <StatusBadge status={tenant.status} type="tenant" />
                           </button>
                         </form>
                       </TableCell>
@@ -284,42 +276,13 @@ export default async function AdminPage(props: {
                 </TableBody>
               </Table>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between pt-4">
-                  <p className="text-sm text-muted-foreground">
-                    Página {page} de {totalPages} ({total} resultados)
-                  </p>
-                  <div className="flex gap-2">
-                    {page > 1 && (
-                      <Link
-                        href={`/admin?${new URLSearchParams({
-                          ...(search && { search }),
-                          ...(planFilter && { plan: planFilter }),
-                          ...(statusFilter && { status: statusFilter }),
-                          page: String(page - 1),
-                        })}`}
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 px-3"
-                      >
-                        Anterior
-                      </Link>
-                    )}
-                    {page < totalPages && (
-                      <Link
-                        href={`/admin?${new URLSearchParams({
-                          ...(search && { search }),
-                          ...(planFilter && { plan: planFilter }),
-                          ...(statusFilter && { status: statusFilter }),
-                          page: String(page + 1),
-                        })}`}
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 px-3"
-                      >
-                        Próxima
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              )}
+              <PaginationControls
+                page={page}
+                totalPages={totalPages}
+                total={total}
+                searchParams={{ search, plan: planFilter, status: statusFilter }}
+                basePath="/admin"
+              />
             </>
           )}
         </CardContent>

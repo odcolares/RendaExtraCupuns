@@ -9,8 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/status-badge";
+import { PlatformBadge } from "@/components/platform-badge";
 import {
   Table,
   TableBody,
@@ -24,25 +25,6 @@ import { PlanSelect } from "@/components/admin/plan-select";
 import { ConfirmButton } from "@/components/admin/confirm-button";
 import { PageHeader } from "@/components/page-header";
 
-const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
-  active: "default",
-  suspended: "destructive",
-  cancelled: "secondary",
-};
-
-const platformLabels: Record<string, string> = {
-  amazon: "Amazon",
-  shopee: "Shopee",
-  mercadolivre: "Mercado Livre",
-  aliexpress: "AliExpress",
-  outros: "Outros",
-};
-
-const offerStatusVariant: Record<string, "default" | "secondary" | "destructive"> = {
-  published: "default",
-  pending: "secondary",
-  failed: "destructive",
-};
 
 export default async function ClientDetailPage(props: {
   params: Promise<{ id: string }>;
@@ -165,9 +147,7 @@ export default async function ClientDetailPage(props: {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Badge variant={statusVariant[tenant.status]}>
-              {tenant.status === "active" ? "Ativo" : tenant.status === "suspended" ? "Suspenso" : "Cancelado"}
-            </Badge>
+            <StatusBadge status={tenant.status} type="tenant" />
           </CardContent>
         </Card>
 
@@ -288,10 +268,8 @@ export default async function ClientDetailPage(props: {
                 {fontes.map((fonte) => (
                   <TableRow key={fonte.id}>
                     <TableCell className="font-medium">{fonte.name}</TableCell>
-                    <TableCell>
-                      <Badge variant={fonte.isActive ? "default" : "secondary"}>
-                        {fonte.isActive ? "Ativa" : "Inativa"}
-                      </Badge>
+                     <TableCell>
+                      <StatusBadge status={fonte.isActive ? "active" : "inactive"} type="fonte" />
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {fonte.lastChecked.toLocaleDateString("pt-BR")}
@@ -337,7 +315,7 @@ export default async function ClientDetailPage(props: {
                       {offer.title}
                     </TableCell>
                     <TableCell>
-                      {platformLabels[offer.platform] || offer.platform}
+                      <PlatformBadge platform={offer.platform} />
                     </TableCell>
                     <TableCell>
                       {offer.price
@@ -345,13 +323,7 @@ export default async function ClientDetailPage(props: {
                         : "—"}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={offerStatusVariant[offer.status]}>
-                        {offer.status === "published"
-                          ? "Publicada"
-                          : offer.status === "pending"
-                          ? "Pendente"
-                          : "Falha"}
-                      </Badge>
+                      <StatusBadge status={offer.status} type="offer" />
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {offer.createdAt.toLocaleDateString("pt-BR")}

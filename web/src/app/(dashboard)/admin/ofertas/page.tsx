@@ -9,9 +9,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { StatusBadge } from "@/components/status-badge";
+import { PlatformBadge } from "@/components/platform-badge";
+import { EmptyState } from "@/components/empty-state";
+import { PaginationControls } from "@/components/pagination-controls";
 import type { Prisma } from "@/generated/prisma/client";
 import {
   Table,
@@ -23,19 +33,6 @@ import {
 } from "@/components/ui/table";
 import { PageHeader } from "@/components/page-header";
 
-const platformLabels: Record<string, string> = {
-  amazon: "Amazon",
-  shopee: "Shopee",
-  mercadolivre: "Mercado Livre",
-  aliexpress: "AliExpress",
-  outros: "Outros",
-};
-
-const statusVariant: Record<string, "default" | "secondary" | "destructive"> = {
-  published: "default",
-  pending: "secondary",
-  failed: "destructive",
-};
 
 export default async function GlobalOffersPage(props: {
   searchParams?: Promise<{
@@ -165,45 +162,45 @@ export default async function GlobalOffersPage(props: {
               defaultValue={search}
               className="max-w-xs"
             />
-            <select
-              name="platform"
-              defaultValue={platformFilter}
-              className="flex h-10 w-[150px] rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="">Todas plataformas</option>
-              <option value="amazon">Amazon</option>
-              <option value="shopee">Shopee</option>
-              <option value="mercadolivre">Mercado Livre</option>
-              <option value="aliexpress">AliExpress</option>
-              <option value="outros">Outros</option>
-            </select>
-            <select
-              name="status"
-              defaultValue={statusFilter}
-              className="flex h-10 w-[140px] rounded-md border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="">Todos status</option>
-              <option value="published">Publicada</option>
-              <option value="pending">Pendente</option>
-              <option value="failed">Falha</option>
-            </select>
+            <Select name="platform" defaultValue={platformFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Todas plataformas" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Todas plataformas</SelectItem>
+                <SelectItem value="amazon">Amazon</SelectItem>
+                <SelectItem value="shopee">Shopee</SelectItem>
+                <SelectItem value="mercadolivre">Mercado Livre</SelectItem>
+                <SelectItem value="aliexpress">AliExpress</SelectItem>
+                <SelectItem value="outros">Outros</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select name="status" defaultValue={statusFilter}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="Todos status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Todos status</SelectItem>
+                <SelectItem value="published">Publicada</SelectItem>
+                <SelectItem value="pending">Pendente</SelectItem>
+                <SelectItem value="failed">Falha</SelectItem>
+              </SelectContent>
+            </Select>
             <Button type="submit" variant="secondary">
               Filtrar
             </Button>
             {(search || platformFilter || statusFilter) && (
-              <Link
-                href="/admin/ofertas"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2"
-              >
+              <Link href="/admin/ofertas" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
                 Limpar
               </Link>
             )}
           </form>
 
           {offers.length === 0 ? (
-            <p className="text-muted-foreground text-sm py-4">
-              Nenhuma oferta encontrada com esses filtros.
-            </p>
+            <EmptyState
+              title="Nenhuma oferta encontrada"
+              description="Não foram encontradas ofertas com os filtros atuais."
+            />
           ) : (
             <>
               <Table>
@@ -228,16 +225,10 @@ export default async function GlobalOffersPage(props: {
                         </span>
                       </TableCell>
                       <TableCell>
-                        {platformLabels[offer.platform] || offer.platform}
+                        <PlatformBadge platform={offer.platform} />
                       </TableCell>
                       <TableCell>
-                        <Badge variant={statusVariant[offer.status]}>
-                          {offer.status === "published"
-                            ? "Publicada"
-                            : offer.status === "pending"
-                            ? "Pendente"
-                            : "Falha"}
-                        </Badge>
+                        <StatusBadge status={offer.status} type="offer" />
                       </TableCell>
                       <TableCell className="text-sm text-muted-foreground">
                         {offer.createdAt.toLocaleDateString("pt-BR")}
@@ -247,42 +238,13 @@ export default async function GlobalOffersPage(props: {
                 </TableBody>
               </Table>
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between pt-4">
-                  <p className="text-sm text-muted-foreground">
-                    Página {page} de {totalPages} ({total} resultados)
-                  </p>
-                  <div className="flex gap-2">
-                    {page > 1 && (
-                      <Link
-                        href={`/admin/ofertas?${new URLSearchParams({
-                          ...(search && { search }),
-                          ...(platformFilter && { platform: platformFilter }),
-                          ...(statusFilter && { status: statusFilter }),
-                          page: String(page - 1),
-                        })}`}
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 px-3"
-                      >
-                        Anterior
-                      </Link>
-                    )}
-                    {page < totalPages && (
-                      <Link
-                        href={`/admin/ofertas?${new URLSearchParams({
-                          ...(search && { search }),
-                          ...(platformFilter && { platform: platformFilter }),
-                          ...(statusFilter && { status: statusFilter }),
-                          page: String(page + 1),
-                        })}`}
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 px-3"
-                      >
-                        Próxima
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              )}
+              <PaginationControls
+                page={page}
+                totalPages={totalPages}
+                total={total}
+                searchParams={{ search, platform: platformFilter, status: statusFilter }}
+                basePath="/admin/ofertas"
+              />
             </>
           )}
         </CardContent>

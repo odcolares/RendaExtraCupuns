@@ -3,6 +3,13 @@
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
 import { changePlanAction } from "@/actions/admin";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function PlanSelect({
   tenantId,
@@ -17,31 +24,35 @@ export function PlanSelect({
   const router = useRouter();
   const [value, setValue] = useState(defaultValue);
 
+  const handleChange = (newValue: string | null) => {
+    if (!newValue) return;
+    if (!confirm(`Alterar plano para "${newValue}"?`)) {
+      return;
+    }
+    setValue(newValue);
+    startTransition(async () => {
+      await changePlanAction(
+        tenantId,
+        newValue as "free" | "starter" | "professional"
+      );
+      router.refresh();
+    });
+  };
+
   return (
-    <select
-      name="plan"
+    <Select
       value={value}
+      onValueChange={handleChange}
       disabled={isPending}
-      onChange={(e) => {
-        const newValue = e.target.value;
-        if (!confirm(`Alterar plano para "${newValue}"?`)) {
-          setValue(value);
-          return;
-        }
-        setValue(newValue);
-        startTransition(async () => {
-          await changePlanAction(
-            tenantId,
-            newValue as "free" | "starter" | "professional"
-          );
-          router.refresh();
-        });
-      }}
-      className={className}
     >
-      <option value="free">Free</option>
-      <option value="starter">Starter</option>
-      <option value="professional">Professional</option>
-    </select>
+      <SelectTrigger className={className}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="free">Free</SelectItem>
+        <SelectItem value="starter">Starter</SelectItem>
+        <SelectItem value="professional">Professional</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
