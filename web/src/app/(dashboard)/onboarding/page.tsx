@@ -1,122 +1,90 @@
-"use client";
-
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { Suspense } from "react";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, Smartphone, MessageCircle, Store, CreditCard, ArrowRight, Play, HelpCircle } from "lucide-react";
-import Link from "next/link";
+import { CheckCircle, Clock, Smartphone, MessageCircle, Store, CreditCard, ArrowRight, Play, HelpCircle, Smartphone as SmartphoneIcon } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { ChannelConnect } from "@/components/channel-connect";
+import { PlatformBadge } from "@/components/platform-badge";
+import { getOnboardingStatusAction, getWhatsAppGroupsAction, getAffiliateDetailsAction, getStripeDetailsAction } from "@/actions/onboarding";
 
 interface Step {
   id: string;
   title: string;
   description: string;
-  icon: React.ReactNode;
+  icon: string;
   status: "pending" | "in_progress" | "completed";
 }
 
-export default function OnboardingPage() {
-  const { data: session } = useSession();
-  const tenantId = session?.user?.tenantId;
+const ICON_MAP: Record<string, React.ReactNode> = {
+  Smartphone: <Smartphone className="h-6 w-6" />,
+  MessageCircle: <MessageCircle className="h-6 w-6" />,
+  Store: <Store className="h-6 w-6" />,
+  CreditCard: <CreditCard className="h-6 w-6" />,
+  Play: <Play className="h-6 w-6" />,
+  SmartphoneIcon: <SmartphoneIcon className="h-6 w-6" />,
+};
 
-  const [currentStep, setCurrentStep] = useState("whatsapp");
-  const [connectionStatus, setConnectionStatus] = useState([
-    { platform: "WhatsApp", connected: true, configured: true, lastUpdated: new Date() },
-    { platform: "Telegram", connected: true, configured: true, lastUpdated: new Date() },
-    { platform: "Amazon", connected: false, configured: true, lastUpdated: undefined },
-    { platform: "Shopee", connected: false, configured: true, lastUpdated: undefined },
-    { platform: "Mercado Livre", connected: false, configured: true, lastUpdated: undefined },
-    { platform: "AliExpress", connected: false, configured: true, lastUpdated: undefined },
+async function OnboardingContent() {
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const [statusData, whatsappGroups, affiliateDetails, stripeDetails] = await Promise.all([
+    getOnboardingStatusAction(),
+    getWhatsAppGroupsAction(),
+    getAffiliateDetailsAction(),
+    getStripeDetailsAction(),
   ]);
 
-  const steps: Step[] = [
-    {
-      id: "whatsapp",
-      title: "Conectar WhatsApp",
-      description: "Conecte seu número WhatsApp secundário para monitorar ofertas",
-      icon: <Smartphone className="h-6 w-6" />,
-      status: "completed",
-    },
-    {
-      id: "telegram",
-      title: "Configurar Telegram",
-      description: "Configure seu bot e canal do Telegram para publicar ofertas",
-      icon: <MessageCircle className="h-6 w-6" />,
-      status: "completed",
-    },
-    {
-      id: "affiliates",
-      title: "Configurar Afiliados",
-      description: "Adicione seus IDs de afiliado para Amazon, Mercado Livre, Shopee e AliExpress",
-      icon: <Store className="h-6 w-6" />,
-      status: "in_progress",
-    },
-    {
-      id: "payments",
-      title: "Configurar Pagamentos",
-      description: "Configure sua conta Stripe para receber comissões automaticamente",
-      icon: <CreditCard className="h-6 w-6" />,
-      status: "pending",
-    },
-    {
-      id: "ready",
-      title: "Pronto para Começar",
-      description: "Sua máquina está pronta para gerar renda automaticamente",
-      icon: <Play className="h-6 w-6" />,
-      status: "pending",
-    },
-  ];
+  const steps: Step[] = statusData.steps;
+  const connectionStatus = statusData.whatsappConnections;
+  const telegramConfig = statusData.telegramConfig;
+  const affiliateConfigs = affiliateDetails;
 
-  const currentStepData = steps.find((step) => step.id === currentStep) || steps[0];
+  const currentStep = steps.find(s => s.status === "in_progress") || steps[0];
 
   const renderStepContent = () => {
-    switch (currentStep) {
+    switch (currentStep.id) {
       case "whatsapp":
         return (
           <div className="space-y-4">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h4 className="font-medium text-blue-900 mb-2">Configuração do WhatsApp</h4>
-              <p className="text-sm text-blue-800">
-                • Número WhatsApp secundário (não pessoal)
-              </p>
-              <p className="text-sm text-blue-800">
-                • Conecte via QR Code (salvo em sessão)
-              </p>
-              <p className="text-sm text-blue-800">
-                • Monitore grupos e newsletters existentes
-              </p>
-              <p className="text-sm text-blue-800">
-                • Risco de ban = evite usar número pessoal
-              </p>
+              <p className="text-sm text-blue-800">• Número WhatsApp secundário (não pessoal)</p>
+              <p className="text-sm text-blue-800">• Conecte via QR Code (salvo em sessão)</p>
+              <p className="text-sm text-blue-800">• Monitore grupos e newsletters existentes</p>
+              <p className="text-sm text-blue-800">• Risco de ban = evite usar número pessoal</p>
             </div>
             <div className="bg-gray-50 border rounded-lg p-4">
               <h4 className="font-medium mb-2">Grupos/Novidades Conectados</h4>
               <div className="space-y-2">
-                {[
-                  { name: "Grupo de Ofertas #1", members: 45, lastUpdate: "2h atrás" },
-                  { name: "Newsletter Diária", members: 120, lastUpdate: "1h atrás" },
-                  { name: "Cupons Separação", members: 28, lastUpdate: "3h atrás" },
-                ].map((group, index) => (
-                  <div key={index} className="flex items-center justify-between py-2 border-b last:border-b-0">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-green-100 rounded-full">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                {whatsappGroups.length > 0 ? (
+                  whatsappGroups.map((group, index) => (
+                    <div key={index} className="flex items-center justify-between py-2 border-b last:border-b-0">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-green-100 rounded-full">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-sm">{group.name}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {group.members} ofertas encontradas • Atualizado {group.lastUpdate}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-sm">{group.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {group.members} membros • Atualizado {group.lastUpdate}
-                        </p>
-                      </div>
+                      <Badge variant={connectionStatus[0]?.connected ? "default" : "secondary"} className="text-xs">
+                        {connectionStatus[0]?.connected ? "Conectado" : "Desconectado"}
+                      </Badge>
                     </div>
-                    <Badge variant="secondary" className="text-xs">
-                      Ativo
-                    </Badge>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">Nenhum grupo conectado ainda. Provisione o bot para começar.</p>
+                )}
               </div>
             </div>
           </div>
@@ -129,16 +97,31 @@ export default function OnboardingPage() {
               <ChannelConnect />
             </div>
             <div className="bg-gray-50 border rounded-lg p-4">
+              <h4 className="font-medium mb-2">Status da Conexão</h4>
+              <div className="flex items-center gap-3 p-3 bg-white rounded border">
+                {telegramConfig.configured ? (
+                  <>
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <div>
+                      <p className="font-medium text-green-800">Telegram configurado</p>
+                      <p className="text-xs text-muted-foreground">
+                        {telegramConfig.tested ? "Testado com sucesso" : "Clique em testar para verificar"}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-5 w-5 text-muted-foreground" />
+                    <p className="text-muted-foreground">Telegram não configurado</p>
+                  </>
+                )}
+              </div>
+            </div>
+            <div className="bg-gray-50 border rounded-lg p-4">
               <h4 className="font-medium mb-2">Regras de publicação</h4>
-              <p className="text-sm text-muted-foreground">
-                • Ofertas criadas no painel são publicadas automaticamente no canal
-              </p>
-              <p className="text-sm text-muted-foreground">
-                • Rate limit: 30 mensagens/hora por canal
-              </p>
-              <p className="text-sm text-muted-foreground">
-                • Mensagem de teste é enviada ao conectar o canal
-              </p>
+              <p className="text-sm text-muted-foreground">• Ofertas criadas no painel são publicadas automaticamente no canal</p>
+              <p className="text-sm text-muted-foreground">• Rate limit: 30 mensagens/hora por canal</p>
+              <p className="text-sm text-muted-foreground">• Mensagem de teste é enviada ao conectar o canal</p>
             </div>
           </div>
         );
@@ -148,14 +131,9 @@ export default function OnboardingPage() {
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
               <h4 className="font-medium text-purple-900 mb-2">Afiliados Configurados</h4>
               <div className="grid grid-cols-2 gap-3">
-                {[
-                  { name: "Amazon", id: "odcolares2026-20", status: "configured" },
-                  { name: "Mercado Livre", id: "88981950", status: "configured" },
-                  { name: "Shopee", id: "18387911117", status: "configured" },
-                  { name: "AliExpress", id: "RendaExtraCupuns", status: "configured" },
-                ].map((affiliate, index) => (
+                {affiliateConfigs.map((affiliate, index) => (
                   <div key={index} className="flex items-center gap-2 p-2 bg-white rounded border">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <CheckCircle className={affiliate.status === "configured" ? "h-4 w-4 text-green-600" : "h-4 w-4 text-muted-foreground"} />
                     <div>
                       <p className="font-medium text-sm">{affiliate.name}</p>
                       <p className="text-xs text-muted-foreground">{affiliate.id}</p>
@@ -179,18 +157,9 @@ export default function OnboardingPage() {
           <div className="space-y-4">
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
               <h4 className="font-medium text-orange-900 mb-2">Stripe Configurado</h4>
-              <p className="text-sm text-orange-800">
-                • Stripe conectado (modo teste)
-              </p>
-              <p className="text-sm text-orange-800">
-                • Preço do plano Starter: R$ 29/mês
-              </p>
-              <p className="text-sm text-orange-800">
-                • Preço do plano Professional: R$ 79/mês
-              </p>
-              <p className="text-sm text-orange-800">
-                • Webhook de assinatura configurado
-              </p>
+              <p className="text-sm text-orange-800">• Plano atual: {stripeDetails.plan === "free" ? "Free" : stripeDetails.plan}</p>
+              <p className="text-sm text-orange-800">• Modo: {stripeDetails.testMode ? "Teste" : "Produção"}</p>
+              <p className="text-sm text-orange-800">• Status: {stripeDetails.connected ? "Conectado" : "Não conectado"}</p>
             </div>
             <div className="bg-gray-50 border rounded-lg p-4">
               <h4 className="font-medium mb-2">Melhores Práticas de Pagamento</h4>
@@ -280,14 +249,15 @@ export default function OnboardingPage() {
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center gap-2">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${step.status === "completed"
-                    ? "bg-green-50 border-green-500 text-green-600"
-                    : step.status === "in_progress"
-                      ? "bg-blue-50 border-blue-500 text-blue-600"
-                      : "bg-gray-50 border-gray-300 text-gray-400"
+                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
+                    step.status === "completed"
+                      ? "bg-green-50 border-green-500 text-green-600"
+                      : step.status === "in_progress"
+                        ? "bg-blue-50 border-blue-500 text-blue-600"
+                        : "bg-gray-50 border-gray-300 text-gray-400"
                   }`}
                 >
-                  {step.icon}
+                  {ICON_MAP[step.icon] || <HelpCircle className="h-5 w-5" />}
                 </div>
                 {index < steps.length - 1 && (
                   <div className="hidden md:block w-16 h-0.5 bg-gray-200" />
@@ -308,8 +278,8 @@ export default function OnboardingPage() {
       {/* Navegação de etapas */}
       <Card>
         <CardHeader>
-          <CardTitle>{currentStepData.title}</CardTitle>
-          <CardDescription>{currentStepData.description}</CardDescription>
+          <CardTitle>{currentStep.title}</CardTitle>
+          <CardDescription>{currentStep.description}</CardDescription>
         </CardHeader>
         <CardContent>
           {renderStepContent()}
@@ -318,23 +288,26 @@ export default function OnboardingPage() {
             <Button
               variant="outline"
               onClick={() => {
-                const currentIndex = steps.findIndex((s) => s.id === currentStep);
+                const currentIndex = steps.findIndex((s) => s.id === currentStep.id);
                 if (currentIndex > 0) {
-                  setCurrentStep(steps[currentIndex - 1].id);
+                  // Navigate to previous step via URL or state
+                  window.history.back();
                 }
               }}
-              disabled={currentStep === "whatsapp"}
+              disabled={currentStep.id === "whatsapp"}
             >
               Anterior
             </Button>
             <Button
               onClick={() => {
-                const currentIndex = steps.findIndex((s) => s.id === currentStep);
+                const currentIndex = steps.findIndex((s) => s.id === currentStep.id);
                 if (currentIndex < steps.length - 1) {
-                  setCurrentStep(steps[currentIndex + 1].id);
+                  const nextStep = steps[currentIndex + 1];
+                  // Could use router.push or state management
+                  window.location.href = `#${nextStep.id}`;
                 }
               }}
-              disabled={currentStep === "ready"}
+              disabled={currentStep.id === "ready"}
             >
               Próximo
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -376,5 +349,13 @@ export default function OnboardingPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<div className="text-center py-8">Carregando configurações...</div>}>
+      <OnboardingContent />
+    </Suspense>
   );
 }

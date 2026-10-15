@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/status-badge";
 import { PageHeader } from "@/components/page-header";
 
 export default async function BillingPage() {
@@ -205,30 +205,27 @@ export default async function BillingPage() {
               {
                 label: "Ativos",
                 count: tenants.filter((t) => t.status === "active").length,
-                color: "text-green-600",
-                variant: "default" as const,
               },
               {
                 label: "Suspensos",
                 count: tenants.filter((t) => t.status === "suspended").length,
-                color: "text-red-600",
-                variant: "destructive" as const,
               },
               {
                 label: "Cancelados",
                 count: tenants.filter((t) => t.status === "cancelled").length,
-                color: "text-muted-foreground",
-                variant: "secondary" as const,
               },
-            ].map(({ label, count, variant }) => (
-              <div
-                key={label}
-                className="flex items-center justify-between py-2"
-              >
-                <Badge variant={variant}>{label}</Badge>
-                <span className="text-2xl font-bold">{count}</span>
-              </div>
-            ))}
+            ].map(({ label, count }) => {
+              const statusValue = label === "Ativos" ? "active" : label === "Suspensos" ? "suspended" : "cancelled";
+              return (
+                <div
+                  key={label}
+                  className="flex items-center justify-between py-2"
+                >
+                  <StatusBadge status={statusValue} type="tenant" />
+                  <span className="text-2xl font-bold">{count}</span>
+                </div>
+              );
+            })}
 
             <div className="border-t pt-4">
               <div className="flex items-center justify-between">

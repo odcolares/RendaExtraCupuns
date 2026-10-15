@@ -4,10 +4,14 @@ import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2, AlertCircle, LogIn, ArrowRight, MailCheck } from "lucide-react";
+import { Loader2, LogIn, ArrowRight, MailCheck, Globe, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -16,9 +20,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PasswordInput } from "@/components/auth-form-wrapper";
 
-// Mesma string de web/src/lib/auth.config.ts (EMAIL_NOT_VERIFIED_MESSAGE) —
-// chega aqui via `result.code` do signIn (subclasse de CredentialsSignin).
+const loginSchema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(1, "Senha é obrigatória"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
+
 const EMAIL_NOT_VERIFIED_MESSAGE =
   "Verifique seu email antes de entrar. Enviamos um link para o seu email.";
 
@@ -27,43 +37,43 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [needsVerification, setNeedsVerification] = useState(false);
   const [resendMessage, setResendMessage] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setResendMessage("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const email = watch("email", "");
+
+  async function onSubmit(data: LoginFormData) {
     setNeedsVerification(false);
-    setLoading(true);
-
     try {
       const result = await signIn("credentials", {
-        email,
-        password,
+        email: data.email,
+        password: data.password,
         redirect: false,
       });
 
       if (result?.error) {
         if (result.code === EMAIL_NOT_VERIFIED_MESSAGE) {
-          setError(result.code);
           setNeedsVerification(true);
+          toast.error(result.code);
         } else {
-          setError("Email ou senha inválidos.");
+          toast.error("Email ou senha inválidos.");
         }
-        setLoading(false);
         return;
       }
 
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      setError("Erro ao fazer login. Tente novamente.");
-      setLoading(false);
+      toast.error("Erro ao fazer login. Tente novamente.");
     }
   }
 
@@ -79,16 +89,15 @@ function LoginForm() {
       if (res.ok) {
         setResendMessage("Se o email existir, enviaremos um novo link.");
       } else {
-        setError("Erro ao reenviar o link. Tente novamente.");
+        toast.error("Erro ao reenviar o link. Tente novamente.");
       }
     } catch {
-      setError("Erro ao reenviar o link. Tente novamente.");
+      toast.error("Erro ao reenviar o link. Tente novamente.");
     }
   }
 
   return (
     <Card className="relative w-full shadow-lg overflow-hidden">
-      {/* Brand gradient top border */}
       <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-primary to-brand-accent" />
       <CardHeader className="text-center pt-8">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-gradient">
@@ -97,14 +106,8 @@ function LoginForm() {
         <CardTitle className="text-2xl tracking-wide">Entrar</CardTitle>
         <CardDescription>Acesse seu painel de afiliados</CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <CardContent className="flex flex-col gap-4">
-          {error && (
-            <div className="flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
           {needsVerification && (
             <div className="flex flex-col gap-2 rounded-md bg-brand-primary/10 p-3 text-sm">
               <Button
@@ -123,36 +126,35 @@ function LoginForm() {
           )}
           <div className="flex flex-col gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="seu@email.com"
-              className="focus-visible:ring-brand-primary placeholder:text-muted-foreground/50"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/50" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                className="focus-visible:ring-brand-primary placeholder:text-muted-foreground/50 pl-10"
+                {...register("email")}
+                aria-invalid={errors.email ? "true" : "false"}
+              />
+            </div>
+            {errors.email && (
+              <p className="text-xs text-destructive">{errors.email.message}</p>
+            )}
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="password">Senha</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
-              className="focus-visible:ring-brand-primary placeholder:text-muted-foreground/50"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+          <PasswordInput
+            id="password"
+            showToggle
+            error={errors.password?.message}
+            {...register("password")}
+          />
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <Button
             type="submit"
             className="w-full cursor-pointer"
-            disabled={loading}
+            disabled={isSubmitting}
           >
-            {loading ? (
+            {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Entrando...
@@ -160,6 +162,15 @@ function LoginForm() {
             ) : (
               "Entrar"
             )}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full cursor-pointer gap-2"
+            onClick={() => signIn("google", { callbackUrl })}
+          >
+            <Globe className="size-4" />
+            Entrar com Google
           </Button>
           <p className="text-sm text-muted-foreground text-center">
             Não tem conta?{" "}

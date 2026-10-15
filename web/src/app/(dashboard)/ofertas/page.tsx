@@ -13,7 +13,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { StatusBadge } from "@/components/status-badge";
+import { PlatformBadge } from "@/components/platform-badge";
+import { EmptyState } from "@/components/empty-state";
+import { PaginationControls } from "@/components/pagination-controls";
+import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PageHeader } from "@/components/page-header";
 import {
   Table,
@@ -31,19 +36,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Search,
-  Filter,
-  Eye,
-  Edit,
-  Trash2,
-  RotateCcw,
-  Inbox,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import { getPaginatedOffersAction } from "@/actions/affiliates";
-import { getOfferByIdAction, updateOfferAction, deleteOfferAction, createOfferAction, reprocessOfferAction } from "@/actions/offers";
-import {
   Sheet,
   SheetContent,
   SheetHeader,
@@ -52,7 +44,17 @@ import {
   SheetDescription,
   SheetClose,
 } from "@/components/ui/sheet";
-import { Plus } from "lucide-react";
+import {
+  Search,
+  Filter,
+  Eye,
+  Edit,
+  Trash2,
+  RotateCcw,
+  Plus,
+} from "lucide-react";
+import { getPaginatedOffersAction } from "@/actions/affiliates";
+import { getOfferByIdAction, updateOfferAction, deleteOfferAction, createOfferAction, reprocessOfferAction } from "@/actions/offers";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -69,37 +71,6 @@ const statusOptions = [
   { value: "pending", label: "Pendente" },
   { value: "failed", label: "Falhou" },
 ];
-
-function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { label: string; className: string }> = {
-    published: { label: "Publicado", className: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" },
-    pending: { label: "Pendente", className: "bg-amber-500/15 text-amber-600 border-amber-500/30" },
-    failed: { label: "Falhou", className: "bg-red-500/15 text-red-600 border-red-500/30" },
-  };
-  const { label, className } = map[status] || { label: status, className: "bg-muted text-muted-foreground" };
-  return <Badge variant="outline" className={className}>{label}</Badge>;
-}
-
-function PlatformBadge({ platform }: { platform: string }) {
-  const labels: Record<string, string> = {
-    amazon: "Amazon",
-    shopee: "Shopee",
-    mercadolivre: "Mercado Livre",
-    aliexpress: "AliExpress",
-    outros: "Outros",
-  };
-  const colors: Record<string, string> = {
-    amazon: "bg-[#FF9900]/15 text-[#FF9900] border-[#FF9900]/30",
-    shopee: "bg-[#EE4D2D]/15 text-[#EE4D2D] border-[#EE4D2D]/30",
-    mercadolivre: "bg-[#FFE600]/20 text-[#B8960F] border-[#FFE600]/40",
-    aliexpress: "bg-[#FF4747]/15 text-[#FF4747] border-[#FF4747]/30",
-  };
-  return (
-    <Badge variant="outline" className={`text-xs ${colors[platform] || "bg-muted text-muted-foreground"}`}>
-      {labels[platform] || platform}
-    </Badge>
-  );
-}
 
 function formatPrice(price: number | null) {
   if (price === null) return "—";
@@ -490,14 +461,16 @@ export default function OffersPage() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <div className="flex items-center justify-center py-12 text-muted-foreground">
-              <span className="text-sm">Carregando ofertas...</span>
+            <div className="space-y-2">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full" />
+              ))}
             </div>
           ) : !data || data.offers.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <Inbox className="size-12 mb-4 opacity-40" />
-              <p>Nenhuma oferta encontrada.</p>
-            </div>
+            <EmptyState
+              title="Nenhuma oferta encontrada"
+              description="Não foram encontradas ofertas com os filtros atuais."
+            />
           ) : (
             <div className="rounded-md border overflow-x-auto">
               <Table>
@@ -559,45 +532,13 @@ export default function OffersPage() {
             </div>
           )}
 
-          {/* Pagination */}
           {data && data.totalPages > 1 && (
-            <div className="flex items-center justify-between px-2 py-4">
-              <p className="text-sm text-muted-foreground">
-                Página {data.page} de {data.totalPages}
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => updateFilter("page", String(data.page - 1))}
-                  disabled={data.page <= 1}
-                >
-                  <ChevronLeft className="size-4 mr-1" />
-                  Anterior
-                </Button>
-                {Array.from({ length: Math.min(5, data.totalPages) }, (_, i) => i + 1).map(
-                  (pageNum) => (
-                    <Button
-                      key={pageNum}
-                      variant={data.page === pageNum ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => updateFilter("page", String(pageNum))}
-                    >
-                      {pageNum}
-                    </Button>
-                  )
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => updateFilter("page", String(data.page + 1))}
-                  disabled={data.page >= data.totalPages}
-                >
-                  Próximo
-                  <ChevronRight className="size-4 ml-1" />
-                </Button>
-              </div>
-            </div>
+            <PaginationControls
+              page={data.page}
+              totalPages={data.totalPages}
+              total={data.total}
+              onPageChange={(p) => updateFilter("page", String(p))}
+            />
           )}
         </CardContent>
       </Card>
@@ -695,11 +636,10 @@ export default function OffersPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-description">Descrição</Label>
-              <textarea
+              <Textarea
                 id="edit-description"
                 value={editForm.description}
                 onChange={(e) => setEditForm((prev) => ({ ...prev, description: e.target.value }))}
-                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 placeholder="Descrição da oferta..."
               />
             </div>
@@ -796,11 +736,10 @@ export default function OffersPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="create-description">Descrição</Label>
-              <textarea
+              <Textarea
                 id="create-description"
                 value={createForm.description}
                 onChange={(e) => setCreateForm((prev) => ({ ...prev, description: e.target.value }))}
-                className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 placeholder="Descrição da oferta..."
               />
             </div>

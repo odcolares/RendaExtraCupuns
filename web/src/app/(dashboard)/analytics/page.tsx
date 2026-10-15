@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getClickStatsAction } from "@/actions/clicks";
 import { MetricCard } from "@/components/metric-card";
 import { ClicksLineChart, PlatformBarChart } from "@/components/charts";
+import { StaggerContainer, StaggerItem } from "@/components/motion";
+import { PlatformBadge } from "@/components/platform-badge";
 import {
   Table,
   TableBody,
@@ -16,6 +18,13 @@ import { MousePointerClick, Users, Zap } from "lucide-react";
 
 export const metadata = { title: "Analytics" };
 
+const periods = [
+  { value: 7, label: "7d" },
+  { value: 30, label: "30d" },
+  { value: 90, label: "90d" },
+  { value: 0, label: "Todo" },
+];
+
 export default async function AnalyticsPage({
   searchParams,
 }: {
@@ -26,7 +35,7 @@ export default async function AnalyticsPage({
 
   const sp = await searchParams;
   const periodRaw = Number(sp.period ?? "30");
-  const period = periodRaw === 7 || periodRaw === 90 ? periodRaw : 30;
+  const period = periods.find((p) => p.value === periodRaw)?.value ?? 30;
 
   const stats = await getClickStatsAction(session.user.tenantId ?? "", period);
 
@@ -36,50 +45,59 @@ export default async function AnalyticsPage({
         <div>
           <h1 className="text-2xl font-bold">Analytics de Cliques</h1>
           <p className="text-sm text-muted-foreground">
-            Período: {period} dias
+            Período: {period === 0 ? "Todo" : `${period} dias`}
           </p>
         </div>
         <div className="flex gap-2">
-          {[7, 30, 90].map((p) => (
+          {periods.map((p) => (
             <Link
-              key={p}
-              href={`/analytics?period=${p}`}
+              key={p.value}
+              href={`/analytics?period=${p.value}`}
               className={`rounded-md px-3 py-1.5 text-sm font-medium ${
-                period === p
+                period === p.value
                   ? "bg-brand-primary text-white"
                   : "bg-muted text-muted-foreground hover:bg-muted/70"
               }`}
             >
-              {p}d
+              {p.label}
             </Link>
           ))}
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <MetricCard
-          icon={MousePointerClick}
-          label="Total de cliques"
-          value={String(stats.totalClicks)}
-        />
-        <MetricCard
-          icon={Users}
-          label="Cliques únicos"
-          value={String(stats.uniqueClicks)}
-        />
-        <MetricCard
-          icon={Zap}
-          label="Cliques hoje"
-          value={String(stats.clicksToday)}
-        />
-      </div>
+      <StaggerContainer className="grid gap-4 sm:grid-cols-3">
+        <StaggerItem>
+          <MetricCard
+            icon={MousePointerClick}
+            label="Total de cliques"
+            value={String(stats.totalClicks)}
+            accent="primary"
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <MetricCard
+            icon={Users}
+            label="Cliques únicos"
+            value={String(stats.uniqueClicks)}
+            accent="teal"
+          />
+        </StaggerItem>
+        <StaggerItem>
+          <MetricCard
+            icon={Zap}
+            label="Cliques hoje"
+            value={String(stats.clicksToday)}
+            accent="amber"
+          />
+        </StaggerItem>
+      </StaggerContainer>
 
       {stats.totalClicks === 0 ? (
         <div className="rounded-lg border bg-card p-8 text-center text-muted-foreground">
           Nenhum clique registrado ainda
         </div>
       ) : (
-        <>
+        <div className="space-y-6">
           <div className="grid gap-4 lg:grid-cols-2">
             <div className="rounded-lg border bg-card p-4">
               <h2 className="mb-4 text-sm font-semibold">Cliques por dia</h2>
@@ -108,15 +126,19 @@ export default async function AnalyticsPage({
               <TableBody>
                 {stats.topProducts.map((p) => (
                   <TableRow key={p.offerId}>
-                    <TableCell className="font-medium">{p.title}</TableCell>
-                    <TableCell>{p.platform}</TableCell>
+                    <TableCell className="font-medium max-w-xs truncate">
+                      {p.title}
+                    </TableCell>
+                    <TableCell>
+                      <PlatformBadge platform={p.platform} />
+                    </TableCell>
                     <TableCell>{p.clicks}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
