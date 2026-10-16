@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Crown, Tags, TrendingUp, Radio, RefreshCw, Clock } from "lucide-react";
+import { RefreshCw, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { PageHeader } from "@/components/page-header";
@@ -76,7 +76,7 @@ export default async function DashboardPage() {
       <StaggerContainer className="grid gap-4 md:grid-cols-4">
         <StaggerItem>
           <MetricCard
-            icon={Crown}
+            icon="Crown"
             label="Plano"
             value={planLabels[metrics.plan] || metrics.plan}
             hint={metrics.status === "active" ? "Ativo" : metrics.status}
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
 
         <StaggerItem>
           <MetricCard
-            icon={Tags}
+            icon="Tags"
             label="Total de Ofertas"
             value={String(metrics.totalOffers)}
             hint={`${metrics.publishedOffers} publicadas, ${metrics.pendingOffers} pendentes`}
@@ -96,7 +96,7 @@ export default async function DashboardPage() {
 
         <StaggerItem>
           <MetricCard
-            icon={TrendingUp}
+            icon="TrendingUp"
             label="Ofertas Hoje"
             value={String(metrics.todayOffers)}
             accent="amber"
@@ -105,7 +105,7 @@ export default async function DashboardPage() {
 
         <StaggerItem>
           <MetricCard
-            icon={Radio}
+            icon="Radio"
             label="Ativas"
             value={String(metrics.activeSources)}
             accent="violet"

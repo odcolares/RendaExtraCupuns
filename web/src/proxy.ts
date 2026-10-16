@@ -5,8 +5,17 @@ import { applyRateLimit } from "@/lib/proxy-rate-limit";
 
 const publicPaths = ["/", "/login", "/signup"];
 const apiAuthPaths = ["/api/auth"];
-const adminPrefix = "/admin";
-const dashboardPrefix = "/dashboard";
+const protectedPrefixes = [
+  "/dashboard",
+  "/admin",
+  "/conta",
+  "/ofertas",
+  "/afiliados",
+  "/analytics",
+  "/assinatura",
+  "/fontes",
+  "/onboarding",
+];
 
 /**
  * Handler do proxy (exportado para uso direto; rate limit em `@/lib/proxy-rate-limit`).
@@ -39,21 +48,17 @@ export function proxyHandler(
     return NextResponse.next();
   }
 
-  // Redirect to login if not authenticated
-  if (!isLoggedIn) {
+  // Redirect to login if not authenticated and trying to access protected route
+  const isProtectedRoute = protectedPrefixes.some((p) => pathname.startsWith(p));
+  if (isProtectedRoute && !isLoggedIn) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   // Admin-only routes
-  if (pathname.startsWith(adminPrefix) && userRole !== "admin") {
+  if (pathname.startsWith("/admin") && userRole !== "admin") {
     return NextResponse.redirect(new URL("/dashboard", req.url));
-  }
-
-  // Dashboard routes - any logged in user
-  if (pathname.startsWith(dashboardPrefix) && isLoggedIn) {
-    return NextResponse.next();
   }
 
   return NextResponse.next();

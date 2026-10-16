@@ -73,14 +73,18 @@ export const authConfig: NextAuthConfig = {
         token.role = (user as unknown as { role: string }).role;
         token.tenantId = (user as unknown as { tenantId: string | null }).tenantId;
       }
+      // Garante que o ID do token seja persistido se disponível no sub (padrão NextAuth)
+      if (!token.id && token.sub) {
+        token.id = token.sub;
+      }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         const user = session.user as unknown as Record<string, unknown>;
-        user.id = token.id;
-        user.role = token.role;
-        user.tenantId = token.tenantId;
+        user.id = (token.id as string) || (token.sub as string);
+        user.role = token.role as string;
+        user.tenantId = token.tenantId as string | null;
       }
       return session;
     },

@@ -1,20 +1,47 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { LucideIcon } from "lucide-react"
+import {
+  Crown,
+  Tags,
+  TrendingUp,
+  Radio,
+  Zap,
+  Users,
+  Smartphone,
+  MessageCircle,
+  Store,
+  CreditCard,
+  Play,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
-type MetricAccent = "primary" | "teal" | "amber" | "violet"
+type MetricAccent = "primary" | "teal" | "amber" | "violet";
 
 type MetricCardProps = {
-  icon: LucideIcon
-  label: string
-  value: string
-  hint?: string
-  accent?: MetricAccent
-}
+  icon: string;
+  label: string;
+  value: string;
+  hint?: string;
+  accent?: MetricAccent;
+};
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  Crown,
+  Tags,
+  TrendingUp,
+  Radio,
+  Zap,
+  Users,
+  Smartphone,
+  MessageCircle,
+  Store,
+  CreditCard,
+  Play,
+};
 
 const ACCENT_CLASSES: Record<MetricAccent, { card: string; chip: string }> = {
   primary: {
@@ -33,16 +60,17 @@ const ACCENT_CLASSES: Record<MetricAccent, { card: string; chip: string }> = {
     card: "border-l-violet-500 bg-violet-500/5",
     chip: "bg-violet-500/10 text-violet-600",
   },
-}
+};
 
 export function MetricCard({
-  icon: Icon,
+  icon: iconName,
   label,
   value,
   hint,
   accent = "primary",
 }: MetricCardProps) {
-  const accentClasses = ACCENT_CLASSES[accent]
+  const Icon = ICON_MAP[iconName] || Smartphone;
+  const accentClasses = ACCENT_CLASSES[accent];
 
   return (
     <motion.div
@@ -73,5 +101,5 @@ export function MetricCard({
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }

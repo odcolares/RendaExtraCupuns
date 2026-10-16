@@ -14,7 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Link from "next/link";
-import { MousePointerClick, Users, Zap } from "lucide-react";
 
 export const metadata = { title: "Analytics" };
 
@@ -68,7 +67,7 @@ export default async function AnalyticsPage({
       <StaggerContainer className="grid gap-4 sm:grid-cols-3">
         <StaggerItem>
           <MetricCard
-            icon={MousePointerClick}
+            icon="MousePointerClick"
             label="Total de cliques"
             value={String(stats.totalClicks)}
             accent="primary"
@@ -76,7 +75,7 @@ export default async function AnalyticsPage({
         </StaggerItem>
         <StaggerItem>
           <MetricCard
-            icon={Users}
+            icon="Users"
             label="Cliques únicos"
             value={String(stats.uniqueClicks)}
             accent="teal"
@@ -84,7 +83,7 @@ export default async function AnalyticsPage({
         </StaggerItem>
         <StaggerItem>
           <MetricCard
-            icon={Zap}
+            icon="Zap"
             label="Cliques hoje"
             value={String(stats.clicksToday)}
             accent="amber"
