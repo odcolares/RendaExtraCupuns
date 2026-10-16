@@ -170,7 +170,13 @@ export async function disconnectChannelAction(
  * Lista os canais configurados do tenant atual.
  */
 export async function getChannelsAction(): Promise<ChannelInfo[]> {
-  const tenantId = await requireTenantId();
+  const session = await auth();
+  const tenantId = session?.user?.tenantId;
+
+  // Usuário sem tenant (ex: admin super admin) não tem canais — retorna vazio
+  if (!tenantId) {
+    return [];
+  }
 
   const channels = await prisma.tenantChannel.findMany({
     where: { tenantId, isActive: true },

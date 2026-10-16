@@ -25,7 +25,12 @@ export default async function ContaPage(props: {
     redirect("/login");
   }
 
-  const user = await getProfileAction(session.user.id);
+  let user;
+  try {
+    user = await getProfileAction(session.user.id);
+  } catch {
+    redirect("/login");
+  }
 
   if (!user) {
     redirect("/login");
