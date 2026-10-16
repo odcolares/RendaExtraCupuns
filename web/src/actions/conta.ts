@@ -12,9 +12,12 @@ async function requireAuth() {
   return session;
 }
 
-export async function getProfileAction() {
-  const session = await requireAuth();
-  const userId = session.user.id;
+export async function getProfileAction(userId?: string) {
+  // Se userId não for informado (chamada direta da action), valida auth
+  if (!userId) {
+    const session = await requireAuth();
+    userId = session.user.id;
+  }
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
