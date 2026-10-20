@@ -56,7 +56,7 @@ export default async function DashboardLayout({
         <Sidebar className="border-r border-border/50">
           <SidebarContent>
             <div className="h-1 bg-gradient-to-r from-brand-primary to-brand-accent" />
-            <SidebarNav userRole={user.role} />
+            <SidebarNav userRole={user.role} hasTenant={!!user.tenantId} />
           </SidebarContent>
         </Sidebar>
 
