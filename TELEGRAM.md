@@ -777,11 +777,11 @@ cp config/.env.example config/.env
 # Rodar apenas módulo Telegram
 npm run dev:telegram
 
-# Ver logs do Telegram
-npm run logs:telegram
+# Ver logs do Telegram (bot loga em logs/combined.log)
+tail -f logs/combined.log
 
-# Testar bot
-npm run test:telegram
+# Testar bot isolado (script de teste)
+npm run dev:telegram
 ```
 
 ### Produção

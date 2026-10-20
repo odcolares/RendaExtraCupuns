@@ -390,7 +390,7 @@ Se a sessão expirar (apenas se o WhatsApp for desconectado manualmente ou após
 npm run whatsapp:qr
 
 # Opção 2: Rodar o bot completo (ele mostra QR se precisar)
-npm run dev
+npm run dev:bot
 ```
 
 ### Migração da Sessão entre Servidores

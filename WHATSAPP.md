@@ -557,7 +557,8 @@ function detectPlatform(url: string): string {
 | **Links quebrados** | Validar antes de processar |
 | **Ofertas duplicadas** | Cache no banco de dados |
 | **Broadcast vs Grupo vs Newsletter** | Todos funcionam — monitor aceita `@g.us`, `@broadcast`, `@newsletter` |
-| **QR Code travando no `npm run dev`** | Script isolado `npm run whatsapp:qr` só com WhatsApp |
+| **QR Code travando no `npm run dev:bot`** | Script isolado `npm run whatsapp:qr` só com WhatsApp |
+| **Erro "Couldn't load version ... from the cache"** | `webVersionCache` (local/strict) foi removido de `src/whatsapp/client.ts` — o cliente baixa a versão web direto. No Windows local, o Chrome do sistema é usado via `puppeteer.executablePath` (ajuste o caminho em `client.ts`/`qr-only.ts` se estiver em outro local, ex.: VPS/Linux) |
 | **Descobrir ID do broadcast** | `npm run discover` — escuta 5 min e exibe IDs |
 | **Múltiplas fontes simultâneas** | `WHATSAPP_GROUP_IDS` (CSV) + `WHATSAPP_NEWSLETTER_ID` — monitor loga nome de cada fonte |
 | **URLs curtas Shopee (shp.ee, s.shopee.com.br)** | Resolvedor no `shopee.ts` — segue redirect HTTP (302) e extrai shopId+itemId da URL final |
@@ -603,7 +604,7 @@ npm run whatsapp:qr
 
 ```bash
 # Rodar bot completo (WhatsApp + Telegram + DB)
-npm run dev
+npm run dev:bot
 ```
 
 ### Manutenção

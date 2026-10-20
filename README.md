@@ -271,7 +271,10 @@ npm run whatsapp:qr
 # Setup OAuth Mercado Livre (primeira vez ou refresh)
 node scripts/setup-ml-oauth.js
 
-# Desenvolvimento (pipeline completo com WhatsApp + Telegram)
+# Desenvolvimento — bot completo (pipeline WhatsApp + Telegram + DB)
+npm run dev:bot
+
+# Desenvolvimento — apenas o web (Next.js, porta 3000)
 npm run dev
 
 # Build para produção (copia .env + cria pastas data/ e logs/)
@@ -319,7 +322,7 @@ npm run test:coverage
 npm run test:watch
 ```
 
-**Cobertura atual**: 103 testes, 11 suites, 100% passando
+**Cobertura atual**: 135 testes, 17 suites, 100% passando
 - WhatsApp: 100% | Utils: 100% | Database: 89% | Afiliados: 71% | Cupons: ✅
 
 ---
@@ -329,11 +332,12 @@ npm run test:watch
 ```bash
 npm install            # Instalar dependências
 npm run cli            # Modo CLI interativo (inserir ofertas manualmente)
-npm run dev            # Rodar em desenvolvimento
+npm run dev:bot      # Rodar o bot em desenvolvimento (WhatsApp + Telegram + DB)
+npm run dev          # Subir o web (Next.js, porta 3000)
 npm run build          # Build TypeScript (copia .env + pastas)
 npm start              # Rodar build em produção
 npm run start:pm2      # Rodar com PM2 (recomendado)
-npm test               # Rodar testes (103 tests)
+npm test               # Rodar testes (135 tests)
 npm run test:coverage  # Testes com relatório de cobertura
 npm run lint           # Verificar erros TypeScript
 ```

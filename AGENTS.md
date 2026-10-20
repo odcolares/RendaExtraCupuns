@@ -25,7 +25,8 @@ Tech: Node.js >= 18, TypeScript 5.4, Jest, Prisma 7.8 (Turso/libSQL)
 
 ### Root (bot)
 ```bash
-npm run dev          # Start bot (telegram + whatsapp + db)
+npm run dev:bot       # Start bot (telegram + whatsapp + db)
+npm run dev           # Start web dev server only (Next.js, port 3000)
 npm run cli          # Interactive CLI mode
 npm run whatsapp:qr  # Generate WhatsApp QR code only
 npm run discover     # Discover group/broadcast IDs
@@ -87,6 +88,7 @@ RendaExtraCupuns/
 ## Conventions
 
 - **Path aliases**: `@/*` maps to `src/*` (root), `./src/*` (web)
+  - ⚠️ Runtime **value imports must use relative paths** (e.g. `../generated/prisma/client`) — the compiled `dist/` cannot resolve `@/` aliases. Use `@/` only for `import type` (erased at compile) or web-only code. Dev scripts (`dev:bot`/`dev:core`) register `tsconfig-paths` as a fallback
 - **Logger**: Use `createModuleLogger("ModuleName")` from `src/utils/logger.ts`
 - **Config**: Loaded from `config/.env` via `src/config/index.ts`
 - **Tests**: Root uses Jest (`tests/`), web uses Vitest (`src/`)

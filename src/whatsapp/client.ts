@@ -34,13 +34,10 @@ export function initializeWhatsApp(
       dataPath: sessionPath || "./.wwebjs_auth",
     }),
     webVersion: "2.3000.1041831138-alpha",
-    webVersionCache: {
-      type: "local",
-      path: "./.wwebjs_cache",
-      strict: true,
-    },
     puppeteer: {
       headless: true,
+      executablePath:
+        "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -148,7 +145,8 @@ export async function startClient(): Promise<void> {
     log.info("Cliente WhatsApp inicializado");
   } catch (err) {
     log.error("Falha ao inicializar cliente WhatsApp", {
-      error: (err as Error).message,
+      error: (err as Error)?.message,
+      stack: (err as Error)?.stack,
     });
     throw err;
   }

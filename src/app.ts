@@ -128,7 +128,9 @@ export async function startApp(options?: {
       log.info("QR code gerado — escaneie com o WhatsApp para conectar");
     } catch (err) {
       log.warn("WhatsApp não inicializado", {
-        error: (err as Error).message,
+        error: (err as Error)?.message,
+        stack: (err as Error)?.stack,
+        raw: err,
       });
     }
   } else {

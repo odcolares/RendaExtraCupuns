@@ -11,8 +11,8 @@
   },
   "scripts": {
     "dev": "npm --prefix web run dev",
-    "dev:bot": "ts-node src/index.ts",
-    "dev:core": "ts-node src/index.ts",
+    "dev:bot": "node -r tsconfig-paths/register -r ts-node/register src/index.ts",
+    "dev:core": "node -r tsconfig-paths/register -r ts-node/register src/index.ts",
     "dev:telegram": "ts-node src/telegram/test-bot.ts",
     "build": "prisma generate && node -e \"const fs=require('fs'); fs.cpSync('src/generated', 'web/src/generated', {recursive:true, force:true});\" && tsc",
     "postbuild": "node -e \"const fs=require('fs'); const src = 'config/.env'; const dst = 'dist/config/.env'; fs.mkdirSync('dist/config', {recursive:true}); const ex = fs.existsSync('config/.env.example') ? 'config/.env.example' : (fs.existsSync('.env.example') ? '.env.example' : null); if (ex) fs.cpSync(ex, dst, {force:true}); if (fs.existsSync(src)) { fs.cpSync(src, dst, {force:true}); } fs.mkdirSync('dist/data', {recursive:true}); fs.mkdirSync('dist/logs', {recursive:true}); console.log('✅ Build copiado para dist/');\"",
@@ -49,6 +49,7 @@
     "prisma": "^7.8.0",
     "ts-jest": "^29.4.11",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^3.15.0",
     "typescript": "^5.4.5"
   }
 }
