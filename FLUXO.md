@@ -193,7 +193,7 @@ Para deploy do bot monousuário original:
 | Configurar ambiente | .env com tokens reais, variaveis de producao |
 | Criar contas externas | Bot Telegram, canais, programas de afiliados |
 | Configurar .env | Preencher tokens e IDs reais |
-| Testar E2E real | npm run cli / npm run dev com .env configurado |
+| Testar E2E real | npm run cli / npm run dev:bot com .env configurado |
 | Configurar PM2 | ecosystem.config.cjs (logs, restart, memoria) |
 | Build de producao | npm run build (postbuild copia .env + pastas) |
 | Deploy em VPS/cloud | Servidor 24/7 para execucao continua |
@@ -223,7 +223,7 @@ Para o módulo web + painel do cliente com assinatura:
 | Painel do cliente | Dashboard, config grupos/afiliados/TG, métricas, fontes |
 | Super admin | Lista clientes, ofertas globais, controle de planos |
 | Deploy Vercel | Auto-deploy via GitHub: preview ao abrir PR, produção ao mergear em `master` |
-| Bot local (fonte) | npm run dev mantido — alimenta o DB compartilhado |
+| Bot local (fonte) | npm run dev:bot mantido — alimenta o DB compartilhado |
 
 **Skills:** Next.js, Prisma, NextAuth, Stripe/Mercado Pago, Turso, Vercel
 
