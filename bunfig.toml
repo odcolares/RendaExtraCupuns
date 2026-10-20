@@ -1,0 +1,3 @@
+[install]
+network-concurrency = 8
+concurrency = 4
