@@ -96,7 +96,15 @@ TENANT_ID=abc123
 WHATSAPP_SESSION_BASE_PATH=/data/whatsapp-sessions
 
 # Telegram (vêm do TenantChannel no DB)
-# TELEGRAM_BOT_TOKEN e TELEGRAM_CHANNEL_ID configurados via onboarding
+# TELEGRAM_BOT_TOKEN
+
+# Caminho do Import Prisma no Bot
+# O código do bot usa imports relativos em vez de aliases @/
+src/lib/prisma.ts agora usa: import { PrismaClient } from "../generated/prisma/client"
+
+# Chrome Executável (Windows / Local Development)
+# Necessário para o Baileys/puppeteer baixar a versão da web do WhatsApp no Windows
+CHROME_EXECUTABLE_PATH=C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe e TELEGRAM_CHANNEL_ID configurados via onboarding
 
 # Afiliados (vêm do AffiliateConfig no DB)
 # Sobrescrevem globais se configurados
